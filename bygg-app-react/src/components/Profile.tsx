@@ -12,10 +12,29 @@ const ProfileComponent: React.FC = () => {
           <h1>Profil uzytkownika</h1>
           {profiles.map((profile) => (
             <div key={profile.id}>
-              <img
-                src={profile.image}
-                alt={`${profile.first_name} ${profile.last_name}`}
-              />
+              <div
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  borderRadius: "50%",
+                }}
+              >
+                <img
+                  src={profile.image}
+                  alt={`${profile.first_name} ${profile.last_name}`}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                />
+              </div>
+
               <p>Email: {profile.user_email}</p>
               <p>Imię: {profile.first_name}</p>
               <p>Nazwisko: {profile.last_name}</p>
