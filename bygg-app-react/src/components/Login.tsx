@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ProfileComponent from "./Profile";
 
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,17 +18,28 @@ const LoginComponent: React.FC = () => {
       });
 
       //Przechowywanie tokena dostepu i odswiezania w localStorage
-      localStorage.setItem("accessToken", response.data.accees);
+      localStorage.setItem("accessToken", response.data.access);
       localStorage.setItem("refreshToken", response.data.refresh);
 
       //Reset stanu bledu
       setError("");
 
-      //Tu dodac przekierowanie po udanym logowaniu
+      //Tu dodac przekierowanie po udanym logowaniu lub zmiane stanu
+      setIsLoggedIn(true);
     } catch (err) {
       setError("Nie udalo sie zalogowac. Sprawdz swoje dane logowania");
     }
   };
+
+  // Renderowanie warunkowe w zależności od stanu logowania
+  if (isLoggedIn) {
+    return (
+      <div>
+        <h1>Logged In</h1>
+        <ProfileComponent />
+      </div>
+    );
+  }
 
   return (
     <div>

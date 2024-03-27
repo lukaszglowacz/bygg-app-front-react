@@ -1,12 +1,11 @@
 import './App.css'
-import ProfileComponent from './components/Profile'
+import LoginComponent from './components/Login'
 
 function App() {
 
   return (
     <div>
-      <h1>Profiles</h1>
-      <ProfileComponent />
+      <LoginComponent/>
     </div>
     
   )
