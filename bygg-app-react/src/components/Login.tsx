@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ProfileComponent from "./Profile";
+import { Container, Col, Row, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,53 +21,56 @@ const LoginComponent: React.FC = () => {
       //Przechowywanie tokena dostepu i odswiezania w localStorage
       localStorage.setItem("accessToken", response.data.access);
       localStorage.setItem("refreshToken", response.data.refresh);
-
+      navigate('/');
+      
       //Reset stanu bledu
       setError("");
 
-      //Tu dodac przekierowanie po udanym logowaniu lub zmiane stanu
-      setIsLoggedIn(true);
     } catch (err) {
       setError("Nie udalo sie zalogowac. Sprawdz swoje dane logowania");
     }
   };
 
-  // Renderowanie warunkowe w zależności od stanu logowania
-  if (isLoggedIn) {
-    return (
-      <div>
-        <h1>Logged In</h1>
-        <ProfileComponent />
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <h2>Logowanie</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleLogin}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Hasło:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit">Zaloguj</button>
-      </form>
-    </div>
+    <Container>
+      <Row className="justify-content-center">
+        <Col xs={12} md={6}>
+          <div className="login-form">
+            <h2>Logowanie</h2>
+            {error && <p>{error}</p>}
+            <form onSubmit={handleLogin}>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Email:
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Hasło:
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <Button variant="primary" type="submit">
+                Zaloguj
+              </Button>
+            </form>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

@@ -1,29 +1,21 @@
-import React, {useEffect, useState} from "react";
-import api from "../api/api";
-import { IProfileData } from "../api/interfaces/types";
+import React from "react";
+import { useProfileData } from "../hooks/useProfileData";
+import { Container, Row, Col } from "react-bootstrap";
 
 //Interfejs dla danych, ktorych spodziewam sie otrzymac z API
 const ProfileComponent: React.FC = () => {
-    const [profiles, setProfiles] = useState<IProfileData[]>([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get<IProfileData[]>('profile/');
-                setProfiles(response.data);
-            } catch (error) {
-                console.error('Wystapil blad podczas pobierania danych o profilach uzytkownikow', error);
-            }
-        };
-        fetchData();
-    }, []);
-
-    return (
-        <div>
-          {/* Renderowanie profili */}
-          {profiles.map(profile => (
+  const profiles = useProfileData();
+  return (
+    <Container>
+      <Row>
+        <Col>
+          <h1>Profil uzytkownika</h1>
+          {profiles.map((profile) => (
             <div key={profile.id}>
-              <img src={profile.image} alt={`${profile.first_name} ${profile.last_name}`} />
+              <img
+                src={profile.image}
+                alt={`${profile.first_name} ${profile.last_name}`}
+              />
               <p>Email: {profile.user_email}</p>
               <p>Imię: {profile.first_name}</p>
               <p>Nazwisko: {profile.last_name}</p>
@@ -32,8 +24,10 @@ const ProfileComponent: React.FC = () => {
               <p>Zaktualizowano: {profile.updated_at}</p>
             </div>
           ))}
-        </div>
-      );
+        </Col>
+      </Row>
+    </Container>
+  );
 };
 
-export default ProfileComponent
+export default ProfileComponent;
