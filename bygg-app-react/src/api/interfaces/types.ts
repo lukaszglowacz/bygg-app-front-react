@@ -8,3 +8,11 @@ export interface IProfileData {
     updated_at: string;
     image: string;
 }
+
+export interface IWorkPlacesData {
+    id: number;
+    street: string;
+    street_number: string;
+    postal_code: string;
+    city: string;
+}

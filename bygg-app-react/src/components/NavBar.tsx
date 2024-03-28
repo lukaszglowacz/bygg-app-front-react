@@ -3,6 +3,7 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useProfileData } from '../hooks/useProfileData';
 import useLogout from '../hooks/useLogOut';
+import Home from './Home';
 
 const NavbarComponent: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const NavbarComponent: React.FC = () => {
   return (
     <Navbar bg="light" expand="lg" fixed="top">
       <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand onClick={() => navigateTo('/')}>
           <img src={userProfile.image} alt="Profile" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
