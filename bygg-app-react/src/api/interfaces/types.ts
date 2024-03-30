@@ -16,3 +16,30 @@ export interface IWorkPlacesData {
     postal_code: string;
     city: string;
 }
+
+export interface IAddWorkPlaceData {
+    street: string;
+    street_number: string;
+    postal_code: string;
+    city: string;
+}
+
+export interface IWorkTimeData {
+    id: number;
+    user: number;
+    user_first_name: string;
+    user_last_name: string;
+    user_personnummer: string;
+    workplace: number;
+    workplace_detail: string;
+    start_time: string;
+    end_time: string;
+    total_time: string;
+}
+
+export interface IWorkTimesResponse {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: IWorkTimeData[];
+}

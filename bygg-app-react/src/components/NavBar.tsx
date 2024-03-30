@@ -3,7 +3,6 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useProfileData } from '../hooks/useProfileData';
 import useLogout from '../hooks/useLogOut';
-import Home from './Home';
 
 const NavbarComponent: React.FC = () => {
   const navigate = useNavigate();

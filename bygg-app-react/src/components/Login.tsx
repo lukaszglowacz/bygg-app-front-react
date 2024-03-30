@@ -1,33 +1,42 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { Container, Col, Row, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import api from "../api/api";
+import { useAuth } from "../context/AuthContext";
+import { AxiosError } from "axios";
 
 const LoginComponent: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const { login } = useAuth(); // Użyj hooka useAuth
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/token/", {
+      const response = await api.post("/api/token/", {
         email,
         password,
       });
 
-      //Przechowywanie tokena dostepu i odswiezania w localStorage
-      localStorage.setItem("accessToken", response.data.access);
-      localStorage.setItem("refreshToken", response.data.refresh);
-      navigate('/');
-      
-      //Reset stanu bledu
-      setError("");
+      login(response.data.access, response.data.refresh);
+      navigate("/");
 
-    } catch (err) {
-      setError("Nie udalo sie zalogowac. Sprawdz swoje dane logowania");
+      setError(""); // Reset stanu błędu
+    } catch (error) {
+      const axiosError = error as AxiosError; // Typowanie błędu jako AxiosError
+      if (axiosError.response) {
+        const errorMessage = axiosError.response.data as { detail: string }; // Zakładamy, że 'data' ma pole 'detail' typu string
+        setError(
+          `Nie udało się zalogować. ${
+            errorMessage.detail || "Sprawdź swoje dane logowania."
+          }`
+        );
+      } else {
+        setError("Nie udało się zalogować. Sprawdź swoje dane logowania.");
+      }
     }
   };
 

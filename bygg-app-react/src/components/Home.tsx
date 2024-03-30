@@ -7,6 +7,7 @@ const Home: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<string>("");
   const [currentDate, setCurrentDate] = useState<string>("");
   const [selectedWorkPlaceId, setSelectedWorkPlaceId] = useState<number | null>(null);
+
   const workplaces = useWorkPlaceData();
 
   useEffect(() => {
@@ -18,18 +19,8 @@ const Home: React.FC = () => {
       setCurrentTime(`${hours}:${minutes}:${seconds}`);
 
       const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
       ];
       const day = now.getDate().toString().padStart(2, "0");
       const month = months[now.getMonth()];
@@ -40,7 +31,6 @@ const Home: React.FC = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Tutaj dodajemy typowanie dla parametru 'workplace'
   const formatAddress = (workplace: IWorkPlacesData) => {
     return `${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`;
   };
@@ -53,21 +43,26 @@ const Home: React.FC = () => {
     <Container>
       <Row className="justify-content-center">
         <Col md={6} className="text-center">
-          <h1 style={{ fontSize: '2.5rem' }}>{currentTime}</h1>
+          <h1 style={{ fontSize: "2.5rem" }}>{currentTime}</h1>
           <p>{currentDate}</p>
           <DropdownButton id="dropdown-basic-button" title="Wybierz miejsce pracy">
             {workplaces.map((workplace) => (
-              <Dropdown.Item 
-                key={workplace.id} 
+              <Dropdown.Item
+                key={workplace.id}
                 onClick={() => handleWorkPlaceSelect(workplace.id)}
-                active={workplace.id === selectedWorkPlaceId}>
+                active={workplace.id === selectedWorkPlaceId}
+              >
                 {formatAddress(workplace)}
               </Dropdown.Item>
             ))}
           </DropdownButton>
           <div className="mt-3">
-            <Button variant="success" className="me-2">Zaloguj</Button>
-            <Button variant="danger">Wyloguj</Button>
+            <Button variant="success" className="me-2">
+              Start
+            </Button>
+            <Button variant="danger">
+              Koniec
+            </Button>
           </div>
         </Col>
       </Row>
