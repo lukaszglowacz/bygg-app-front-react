@@ -18,7 +18,7 @@ const WorkPlaceContainer: React.FC = () => {
       try {
         await deleteWorkPlace(id);
         alert("Miejsce pracy zostało usunięte.");
-        navigate("/work-places");
+        navigate("/work-places"); // Odświeżenie listy może być potrzebne
       } catch (error) {
         console.error("Wystąpił błąd podczas usuwania miejsca pracy: ", error);
         alert("Nie udało się usunąć miejsca pracy.");
@@ -28,6 +28,10 @@ const WorkPlaceContainer: React.FC = () => {
 
   const formatAddress = (workplace: IWorkPlacesData) => {
     return `${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`;
+  };
+
+  const handleEditClick = (id: number) => {
+    navigate(`/edit-work-place/${id}`); // Przekierowanie do formularza edycji z ID miejsca pracy
   };
 
   return (
@@ -44,9 +48,14 @@ const WorkPlaceContainer: React.FC = () => {
                 <div className="ms-2 me-auto">
                   <div className="fw-bold">{formatAddress(workplace)}</div>
                 </div>
-                <Button variant="danger" onClick={() => handleDeleteClick(workplace.id)}>
-                  Usuń
-                </Button>
+                <div>
+                  <Button variant="secondary" onClick={() => handleEditClick(workplace.id)} style={{ marginRight: "10px" }}>
+                    Edit
+                  </Button>
+                  <Button variant="danger" onClick={() => handleDeleteClick(workplace.id)}>
+                    Usuń
+                  </Button>
+                </div>
               </ListGroup.Item>
             ))}
           </ListGroup>

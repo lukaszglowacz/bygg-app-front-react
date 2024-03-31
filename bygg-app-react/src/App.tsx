@@ -9,6 +9,7 @@ import WorkHour from "./components/WorkHour";
 import WorkPlace from "./components/WorkPlace";
 import AddWorkHour from './components/AddWorkHour';
 import AddWorkPlaceForm from './components/AddWorkPlace';
+import EditWorkPlace from './components/EditWorkPlace';
 
 
 const App: React.FC = () => {
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Route path="/addworkhour" element={<AddWorkHour />} />
           <Route path="/work-places" element={<WorkPlace/>}/>
           <Route path="/add-work-place" element={<AddWorkPlaceForm/>}/>
+          <Route path="/edit-work-place/:id" element={<EditWorkPlace/>}/>
         </Routes>
       </div>
     </Router>
