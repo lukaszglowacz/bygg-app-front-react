@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Col, Row, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { AxiosError } from "axios";
@@ -72,6 +72,9 @@ const LoginComponent: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+              <p className="mt-3">
+                Nie masz konta? <Link to="/register">Zarejestruj się</Link>.
+              </p>
               <Button variant="primary" type="submit">
                 Zaloguj
               </Button>
