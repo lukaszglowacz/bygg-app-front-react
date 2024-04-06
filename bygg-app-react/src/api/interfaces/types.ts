@@ -1,6 +1,7 @@
 export interface IProfileData {
     id: number;
     user_email: string;
+    user_id: number; 
     first_name: string;
     last_name: string;
     personnummer: string;

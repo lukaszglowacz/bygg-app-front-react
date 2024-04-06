@@ -65,7 +65,7 @@ const RegisterUser: React.FC = () => {
 
             <Form.Group controlId="formPersonnummer">
               <Form.Label>Personnummer</Form.Label>
-              <Form.Control type="text" placeholder="XXXXXX XXXX" name="personnummer" value={formData.personnummer} onChange={handleChange} required />
+              <Form.Control type="text" placeholder="XXXXXX-XXXX" name="personnummer" value={formData.personnummer} onChange={handleChange} required />
             </Form.Group>
 
             <Button variant="primary" type="submit">

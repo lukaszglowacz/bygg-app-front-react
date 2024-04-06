@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Button, Container, Form, Row, Col, Alert } from "react-bootstrap";
 import { useProfileData } from "../hooks/useProfileData";
 import { useWorkPlaceData } from "../hooks/useWorkplaceData";
+import axios, { AxiosError } from "axios"; // Upewnij się, że zaimportowałeś AxiosError
 import api from "../api/api";
-import axios, { AxiosError } from "axios";
 
 const AddWorkHour: React.FC = () => {
   const [selectedProfile, setSelectedProfile] = useState<string>("");
@@ -17,46 +17,48 @@ const AddWorkHour: React.FC = () => {
   const profiles = useProfileData();
   const workplaces = useWorkPlaceData();
 
+  interface ErrorData {
+    message: string;
+    [key: string]: any; // Dla innych potencjalnych pól
+  }
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
     setSuccess("");
     setSubmitting(true);
 
-    const profileId = Number(selectedProfile);
+    const profile = profiles.find(p => p.id.toString() === selectedProfile);
+    const user_id = profile ? profile.user_id : null; // Pobieranie user_id z profilu
+
     const workplaceId = Number(selectedWorkplace);
 
-    if (!profileId || !workplaceId) {
-      setError("Nieprawidłowy profil użytkownika lub miejsce pracy.");
+    if (!user_id || !workplaceId) {
+      setError("Nieprawidłowy użytkownik lub miejsce pracy.");
       setSubmitting(false);
       return;
     }
 
     try {
-      // Przygotowanie danych do wysłania zgodnie z oczekiwanym formatem
       const postData = {
-        user: profileId, // 'profileId' powinno być ID użytkownika, a nie profilu, jeśli to ma być zgodne z modelem `WorkSession`
+        user: user_id,
         workplace: workplaceId,
         start_time: startTime,
         end_time: endTime,
       };
-      
-
-      console.log(postData); // Dla celów debugowania
 
       await api.post("/worksession/", postData);
       setSuccess("Sesja pracy została pomyślnie dodana.");
-      // Resetowanie stanu formularza
       setSelectedProfile("");
       setSelectedWorkplace("");
       setStartTime("");
       setEndTime("");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Błąd przy wysyłaniu danych:", error.response?.data);
-        setError("Wystąpił błąd: " + (error.response?.data as any).message);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+          const errorData = error.response.data as ErrorData;
+          setError(`Wystąpił błąd: ${errorData.message || "Nieznany błąd"}`);
       } else {
-        setError("Wystąpił nieoczekiwany błąd.");
+          setError("Wystąpił nieoczekiwany błąd.");
       }
     } finally {
       setSubmitting(false);
@@ -97,7 +99,7 @@ const AddWorkHour: React.FC = () => {
                 <option value="">Wybierz miejsce pracy</option>
                 {workplaces.map((workplace) => (
                   <option key={workplace.id} value={workplace.id}>
-                    {workplace.street} {workplace.street_number},{" "}
+                    {workplace.street} {workplace.street_number},
                     {workplace.postal_code} {workplace.city}
                   </option>
                 ))}

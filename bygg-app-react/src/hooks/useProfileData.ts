@@ -8,17 +8,18 @@ export const useProfileData = (): IProfileData[] => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get<IProfileData[]>("profile/");
-        setProfiles(response.data);
+        const response = await api.get<IProfileData[]>("/profile/");
+        setProfiles(response.data.map(profile => ({
+          ...profile,
+          user_id: profile.user_id  // Upewnij się, że backend faktycznie zwraca to pole
+        })));
       } catch (error) {
-        console.error(
-          "Wystapil blad podczas pobierania danych o profilach uzytkownikow",
-          error
-        );
+        console.error("Wystąpił błąd podczas pobierania danych o profilach użytkowników", error);
       }
     };
     fetchData();
   }, []);
 
-  return profiles
+  return profiles;
 };
+

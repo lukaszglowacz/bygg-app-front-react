@@ -1,101 +1,109 @@
-import React from "react";
-import { useProfileData } from "../hooks/useProfileData";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  ListGroup,
-  Image,
-  Form,
-  Button,
-} from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Image, Form, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { PencilSquare } from 'react-bootstrap-icons';
 import api from "../api/api";
-import { useState } from "react";
+import { useProfileData } from "../hooks/useProfileData";
 
-//Interfejs dla danych, których spodziewam się otrzymać z API
-const ProfileComponent: React.FC = () => {
+const ProfileComponent = () => {
   const profiles = useProfileData();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<Map<number, File>>(new Map());
+  const [formData, setFormData] = useState<Map<number, { firstName: string; lastName: string; personnummer: string }>>(new Map());
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    const newFormData = new Map();
+    profiles.forEach(profile => {
+      newFormData.set(profile.id, {
+        firstName: profile.first_name,
+        lastName: profile.last_name,
+        personnummer: profile.personnummer
+      });
+    });
+    setFormData(newFormData);
+  }, [profiles]);
+
+  const handleFileChange = (profileId: number, event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setSelectedFile(event.target.files[0]);
+      setSelectedFiles(new Map(selectedFiles.set(profileId, event.target.files[0])));
     }
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>,
-    profileId: number
-  ) => {
-    event.preventDefault();
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append("image", selectedFile);
+  const handleInputChange = (profileId: number, field: string, value: string) => {
+    const existing = formData.get(profileId) || { firstName: "", lastName: "", personnummer: "" };
+    const updated = { ...existing, [field]: value };
+    setFormData(new Map(formData.set(profileId, updated)));
+  };
 
-      try {
-        // Załóżmy, że endpoint API do aktualizacji zdjęcia profilowego wymaga wysłania formularza
-        // i używa metody PATCH. Należy dostosować URL i metodę do swojego API.
-        await api.patch(`/profile/${profileId}/`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        alert("Zdjęcie profilowe zostało zaktualizowane.");
-      } catch (error) {
-        console.error(
-          "Wystąpił błąd przy aktualizacji zdjęcia profilowego:",
-          error
-        );
-        alert("Nie udało się zaktualizować zdjęcia profilowego.");
-      }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, profileId: number) => {
+    event.preventDefault();
+    const payload = new FormData();
+    if (selectedFiles.has(profileId)) {
+      payload.append("image", selectedFiles.get(profileId) as Blob);
+    }
+    const data = formData.get(profileId);
+    if (data) {
+      payload.append("first_name", data.firstName);
+      payload.append("last_name", data.lastName);
+      payload.append("personnummer", data.personnummer);
+    }
+
+    try {
+      await api.patch(`/profile/${profileId}/`, payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      alert("Profil został zaktualizowany.");
+    } catch (error) {
+      console.error("Wystąpił błąd przy aktualizacji profilu:", error);
+      alert("Nie udało się zaktualizować profilu.");
     }
   };
 
   return (
     <Container>
-      <Row className="justify-content-md-center">
+      <Row className="justify-content-center">
         {profiles.map((profile) => (
-          <Col md={6} lg={4} key={profile.id} className="mb-4">
+          <Col md={6} lg={4} key={profile.id} className="mb-3">
             <Card>
-              <Card.Header>
-                <Image
-                  src={profile.image}
-                  alt={`${profile.first_name} ${profile.last_name}`}
-                  roundedCircle
-                  fluid
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                  }}
-                />
-                <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
-                  <Form.Group>
-                    <input
-                      type="file"
-                      className="form-control"
-                      onChange={handleFileChange}
-                    />
-                  </Form.Group>
-                  <Button type="submit">Upload Image</Button>
-                </Form>
+              <Card.Header className="text-center">
+                <Image src={profile.image} roundedCircle fluid style={{ width: "100px", height: "100px", objectFit: "cover", margin: "0 auto"}} />
+                <OverlayTrigger
+                  placement="right"
+                  overlay={<Tooltip>Edytuj zdjęcie</Tooltip>}
+                >
+                  <label className="btn btn-secondary">
+                    <PencilSquare /> <input type="file" hidden onChange={(e) => handleFileChange(profile.id, e)} />
+                  </label>
+                </OverlayTrigger>
+                <p className="mt-2 mb-0 text-muted" style={{ fontSize: '16px', fontWeight: 'bold' }}>{profile.user_email}</p>
               </Card.Header>
               <Card.Body>
-                <Card.Title>{`${profile.first_name} ${profile.last_name}`}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                  {profile.user_email}
-                </Card.Subtitle>
+                <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Imię</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={formData.get(profile.id)?.firstName || ""}
+                      onChange={(e) => handleInputChange(profile.id, 'firstName', e.target.value)}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Nazwisko</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={formData.get(profile.id)?.lastName || ""}
+                      onChange={(e) => handleInputChange(profile.id, 'lastName', e.target.value)}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Personnummer</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={formData.get(profile.id)?.personnummer || ""}
+                      onChange={(e) => handleInputChange(profile.id, 'personnummer', e.target.value)}
+                    />
+                  </Form.Group>
+                  <Button variant="primary" type="submit">Zaktualizuj</Button>
+                </Form>
               </Card.Body>
-              <ListGroup variant="flush">
-                <ListGroup.Item>
-                  Personnummer: {profile.personnummer}
-                </ListGroup.Item>
-                <ListGroup.Item>Utworzono: {profile.created_at}</ListGroup.Item>
-                <ListGroup.Item>
-                  Zaktualizowano: {profile.updated_at}
-                </ListGroup.Item>
-              </ListGroup>
             </Card>
           </Col>
         ))}

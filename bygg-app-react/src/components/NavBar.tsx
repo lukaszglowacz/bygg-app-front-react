@@ -24,7 +24,7 @@ const NavbarComponent: React.FC = () => {
     <Navbar bg="light" expand="lg" fixed="top">
       <Container>
         <Navbar.Brand onClick={() => navigateTo('/')}>
-          <img src={userProfile.image} alt="Profile" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+          <img src={userProfile.image} alt="Profile" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: "cover", margin: "0 auto" }} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
