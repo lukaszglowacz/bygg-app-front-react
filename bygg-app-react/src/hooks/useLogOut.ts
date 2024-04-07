@@ -1,20 +1,10 @@
-// hooks/useLogout.ts
-import { useNavigate } from 'react-router-dom';
+// Plik: hooks/useLogout.ts
+import { useAuth } from '../context/AuthContext';  // Załóżmy, że ścieżka do AuthContext jest prawidłowa
 
 const useLogout = () => {
-  const navigate = useNavigate();
+  const { logout } = useAuth();  // Używamy hooka useAuth, aby pobrać funkcję logout
 
-  const logout = () => {
-    // Czyszczenie localStorage
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    // Możesz dodać tutaj więcej czynności związanych z wylogowaniem, np. czyszczenie stanu aplikacji
-
-    // Przekierowanie do strony logowania
-    navigate('/login');
-  };
-
-  return logout;
+  return logout;  // Zwracamy funkcję logout, aby można było jej użyć w komponentach
 };
 
 export default useLogout;

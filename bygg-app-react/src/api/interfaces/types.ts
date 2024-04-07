@@ -56,3 +56,11 @@ export interface LiveSession {
     end_time?: string;
     total_time: string;
 }
+
+export interface Session {
+    id: number;
+    user: number;
+    workplace: number;
+    start_time: string;
+    status: string;
+  }

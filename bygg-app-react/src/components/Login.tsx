@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Col, Row, Button } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { AxiosError } from "axios";
+import useActiveSession from "../hooks/useActiveSession";
 
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -11,6 +12,16 @@ const LoginComponent: React.FC = () => {
   const [error, setError] = useState<string>("");
   const { login } = useAuth(); // Use the useAuth hook
   const navigate = useNavigate();
+
+  // Używamy hooka useActiveSession do sprawdzenia aktywnej sesji po zalogowaniu
+  const activeSession = useActiveSession();
+
+  // Przekierowanie użytkownika do strony głównej, jeśli istnieje aktywna sesja
+  useEffect(() => {
+    if (activeSession) {
+      navigate("/");
+    }
+  }, [activeSession, navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

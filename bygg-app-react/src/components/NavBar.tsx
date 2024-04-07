@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';  // Zakładając, że masz taki hook
 import { useProfileData } from '../hooks/useProfileData';
 import useLogout from '../hooks/useLogOut';
 
 const NavbarComponent: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const profiles = useProfileData();
   const logout = useLogout();
 
+  // Przekierowanie na stronę logowania, jeśli użytkownik nie jest zalogowany
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && location.pathname !== "/register") {
+      navigate('/login');
+    }
+  }, [isAuthenticated, isLoading, navigate, location.pathname]);
+
   const handleLogout = () => {
-    // Logika wylogowania i zastosowania useLogOutHook
-    logout();
+    logout();  // Wywołanie funkcji logout
   };
 
   const navigateTo = (path: string) => {
@@ -23,20 +32,25 @@ const NavbarComponent: React.FC = () => {
   return (
     <Navbar bg="light" expand="lg" fixed="top">
       <Container>
-        <Navbar.Brand onClick={() => navigateTo('/')}>
-          <img src={userProfile.image} alt="Profile" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: "cover", margin: "0 auto" }} />
-        </Navbar.Brand>
+        {isAuthenticated && userProfile.image && (
+          <Navbar.Brand onClick={() => navigateTo('/')}>
+            <img src={userProfile.image} alt="Profile" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: "cover", margin: "0 auto" }} />
+          </Navbar.Brand>
+        )}
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <NavDropdown title={userProfile.first_name} id="basic-nav-dropdown">
-              <NavDropdown.Item onClick={() => navigateTo('/')}>Panel nawigacyjny</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => navigateTo('/profile')}>Profil</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => navigateTo('/work-hours')}>Godziny pracy</NavDropdown.Item>
-              <NavDropdown.Item onClick={() => navigateTo('/work-places')}>Miejsca pracy</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={handleLogout}>Log Out</NavDropdown.Item>
-            </NavDropdown>
+            {isAuthenticated && (
+              <NavDropdown title={userProfile.first_name} id="basic-nav-dropdown">
+                <NavDropdown.Item onClick={() => navigateTo('/')}>Panel nawigacyjny</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo('/profile')}>Profil</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo('/active-sessions')}>Aktualnie pracuja</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo('/work-hours')}>Godziny pracy</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo('/work-places')}>Miejsca pracy</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={handleLogout}>Wyloguj się</NavDropdown.Item>
+              </NavDropdown>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
