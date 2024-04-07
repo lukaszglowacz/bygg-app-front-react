@@ -9,31 +9,36 @@ const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const { login } = useAuth(); // Użyj hooka useAuth
+  const { login } = useAuth(); // Use the useAuth hook
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    interface LoginResponse {
+      access: string;
+      refresh: string;
+      user_id: string;
+      detail?: string; // opcjonalne pole, które może pojawić się w odpowiedzi błędu
+    }
+    
+    // Następnie użyj tego interfejsu w swoich wywołaniach API:
     try {
-      const response = await api.post("/api/token/", {
-        email,
-        password,
-      });
-
-      login(response.data.access, response.data.refresh);
-      navigate("/");
-
-      setError(""); // Reset stanu błędu
+      const response = await api.post<LoginResponse>("/api/token/", { email, password });
+    
+      if (response.data.access && response.data.refresh && response.data.user_id) {
+        const expiresIn = 24 * 60 * 60 * 1000; // 24 godziny w milisekundach
+        const expiresAt = new Date().getTime() + expiresIn;
+        login(response.data.access, response.data.refresh, response.data.user_id, expiresAt);
+        navigate("/");
+        setError("");
+      } else {
+        setError("Logowanie nieudane: brak identyfikatora użytkownika lub błędne dane.");
+      }
     } catch (error) {
-      const axiosError = error as AxiosError; // Typowanie błędu jako AxiosError
-      if (axiosError.response) {
-        const errorMessage = axiosError.response.data as { detail: string }; // Zakładamy, że 'data' ma pole 'detail' typu string
-        setError(
-          `Nie udało się zalogować. ${
-            errorMessage.detail || "Sprawdź swoje dane logowania."
-          }`
-        );
+      const axiosError = error as AxiosError<LoginResponse>;
+      if (axiosError.response && axiosError.response.data.detail) {
+        setError(`Nie udało się zalogować. ${axiosError.response.data.detail}`);
       } else {
         setError("Nie udało się zalogować. Sprawdź swoje dane logowania.");
       }

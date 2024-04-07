@@ -44,3 +44,15 @@ export interface IWorkTimesResponse {
     previous: string | null;
     results: IWorkTimeData[];
 }
+
+export interface LiveSession {
+    id: number;
+    session_token: string;
+    status: "completed" | "started" | "paused"; // Dopasuj statusy zgodnie z możliwymi wartościami
+    user: number;
+    workplace: number;
+    workplace_detail: string;
+    start_time: string;
+    end_time?: string;
+    total_time: string;
+}
