@@ -3,6 +3,7 @@ import { Button, Form, Alert, Container, Row, Col } from "react-bootstrap";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import useActiveSession from "../hooks/useActiveSession";
+import ConfirmModal from "./ConfirmModal";
 
 interface Workplace {
   id: number;
@@ -25,6 +26,8 @@ const Home: React.FC = () => {
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<number>(-1);
   const [session, setSession] = useState<Session | null>(null);
   const [alertInfo, setAlertInfo] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showEndModal, setShowEndModal] = useState(false);
 
   const { userId } = useAuth(); // Pobranie userId z kontekstu
   const activeSession = useActiveSession();
@@ -36,7 +39,7 @@ const Home: React.FC = () => {
         setWorkplaces(response.data);
       } catch (error) {
         console.error("Error fetching workplaces", error);
-        setAlertInfo("Failed to fetch workplaces.");
+        setAlertInfo("Nie mozna pobrac miejsc pracy. Zaloguj sie ponownie.");
       }
     };
     fetchWorkplaces();
@@ -46,11 +49,22 @@ const Home: React.FC = () => {
     setSession(activeSession); // Aktualizacja stanu sesji po załadowaniu przez hook useActiveSession
   }, [activeSession]);
 
-   
+  const confirmStartSession = () => {
+    handleStartSession();
+    setShowModal(false);
+  };
+
+  const handleStartButtonClick = () => {
+    if (selectedWorkplaceId === -1 || !userId) {
+      setAlertInfo("Zaznacz miejsce pracy i upewnij sie czy jestes zalogowany");
+      return;
+    }
+    setShowModal(true);
+  };
 
   const handleStartSession = async () => {
-    if (selectedWorkplaceId === -1 || !userId) {
-      setAlertInfo("Please select a workplace and ensure you are logged in!");
+    if (userId === null) {
+      setAlertInfo("Musisz być zalogowany, aby rozpocząć sesję.");
       return;
     }
     try {
@@ -60,21 +74,29 @@ const Home: React.FC = () => {
       });
       setSession({
         id: response.data.id,
-        user: parseInt(userId),
+        user: parseInt(userId, 10),
         workplace: selectedWorkplaceId,
         start_time: response.data.start_time,
         status: "Trwa",
       });
-      setAlertInfo("Session started successfully.");
+      setAlertInfo("Praca rozpoczeta");
     } catch (error) {
       console.error("Error starting session", error);
-      setAlertInfo("Failed to start session.");
+      setAlertInfo("Nie udalo sie rozpoczac sesji. Zaloguj sie ponownie.");
     }
   };
 
-  const handleEndSession = async () => {
+  const handleEndButtonClick = () => {
+    if (!session || session.status !== "Trwa") {
+      setAlertInfo("Nie ma aktuwnej sesji do zakonczenia");
+      return;
+    }
+    setShowEndModal(true);
+  };
+
+  const confirmEndSession = async () => {
     if (!session || !session.id) {
-      setAlertInfo("No active session to end!");
+      setAlertInfo("Brak sesji do zakonczenia. Mozesz rozpoczac nowa sesje.");
       return;
     }
     try {
@@ -84,10 +106,12 @@ const Home: React.FC = () => {
       };
       await api.put(`/livesession/end/${session.id}/`, requestData);
       setSession(null); // Resetowanie sesji po jej zakończeniu
-      setAlertInfo("Session ended successfully.");
+      setAlertInfo("Gratulacje! To byl dobry dzien!");
+      setShowEndModal(false); // Zamknij modal
     } catch (error) {
       console.error("Error ending session", error);
-      setAlertInfo("Failed to end session.");
+      setAlertInfo("Nie udalo sie zakonczyc sesji. Zaloguj sie ponownie.");
+      setShowEndModal(false); // Zamknij modal
     }
   };
 
@@ -97,13 +121,13 @@ const Home: React.FC = () => {
         <Col md={6}>
           {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
           <Form.Group controlId="workplaceSelect">
-            <Form.Label>Select Workplace</Form.Label>
+            <Form.Label>Zaznacz miejsce pracy</Form.Label>
             <Form.Control
               as="select"
               value={selectedWorkplaceId.toString()}
               onChange={(e) => setSelectedWorkplaceId(parseInt(e.target.value))}
             >
-              <option value="-1">Choose...</option>
+              <option value="-1">Wybierz...</option>
               {workplaces.map((workplace) => (
                 <option key={workplace.id} value={workplace.id}>
                   {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}
@@ -112,23 +136,87 @@ const Home: React.FC = () => {
             </Form.Control>
           </Form.Group>
           <div className="d-grid gap-2">
-            <Button variant="primary" onClick={handleStartSession}>
-              Start
+            <Button
+              variant="primary"
+              onClick={handleStartButtonClick}
+              disabled={!!(session && session.status === "Trwa")}
+            >
+              Start pracy
             </Button>
             <Button
-              variant="secondary"
-              onClick={handleEndSession}
+              variant="danger"
+              onClick={handleEndButtonClick}
               disabled={!session || session.status !== "Trwa"}
             >
-              End
+              Koniec pracy
             </Button>
           </div>
           <Alert variant="success" className="mt-3">
-            Session Status:{" "}
+            Status{" "}
             {session
               ? `${session.status} since ${session.start_time}`
-              : "No active session"}
+              : "Brak aktywnych sesji pracy"}
           </Alert>
+          <ConfirmModal
+            show={showModal}
+            onHide={() => setShowModal(false)}
+            onConfirm={confirmStartSession}
+            title="Potwierdz poczatek sesji pracy"
+            children={
+              <>
+                <p>Czy na pewno chcesz rozpoczac prace w miejscu:</p>
+                <p>
+                  <strong>
+                    {
+                      workplaces.find((w) => w.id === selectedWorkplaceId)
+                        ?.street
+                    }{" "}
+                    {
+                      workplaces.find((w) => w.id === selectedWorkplaceId)
+                        ?.street_number
+                    }
+                    ,{" "}
+                    {
+                      workplaces.find((w) => w.id === selectedWorkplaceId)
+                        ?.postal_code
+                    }{" "}
+                    {workplaces.find((w) => w.id === selectedWorkplaceId)?.city}
+                    ?
+                  </strong>
+                </p>
+              </>
+            }
+          />
+          <ConfirmModal
+            show={showEndModal}
+            onHide={() => setShowEndModal(false)}
+            onConfirm={confirmEndSession}
+            title="Potwierdz zakończenie sesji pracy"
+            children={
+              <>
+                <p>Czy na pewno chcesz zakonczyc prace w miejscu:</p>
+                <p>
+                  <strong>
+                    {
+                      workplaces.find((w) => w.id === selectedWorkplaceId)
+                        ?.street
+                    }{" "}
+                    {
+                      workplaces.find((w) => w.id === selectedWorkplaceId)
+                        ?.street_number
+                    }
+                    ,{" "}
+                    {
+                      workplaces.find((w) => w.id === selectedWorkplaceId)
+                        ?.postal_code
+                    }{" "}
+                    {workplaces.find((w) => w.id === selectedWorkplaceId)?.city}
+                    ?
+                  </strong>
+                </p>
+              </>
+            }
+          />
         </Col>
       </Row>
     </Container>
