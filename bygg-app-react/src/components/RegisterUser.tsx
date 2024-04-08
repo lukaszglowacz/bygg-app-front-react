@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import api from "../api/api"; // Zakładam, że ten plik istnieje i jest skonfigurowany
 import { useNavigate } from "react-router-dom";
+import useGoBack from "../hooks/useGoBack";
 
 interface RegistrationFormData {
   email: string;
@@ -22,6 +23,7 @@ const RegisterUser: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const navigate = useNavigate();
+  const goBack = useGoBack();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -127,6 +129,9 @@ const RegisterUser: React.FC = () => {
 
             <Button variant="primary" type="submit">
               Zarejestruj się
+            </Button>
+            <Button variant="secondary" onClick={goBack} className="ml-2">
+              Wroc do logowania
             </Button>
           </Form>
         </Col>
