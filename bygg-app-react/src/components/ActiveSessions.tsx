@@ -32,8 +32,8 @@ const ActiveSessions: React.FC = () => {
                     {sessions.map((session: Session, index: number) => (
                         <tr key={session.id}>
                             <td>{index + 1}</td>
-                            <td>{session.user}</td> {/* Zakładamy, że to ID lub dane użytkownika */}
-                            <td>{session.workplace}</td> {/* Zakładamy, że to ID lub nazwa miejsca pracy */}
+                            <td>{`${session.user_first_name} ${session.user_last_name}`}</td>
+                            <td>{session.workplace_detail}</td> {/* Zakładamy, że to ID lub nazwa miejsca pracy */}
                             <td>{new Date(session.start_time).toLocaleString()}</td>
                             <td>{session.status}</td>
                         </tr>

@@ -45,22 +45,13 @@ export interface IWorkTimesResponse {
     results: IWorkTimeData[];
 }
 
-export interface LiveSession {
-    id: number;
-    session_token: string;
-    status: "completed" | "started" | "paused"; // Dopasuj statusy zgodnie z możliwymi wartościami
-    user: number;
-    workplace: number;
-    workplace_detail: string;
-    start_time: string;
-    end_time?: string;
-    total_time: string;
-}
-
 export interface Session {
     id: number;
     user: number;
     workplace: number;
     start_time: string;
     status: string;
+    user_first_name: string;
+    user_last_name: string;
+    workplace_detail: string;
   }
