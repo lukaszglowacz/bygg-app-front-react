@@ -21,7 +21,7 @@ const ActiveSessions: React.FC = () => {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>Lp</th>
                         <th>Pracownik</th>
                         <th>Miejsce pracy</th>
                         <th>Czas rozpoczęcia</th>
