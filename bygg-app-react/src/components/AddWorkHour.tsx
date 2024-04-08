@@ -4,6 +4,7 @@ import { useProfileData } from "../hooks/useProfileData";
 import { useWorkPlaceData } from "../hooks/useWorkplaceData";
 import axios, { AxiosError } from "axios"; // Upewnij się, że zaimportowałeś AxiosError
 import api from "../api/api";
+import useGoBack from "../hooks/useGoBack";
 
 const AddWorkHour: React.FC = () => {
   const [selectedProfile, setSelectedProfile] = useState<string>("");
@@ -13,6 +14,7 @@ const AddWorkHour: React.FC = () => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
+  const goBack = useGoBack()
 
   const profiles = useProfileData();
   const workplaces = useWorkPlaceData();
@@ -127,6 +129,9 @@ const AddWorkHour: React.FC = () => {
             </Form.Group>
             <Button variant="primary" type="submit" disabled={submitting}>
               {submitting ? "Dodawanie..." : "Dodaj"}
+            </Button>
+            <Button variant="secondary" onClick={goBack} className="ml-2">
+              Powrot
             </Button>
           </Form>
         </Col>

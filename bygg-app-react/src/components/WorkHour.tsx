@@ -50,8 +50,8 @@ const WorkHour: React.FC = () => {
                     <td>{`${workTime.user_first_name} ${workTime.user_last_name}`}</td>
                     <td>{workTime.user_personnummer}</td>
                     <td>{workTime.workplace_detail}</td>
-                    <td>{new Date(workTime.start_time).toLocaleString()}</td>
-                    <td>{new Date(workTime.end_time).toLocaleString()}</td>
+                    <td>{workTime.start_time}</td>
+                    <td>{workTime.end_time}</td>
                     <td>{workTime.total_time} h</td>
                   </tr>
                 ))}

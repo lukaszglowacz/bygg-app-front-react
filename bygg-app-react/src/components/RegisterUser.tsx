@@ -131,7 +131,7 @@ const RegisterUser: React.FC = () => {
               Zarejestruj się
             </Button>
             <Button variant="secondary" onClick={goBack} className="ml-2">
-              Wroc do logowania
+              Powrot
             </Button>
           </Form>
         </Col>

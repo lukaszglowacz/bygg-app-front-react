@@ -19,6 +19,8 @@ interface Session {
   workplace: number;
   start_time: string;
   status: string;
+  workplace_detail: string;
+  user_first_name: string;
 }
 
 const Home: React.FC = () => {
@@ -31,19 +33,24 @@ const Home: React.FC = () => {
 
   const { userId } = useAuth(); // Pobranie userId z kontekstu
   const activeSession = useActiveSession();
+  const currentWorkplace = workplaces.find((w) => w.id === session?.workplace);
+
+  const fetchWorkplaces = async () => {
+    try {
+      const response = await api.get("/workplace/");
+      setWorkplaces(response.data);
+    } catch (error) {
+      console.error("Error fetching workplaces", error);
+      setAlertInfo("Nie mozna pobrac miejsc pracy. Zaloguj sie ponownie.");
+    }
+  };
 
   useEffect(() => {
-    const fetchWorkplaces = async () => {
-      try {
-        const response = await api.get("/workplace/");
-        setWorkplaces(response.data);
-      } catch (error) {
-        console.error("Error fetching workplaces", error);
-        setAlertInfo("Nie mozna pobrac miejsc pracy. Zaloguj sie ponownie.");
-      }
-    };
-    fetchWorkplaces();
-  }, []);
+    if (userId) {
+      // Pobierz miejsca pracy tylko gdy użytkownik jest zalogowany
+      fetchWorkplaces();
+    }
+  }, [userId]);
 
   useEffect(() => {
     setSession(activeSession); // Aktualizacja stanu sesji po załadowaniu przez hook useActiveSession
@@ -78,6 +85,8 @@ const Home: React.FC = () => {
         workplace: selectedWorkplaceId,
         start_time: response.data.start_time,
         status: "Trwa",
+        user_first_name: response.data.user_first_name,
+        workplace_detail: response.data.workplace_detail,
       });
       setAlertInfo("Praca rozpoczeta");
     } catch (error) {
@@ -88,8 +97,12 @@ const Home: React.FC = () => {
 
   const handleEndButtonClick = () => {
     if (!session || session.status !== "Trwa") {
-      setAlertInfo("Nie ma aktuwnej sesji do zakonczenia");
+      setAlertInfo("Nie ma aktywnej sesji do zakończenia");
       return;
+    }
+    // Ponowne sprawdzenie danych przed pokazaniem modalu
+    if (!workplaces.find((w) => w.id === session.workplace)) {
+      fetchWorkplaces(); // Ponowne pobieranie danych, jeśli nie są aktualne
     }
     setShowEndModal(true);
   };
@@ -121,7 +134,7 @@ const Home: React.FC = () => {
         <Col md={6}>
           {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
           <Form.Group controlId="workplaceSelect">
-            <Form.Label>Zaznacz miejsce pracy</Form.Label>
+            <Form.Label>Wybierz miejsce pracy</Form.Label>
             <Form.Control
               as="select"
               value={selectedWorkplaceId.toString()}
@@ -152,16 +165,22 @@ const Home: React.FC = () => {
             </Button>
           </div>
           <Alert variant="success" className="mt-3">
-            Status{" "}
-            {session
-              ? `${session.status} since ${session.start_time}`
-              : "Brak aktywnych sesji pracy"}
+            {session ? (
+              <>
+                {session?.user_first_name}, pracujesz od
+                <strong> {session.start_time} </strong>w miejscu
+                <strong> {session.workplace_detail} </strong>. Kliknij przycisk <strong>Koniec pracy</strong>, aby zakonczyc prace.
+              </>
+            ) : (
+              <>Kliknij przycisk <strong>Start pracy</strong>, aby rozpoczac prace.</>
+            )}
           </Alert>
+
           <ConfirmModal
             show={showModal}
             onHide={() => setShowModal(false)}
             onConfirm={confirmStartSession}
-            title="Potwierdz poczatek sesji pracy"
+            title="Potwierdz poczatek pracy"
             children={
               <>
                 <p>Czy na pewno chcesz rozpoczac prace w miejscu:</p>
@@ -191,27 +210,14 @@ const Home: React.FC = () => {
             show={showEndModal}
             onHide={() => setShowEndModal(false)}
             onConfirm={confirmEndSession}
-            title="Potwierdz zakończenie sesji pracy"
+            title="Potwierdz zakończenie pracy"
             children={
               <>
-                <p>Czy na pewno chcesz zakonczyc prace w miejscu:</p>
+                <p>Czy na pewno chcesz zakończyć pracę w miejscu:</p>
                 <p>
                   <strong>
-                    {
-                      workplaces.find((w) => w.id === selectedWorkplaceId)
-                        ?.street
-                    }{" "}
-                    {
-                      workplaces.find((w) => w.id === selectedWorkplaceId)
-                        ?.street_number
-                    }
-                    ,{" "}
-                    {
-                      workplaces.find((w) => w.id === selectedWorkplaceId)
-                        ?.postal_code
-                    }{" "}
-                    {workplaces.find((w) => w.id === selectedWorkplaceId)?.city}
-                    ?
+                    {currentWorkplace?.street} {currentWorkplace?.street_number}
+                    ,{currentWorkplace?.postal_code} {currentWorkplace?.city}?
                   </strong>
                 </p>
               </>
