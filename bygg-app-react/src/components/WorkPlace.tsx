@@ -3,28 +3,16 @@ import { useWorkPlaceData } from "../hooks/useWorkplaceData";
 import { Container, Col, Row, Button, ListGroup } from "react-bootstrap";
 import { IWorkPlacesData } from "../api/interfaces/types";
 import { useNavigate } from "react-router-dom";
-import { deleteWorkPlace } from "../api/api";
 
 const WorkPlaceContainer: React.FC = () => {
   const workplaces = useWorkPlaceData();
   const navigate = useNavigate();
 
   const handleAddClick = () => {
-    navigate("/add-work-place"); // Przekierowanie do AddWorkPlace
+    navigate("/add-work-session"); // Przekierowanie do AddWorkSession
   };
 
-  const handleDeleteClick = async (id: number) => {
-    if (window.confirm("Czy na pewno chcesz usunąć to miejsce pracy?")) {
-      try {
-        await deleteWorkPlace(id);
-        alert("Miejsce pracy zostało usunięte.");
-        navigate("/work-places"); // Odświeżenie listy może być potrzebne
-      } catch (error) {
-        console.error("Wystąpił błąd podczas usuwania miejsca pracy: ", error);
-        alert("Nie udało się usunąć miejsca pracy.");
-      }
-    }
-  };
+  
 
   const formatAddress = (workplace: IWorkPlacesData) => {
     return `${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`;
@@ -51,9 +39,6 @@ const WorkPlaceContainer: React.FC = () => {
                 <div>
                   <Button variant="secondary" onClick={() => handleEditClick(workplace.id)} style={{ marginRight: "10px" }}>
                     Edit
-                  </Button>
-                  <Button variant="danger" onClick={() => handleDeleteClick(workplace.id)}>
-                    Usuń
                   </Button>
                 </div>
               </ListGroup.Item>

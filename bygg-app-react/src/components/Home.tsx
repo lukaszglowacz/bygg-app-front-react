@@ -30,6 +30,7 @@ const Home: React.FC = () => {
   const [alertInfo, setAlertInfo] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showEndModal, setShowEndModal] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const { userId } = useAuth(); // Pobranie userId z kontekstu
   const activeSession = useActiveSession();
@@ -44,6 +45,14 @@ const Home: React.FC = () => {
       setAlertInfo("Nie mozna pobrac miejsc pracy. Zaloguj sie ponownie.");
     }
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date()); // Update the time every second
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -132,7 +141,28 @@ const Home: React.FC = () => {
     <Container>
       <Row className="justify-content-md-center">
         <Col md={6}>
-          {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
+          <div
+            style={{
+              fontSize: "72px",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}
+          </div>
+          <div
+            style={{
+              fontSize: "24px",
+              textAlign: "center",
+              marginBottom: "20px",
+            }}
+          >
+            {currentTime.toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </div>
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center">
+        <Col md={6}>
           <Form.Group controlId="workplaceSelect">
             <Form.Label>Wybierz miejsce pracy</Form.Label>
             <Form.Control
@@ -169,12 +199,17 @@ const Home: React.FC = () => {
               <>
                 {session?.user_first_name}, pracujesz od
                 <strong> {session.start_time} </strong>w miejscu
-                <strong> {session.workplace_detail} </strong>. Kliknij przycisk <strong>Koniec pracy</strong>, aby zakonczyc prace.
+                <strong> {session.workplace_detail} </strong>. Kliknij przycisk{" "}
+                <strong>Koniec pracy</strong>, aby zakonczyc prace.
               </>
             ) : (
-              <>Kliknij przycisk <strong>Start pracy</strong>, aby rozpoczac prace.</>
+              <>
+                Kliknij przycisk <strong>Start pracy</strong>, aby rozpoczac
+                prace.
+              </>
             )}
           </Alert>
+          {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
 
           <ConfirmModal
             show={showModal}

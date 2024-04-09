@@ -5,22 +5,29 @@ import { IWorkTimeData, IWorkTimesResponse } from "../api/interfaces/types";
 export const useWorkTimeData = () => {
   const [workTimes, setWorkTimes] = useState<IWorkTimeData[]>([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const fetchData = useCallback(async () => {
     try {
       const response = await api.get<IWorkTimesResponse>(`/worksession/?page=${page}`);
-      setWorkTimes(prevWorkTimes => [...prevWorkTimes, ...response.data.results]);
+      if (page === 1) {
+        setWorkTimes(response.data.results);
+      } else {
+        const newRecords = response.data.results.filter(
+          (newRecord) => !workTimes.some((existingRecord) => existingRecord.id === newRecord.id)
+        );
+        setWorkTimes(prevWorkTimes => [...prevWorkTimes, ...newRecords]);
+      }
       setHasMore(response.data.next !== null);
       setPage(prevPage => prevPage + 1);
     } catch (error) {
       console.error("Error fetching work times", error);
     }
-  }, [page]);
+  }, [page, workTimes]);
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   return { workTimes, fetchData, hasMore };
 };

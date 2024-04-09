@@ -3,11 +3,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
 import api from "../api/api";
 import { IWorkPlacesData } from "../api/interfaces/types"; // Zakładam, że ten interfejs jest już zdefiniowany
+import { deleteWorkPlace } from "../api/api";
+import useGoBack from "../hooks/useGoBack";
 
 const EditWorkPlace: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Użycie generycznego typu bezpośrednio
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
+  const goBack = useGoBack();
+
   const [workplace, setWorkplace] = useState<IWorkPlacesData>({
     id: 0, // początkowa wartość jako 0, ale zostanie zaktualizowana po pobraniu danych
     street: "",
@@ -35,20 +39,33 @@ const EditWorkPlace: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!workplace.street) {
-        newErrors.street = "Ulica jest wymagana.";
-      }
-      if (!workplace.street_number.match(/^\d+$/)) {
-        newErrors.street_number = "Numer ulicy musi być liczbą.";
-      }
-      if (!workplace.postal_code.match(/^\d{3}\s\d{2}$/)) {
-        newErrors.postal_code = "Kod pocztowy musi być w formacie 'XXX XX'.";
-      }
-      if (!workplace.city) {
-        newErrors.city = "Miasto jest wymagane.";
-      }
+      newErrors.street = "Ulica jest wymagana.";
+    }
+    if (!workplace.street_number.match(/^\d+$/)) {
+      newErrors.street_number = "Numer ulicy musi być liczbą.";
+    }
+    if (!workplace.postal_code.match(/^\d{3}\s\d{2}$/)) {
+      newErrors.postal_code = "Kod pocztowy musi być w formacie 'XXX XX'.";
+    }
+    if (!workplace.city) {
+      newErrors.city = "Miasto jest wymagane.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleDeleteClick = async (id: number) => {
+    if (window.confirm("Czy na pewno chcesz usunąć to miejsce pracy?")) {
+      try {
+        await deleteWorkPlace(id);
+        alert("Miejsce pracy zostało usunięte.");
+        navigate("/work-places"); // Odświeżenie listy może być potrzebne
+      } catch (error) {
+        console.error("Wystąpił błąd podczas usuwania miejsca pracy: ", error);
+        alert("Nie udało się usunąć miejsca pracy.");
+      }
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,6 +149,15 @@ const EditWorkPlace: React.FC = () => {
 
             <Button variant="primary" type="submit">
               Zaktualizuj
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => handleDeleteClick(workplace.id)}
+            >
+              Usuń
+            </Button>
+            <Button variant="secondary" onClick={goBack} className="ml-2">
+              Powrot
             </Button>
           </Form>
         </Col>

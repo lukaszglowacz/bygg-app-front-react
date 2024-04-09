@@ -48,24 +48,29 @@ const AddWorkHour: React.FC = () => {
         start_time: startTime,
         end_time: endTime,
       };
-
-      await api.post("/worksession/", postData);
-      setSuccess("Sesja pracy została pomyślnie dodana.");
-      setSelectedProfile("");
-      setSelectedWorkplace("");
-      setStartTime("");
-      setEndTime("");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response) {
-          const errorData = error.response.data as ErrorData;
-          setError(`Wystąpił błąd: ${errorData.message || "Nieznany błąd"}`);
-      } else {
-          setError("Wystąpił nieoczekiwany błąd.");
+    
+      const response = await api.post("/worksession/", postData);
+      if (response.status === 201) {
+        setSuccess("Sesja pracy została pomyślnie dodana.");
+        // Resetowanie formularza
+        setSelectedProfile("");
+        setSelectedWorkplace("");
+        setStartTime("");
+        setEndTime("");
       }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorData = error.response?.data;
+        const errorMessage = errorData?.detail || "Nieznany błąd"; // Używaj klucza 'detail' jeśli istnieje w odpowiedzi
+        setError(`Wystąpił błąd: ${errorMessage}`);
+      } else {
+        setError("Wystąpił nieoczekiwany błąd.");
+      }
+      console.error("Failed to post work session:", error);
     } finally {
       setSubmitting(false);
-    }
-  };
+    }}
+    
 
   return (
     <Container>

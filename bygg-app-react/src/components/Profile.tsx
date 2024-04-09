@@ -7,7 +7,10 @@ import { useProfileData } from "../hooks/useProfileData";
 const ProfileComponent = () => {
   const profiles = useProfileData();
   const [selectedFiles, setSelectedFiles] = useState<Map<number, File>>(new Map());
+  const [previewUrls, setPreviewUrls] = useState<Map<number, string>>(new Map());
   const [formData, setFormData] = useState<Map<number, { firstName: string; lastName: string; personnummer: string }>>(new Map());
+  
+  
 
   useEffect(() => {
     const newFormData = new Map();
@@ -22,8 +25,11 @@ const ProfileComponent = () => {
   }, [profiles]);
 
   const handleFileChange = (profileId: number, event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setSelectedFiles(new Map(selectedFiles.set(profileId, event.target.files[0])));
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setSelectedFiles(new Map(selectedFiles.set(profileId, file)));
+      const fileUrl = URL.createObjectURL(file);
+      setPreviewUrls(new Map(previewUrls.set(profileId, fileUrl)));
     }
   };
 
@@ -64,7 +70,7 @@ const ProfileComponent = () => {
           <Col md={6} lg={4} key={profile.id} className="mb-3">
             <Card>
               <Card.Header className="text-center">
-                <Image src={profile.image} roundedCircle fluid style={{ width: "100px", height: "100px", objectFit: "cover", margin: "0 auto"}} />
+                <Image src={previewUrls.get(profile.id) || profile.image} roundedCircle fluid style={{ width: "100px", height: "100px", objectFit: "cover", margin: "0 auto"}} />
                 <OverlayTrigger
                   placement="right"
                   overlay={<Tooltip>Edytuj zdjęcie</Tooltip>}

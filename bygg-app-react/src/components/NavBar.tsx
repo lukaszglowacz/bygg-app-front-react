@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext"; // Zakładając, że masz taki
 import { useProfileData } from "../hooks/useProfileData";
 import useLogout from "../hooks/useLogOut";
 import ConfirmModal from "./ConfirmModal";
+import { useUserProfile } from "../context/UserProfileContext";
 
 const NavbarComponent: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -13,6 +14,7 @@ const NavbarComponent: React.FC = () => {
   const profiles = useProfileData();
   const logout = useLogout();
   const [showModal, setShowModal] = useState(false);
+  const { profile } = useUserProfile();
 
   // Przekierowanie na stronę logowania, jeśli użytkownik nie jest zalogowany
   useEffect(() => {
