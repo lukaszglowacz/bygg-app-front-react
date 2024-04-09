@@ -2,28 +2,17 @@ import React from "react";
 import { useWorkTimeData } from "../hooks/useWorkTimeData";
 import { Container, Col, Row, Table, Button } from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useNavigate } from "react-router-dom";
 
 const WorkHour: React.FC = () => {
   const { workTimes, fetchData, hasMore } = useWorkTimeData();
-  const navigate = useNavigate(); // Hook do nawigowania
 
-  const handleAddClick = () => {
-    navigate("/addworkhour"); // Przekierowanie do AddWorkHour
-  };
 
   return (
     <Container>
       <Row>
         <Col>
           <h1>Godziny pracy</h1>
-          <Button
-            variant="success"
-            onClick={handleAddClick}
-            style={{ marginBottom: "10px" }}
-          >
-            Dodaj
-          </Button>
+          
           <InfiniteScroll
             dataLength={workTimes.length}
             next={fetchData}
