@@ -1,14 +1,23 @@
 import React, { useState, useMemo } from "react";
 import { useWorkTimeData } from "../hooks/useWorkTimeData";
-import { Container, Col, Row, Table, Form } from "react-bootstrap";
+import { Container, Col, Row, Table, Form, InputGroup } from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { FaCalendarAlt } from "react-icons/fa";
+
+function parseDate(dateStr: string): Date {
+  const [date, time] = dateStr.split(' ');
+  const [day, month, year] = date.split('.');
+  const [hours, minutes] = time.split(':');
+  // Tworzenie nowego obiektu Date używając formatu rok, miesiąc (od 0), dzień, godziny, minuty
+  return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
+}
 
 const WorkHour: React.FC = () => {
   const { workTimes, fetchData, hasMore } = useWorkTimeData();
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedWorkplace, setSelectedWorkplace] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");  // Stan dla wybranej daty
 
-  // Utworzenie listy unikalnych użytkowników
   const users = useMemo(() => {
     const uniqueUsers = new Map();
     workTimes.forEach((wt) => {
@@ -19,7 +28,6 @@ const WorkHour: React.FC = () => {
     return Array.from(uniqueUsers.entries());
   }, [workTimes]);
 
-  // Utworzenie listy unikalnych miejsc pracy
   const workplaces = useMemo(() => {
     const uniqueWorkplaces = new Map();
     workTimes.forEach((wt) => {
@@ -30,35 +38,56 @@ const WorkHour: React.FC = () => {
     return Array.from(uniqueWorkplaces.keys());
   }, [workTimes]);
 
-  // Filtrowanie danych na podstawie wybranego użytkownika i miejsca pracy
   const filteredWorkTimes = useMemo(() => {
-    return workTimes.filter((wt) => (
-      (selectedUserId ? wt.user_personnummer === selectedUserId : true) &&
-      (selectedWorkplace ? wt.workplace_detail === selectedWorkplace : true)
-    ));
-  }, [workTimes, selectedUserId, selectedWorkplace]);
+    return workTimes.filter((wt) => {
+      const wtDate = parseDate(wt.start_time);
+      wtDate.setHours(0, 0, 0, 0);
+      const selectedDateObj = new Date(selectedDate);
+      selectedDateObj.setHours(0, 0, 0, 0);
+      return (
+        (selectedUserId ? wt.user_personnummer === selectedUserId : true) &&
+        (selectedWorkplace ? wt.workplace_detail === selectedWorkplace : true) &&
+        (selectedDate ? wtDate.getTime() === selectedDateObj.getTime() : true)
+      );
+    });
+  }, [workTimes, selectedUserId, selectedWorkplace, selectedDate]);
 
   return (
     <Container>
       <Row>
         <Col>
           <h1>Godziny pracy</h1>
-          <Form.Control as="select" value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
-            <option value="">Wszyscy użytkownicy</option>
-            {users.map(([personnummer, name]) => (
-              <option key={personnummer} value={personnummer}>
-                {name}
-              </option>
-            ))}
-          </Form.Control>
-          <Form.Control as="select" value={selectedWorkplace} onChange={(e) => setSelectedWorkplace(e.target.value)}>
-            <option value="">Wszystkie miejsca pracy</option>
-            {workplaces.map((place) => (
-              <option key={place} value={place}>
-                {place}
-              </option>
-            ))}
-          </Form.Control>
+          <Form>
+            <Form.Group>
+              <Form.Label>Użytkownik</Form.Label>
+              <Form.Control as="select" value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
+                <option value="">Wszyscy użytkownicy</option>
+                {users.map(([personnummer, name]) => (
+                  <option key={personnummer} value={personnummer}>{name}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Miejsce pracy</Form.Label>
+              <Form.Control as="select" value={selectedWorkplace} onChange={(e) => setSelectedWorkplace(e.target.value)}>
+                <option value="">Wszystkie miejsca pracy</option>
+                {workplaces.map((place) => (
+                  <option key={place} value={place}>{place}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Data rozpoczęcia</Form.Label>
+              <InputGroup>
+                <InputGroup.Text><FaCalendarAlt /></InputGroup.Text>
+                <Form.Control
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </InputGroup>
+            </Form.Group>
+          </Form>
           <InfiniteScroll
             dataLength={filteredWorkTimes.length}
             next={fetchData}
