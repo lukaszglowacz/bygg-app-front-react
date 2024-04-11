@@ -11,6 +11,7 @@ import EditWorkPlace from "./components/EditWorkPlace";
 import RegisterUser from "./components/RegisterUser";
 import ActiveSessions from "./components/ActiveSessions";
 import { UserProfileProvider } from "./context/UserProfileContext";
+import EditWorkHour from "./components/EditWorkHour";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={<ProfileComponent />} />
             <Route path="/login" element={<LoginComponent />} />
             <Route path="/work-hours" element={<WorkHour />} />
+            <Route path="/edit/:id" element={<EditWorkHour />} />
             <Route path="/work-places" element={<WorkPlace />} />
             <Route path="/edit-work-place/:id" element={<EditWorkPlace />} />
             <Route path="/register" element={<RegisterUser />} />
