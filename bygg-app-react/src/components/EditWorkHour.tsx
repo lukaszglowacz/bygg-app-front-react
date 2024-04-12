@@ -1,127 +1,108 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Form, Button, Container, Alert } from 'react-bootstrap';
-import api from '../api/api';
-import useGoBack from '../hooks/useGoBack';
-import { useWorkPlaceData } from '../hooks/useWorkplaceData';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
+import api from '../api/api'; // Import konfiguracji API
 
-interface IWorkTimeData {
+interface WorkSession {
+  id: number;
+  profile: {
     id: number;
-    user: number;
-    user_first_name: string;
-    user_last_name: string;
-    user_personnummer: string;
-    workplace: number;
-    workplace_detail: string;
-    start_time: string;
-    end_time: string;
-    total_time: string;
+    user_email: string;
+    user_id: number;
+    full_name: string;
+    first_name: string;
+    last_name: string;
+    personnummer: string;
+    created_at: string;
+    updated_at: string;
+    image: string;
+  };
+  workplace: {
+    id: number;
+    street: string;
+    street_number: string;
+    postal_code: string;
+    city: string;
+  };
+  start_time: string;
+  end_time: string;
+  total_time: string;
 }
 
-const fetchData = async (id: string): Promise<IWorkTimeData> => {
-    try {
-        const response = await api.get<IWorkTimeData>(`/worksession/${id}`);
-        return response.data;
-    } catch (error) {
-        throw new Error('Failed to fetch data');
-    }
-};
-
-const updateData = async (id: string, data: IWorkTimeData): Promise<void> => {
-    try {
-        await api.put(`/worksession/${id}`, data);
-        console.error('Błąd podczas aktualizacji danych:', Error);
-    } catch (error) {
-        throw new Error('Failed to update data');
-    }
-};
-
 const EditWorkHour: React.FC = () => {
-    const { id } = useParams<{ id?: string }>();
-    const [workTime, setWorkTime] = useState<IWorkTimeData | null>(null);
-    const [selectedWorkplaceDetail, setSelectedWorkplaceDetail] = useState<string>('');
-    const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
-    const goBack = useGoBack()
-    const workplaces = useWorkPlaceData();
+  const { id } = useParams<{ id: string }>();
+  const [session, setSession] = useState<WorkSession | null>(null);
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (id) {
-            fetchData(id)
-                .then((data) => {
-                    setWorkTime(data);
-                    setSelectedWorkplaceDetail(data.workplace_detail);
-                })
-                
-                .catch(() => setError('Nie udało się załadować danych.'));
-        }
-    }, [id]);
+  const fetchSession = async () => {
+    try {
+      const response = await api.get<WorkSession>(`/worksession/${id}`);
+      setSession(response.data);
+    } catch (error) {
+      setError('Failed to fetch work session details.');
+    }
+  };
 
-    const handleChange: React.ChangeEventHandler<HTMLElement> = (e) => {
-        const value = (e.target as HTMLSelectElement).value;
-        setSelectedWorkplaceDetail(value);
-    };
-    
+  useEffect(() => {
+    fetchSession();
+  }, [id]);
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        if (workTime) {
-            try {
-                await updateData(workTime.id.toString(), { ...workTime, workplace_detail: selectedWorkplaceDetail });
-                navigate('/work-hours');
-            } catch {
-                setError('Nie udało się zaktualizować danych.');
-            }
-        }
-    };
-    if (!workTime) return <div>Loading...</div>;
-    if (error) return <Alert variant="danger">{error}</Alert>;
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (session) {
+      try {
+        await api.put(`/worksession/${id}`, session);
+        navigate('/work-hours'); // Navigate back to the list of work sessions
+      } catch (error) {
+        setError('Failed to save changes.');
+      }
+    }
+  };
 
+  if (!session) return <div>Loading...</div>;
+  if (error) return <Alert variant="danger">{error}</Alert>;
 
-    return (
-        <Container>
-            <h1>Edytuj Rekord Pracy</h1>
-            <Form onSubmit={handleSubmit}>
-                {/* Formularz edycji danych */}
-                <Form.Group>
-                    <Form.Label>Imię</Form.Label>
-                    <Form.Control type="text" name="user_first_name" value={workTime?.user_first_name || ''} onChange={(e: ChangeEvent<HTMLInputElement>) => setWorkTime({...workTime, user_first_name: e.target.value })} />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Nazwisko</Form.Label>
-                    <Form.Control type="text" name="user_last_name" value={workTime?.user_last_name || ''} onChange={(e: ChangeEvent<HTMLInputElement>) => setWorkTime({...workTime, user_last_name: e.target.value })} />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Personnummer</Form.Label>
-                    <Form.Control type="text" name="user_personnummer" value={workTime?.user_personnummer || ''} onChange={(e: ChangeEvent<HTMLInputElement>) => setWorkTime({...workTime, user_personnummer: e.target.value })} />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Miejsce pracy</Form.Label>
-                    <Form.Control as="select" value={selectedWorkplaceDetail} onChange={handleChange}>
-                        {workplaces.map((place) => (
-                            <option key={place.id} value={place.id}>
-                                {`${place.street} ${place.street_number}, ${place.postal_code} ${place.city}`}
-                            </option>
-                        ))}
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Czas rozpoczęcia</Form.Label>
-                    <Form.Control type="text" name="start_time" value={workTime?.start_time || ''} onChange={(e: ChangeEvent<HTMLInputElement>) => setWorkTime({...workTime, start_time: e.target.value })} />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Czas zakończenia</Form.Label>
-                    <Form.Control type="text" name="end_time" value={workTime?.end_time || ''} onChange={(e: ChangeEvent<HTMLInputElement>) => setWorkTime({...workTime, end_time: e.target.value })} />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Całkowity czas pracy</Form.Label>
-                    <Form.Control type="text" name="total_time" value={workTime?.total_time || ''} onChange={(e: ChangeEvent<HTMLInputElement>) => setWorkTime({...workTime, total_time: e.target.value })} />
-                </Form.Group>
-                <Button variant="primary" type="submit">Zapisz zmiany</Button>
-                <Button variant="danger" onClick={goBack}>Wroc</Button>
-            </Form>
-        </Container>
-    );
+  return (
+    <Container>
+      <h1>Edit Work Session</h1>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
+          <Form.Label>Employee Full Name</Form.Label>
+          <Form.Control type="text" value={session.profile.full_name} readOnly />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Workplace Address</Form.Label>
+          <Form.Control
+            type="text"
+            value={`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city} ${session.workplace.postal_code}`}
+            readOnly
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Start Time</Form.Label>
+          <Form.Control
+            type="datetime-local"
+            value={new Date(session.start_time).toISOString().substring(0, 16)}
+            onChange={(e) => setSession({...session, start_time: e.target.value})}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>End Time</Form.Label>
+          <Form.Control
+            type="datetime-local"
+            value={new Date(session.end_time).toISOString().substring(0, 16)}
+            onChange={(e) => setSession({...session, end_time: e.target.value})}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Total Time Worked</Form.Label>
+          <Form.Control type="text" value={session.total_time} readOnly />
+        </Form.Group>
+        <Button variant="primary" type="submit">Save Changes</Button>
+      </Form>
+    </Container>
+  );
 };
 
 export default EditWorkHour;
