@@ -5,18 +5,7 @@ import api from '../api/api'; // Import konfiguracji API
 
 interface WorkSession {
   id: number;
-  profile: {
-    id: number;
-    user_email: string;
-    user_id: number;
-    full_name: string;
-    first_name: string;
-    last_name: string;
-    personnummer: string;
-    created_at: string;
-    updated_at: string;
-    image: string;
-  };
+  profile: Profile;
   workplace: {
     id: number;
     street: string;
@@ -29,18 +18,35 @@ interface WorkSession {
   total_time: string;
 }
 
+interface Profile {
+    id: number;
+    user_email: string;
+    user_id: number;
+    full_name: string;
+    first_name: string;
+    last_name: string;
+    personnummer: string;
+    created_at: string;
+    updated_at: string;
+    image: string;
+  }
+  
+
 const EditWorkHour: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [session, setSession] = useState<WorkSession | null>(null);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
   const fetchSession = async () => {
     try {
-      const response = await api.get<WorkSession>(`/worksession/${id}`);
-      setSession(response.data);
+      const sessionResponse = await api.get<WorkSession>(`/worksession/${id}`);
+      setSession(sessionResponse.data);
+      const profileResponse = await api.get<Profile[]>('/profile'); // Używam odpowiedniego endpointu
+      setProfiles(profileResponse.data);
     } catch (error) {
-      setError('Failed to fetch work session details.');
+      setError('Failed to fetch data.');
     }
   };
 
@@ -63,13 +69,28 @@ const EditWorkHour: React.FC = () => {
   if (!session) return <div>Loading...</div>;
   if (error) return <Alert variant="danger">{error}</Alert>;
 
+  const handleProfileChange = (profileId: string) => {
+    const newProfile = profiles.find(profile => profile.id.toString() === profileId);
+    if (newProfile && session) {
+      setSession({ ...session, profile: newProfile });
+    }
+  };
+
   return (
     <Container>
       <h1>Edit Work Session</h1>
       <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
+      <Form.Group className="mb-3">
           <Form.Label>Employee Full Name</Form.Label>
-          <Form.Control type="text" value={session.profile.full_name} readOnly />
+          <Form.Control
+            as="select"
+            value={session.profile.id.toString()}
+            onChange={(e) => handleProfileChange(e.target.value)}
+          >
+            {profiles.map((profile) => (
+              <option key={profile.id} value={profile.id}>{profile.full_name}</option>
+            ))}
+          </Form.Control>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>Workplace Address</Form.Label>
