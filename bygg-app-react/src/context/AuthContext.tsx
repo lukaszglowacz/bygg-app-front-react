@@ -2,11 +2,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
-  isAuthenticated: boolean;  // Stan określający, czy użytkownik jest zalogowany
+  isAuthenticated: boolean;
   userId: string | null;
-  isLoading: boolean;     // ID zalogowanego użytkownika
-  login: (token: string, refreshToken: string, userId: string, expiresAt: number) => void;  // Funkcja logowania
-  logout: () => void;         // Funkcja wylogowania
+  profileId: string | null; // Dodajemy profileId
+  isLoading: boolean;
+  login: (token: string, refreshToken: string, userId: string, profileId: string, expiresAt: number) => void;
+  logout: () => void;
 }
 
 // Tworzenie kontekstu AuthContext z domyślną wartością `null!` (assertion that it will not be null)
@@ -21,6 +22,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Sprawdzanie lokalnego przechowywania przy montowaniu komponentu
@@ -28,21 +30,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const token = localStorage.getItem("accessToken");
     const expiration = localStorage.getItem("expiresAt");
     const storedUserId = localStorage.getItem("userId");
+    const storedProfileId = localStorage.getItem("profileId");
     if (token && expiration && new Date().getTime() < parseInt(expiration)) {
       setIsAuthenticated(true);
       setUserId(storedUserId);
+      setProfileId(storedProfileId); 
     }
     setIsLoading(false); 
   }, []);
 
   // Funkcja logowania zapisująca dane w localStorage i aktualizująca stan
-  const login = (token: string, refreshToken: string, userId: string, expiresAt: number) => {
+  const login = (token: string, refreshToken: string, userId: string, profileId: string, expiresAt: number) => {
     localStorage.setItem("accessToken", token);
     localStorage.setItem("refreshToken", refreshToken);
     localStorage.setItem("userId", userId);
+    localStorage.setItem("profileId", profileId);
     localStorage.setItem("expiresAt", expiresAt.toString());
     setIsAuthenticated(true);
     setUserId(userId);
+    setProfileId(profileId);
     setIsLoading(false);
   };
 
@@ -51,12 +57,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.clear();
     setIsAuthenticated(false);
     setUserId(null);
+    setProfileId(null);
     setIsLoading(false); 
   };
 
   // Dostarczanie kontekstu do dzieci komponentu
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userId, profileId, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

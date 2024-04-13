@@ -46,11 +46,11 @@ const LoginComponent: React.FC = () => {
 
     try {
       const response = await api.post("/api/token/", { email, password });
-      const { access, refresh, user_id } = response.data;
-      if (access && refresh && user_id) {
+      const { access, refresh, user_id, profile_id } = response.data;
+      if (access && refresh && user_id && profile_id) {
         const expiresIn = 24 * 60 * 60 * 1000;
         const expiresAt = new Date().getTime() + expiresIn;
-        login(access, refresh, user_id, expiresAt);
+        login(access, refresh, user_id, profile_id, expiresAt);
         navigate("/");
       }
     } catch (error) {
