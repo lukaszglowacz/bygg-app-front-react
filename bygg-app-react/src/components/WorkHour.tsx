@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Alert, Spinner, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import api from '../api/api';
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Alert, Spinner, Button, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import api from "../api/api";
 
 interface Profile {
   id: number;
@@ -29,29 +29,93 @@ interface WorkSession {
 const WorkHour: React.FC = () => {
   const navigate = useNavigate();
   const [workSessions, setWorkSessions] = useState<WorkSession[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    profile: "",
+    workplace: "",
+    start_min: "",
+    start_max: "",
+  });
 
   useEffect(() => {
-    const fetchWorkSessions = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get<WorkSession[]>('/worksession/');
-        setWorkSessions(response.data);
+        const [profileResponse, workplaceResponse, sessionResponse] = await Promise.all([
+          api.get<Profile[]>("/profile"),
+          api.get<Workplace[]>("/workplace"),
+          api.get<WorkSession[]>("/worksession/")
+        ]);
+        setProfiles(profileResponse.data);
+        setWorkplaces(workplaceResponse.data);
+        setWorkSessions(sessionResponse.data);
       } catch (error) {
         setError('Nie udało się załadować danych sesji pracy.');
-        console.error(error);
       }
     };
-
-    fetchWorkSessions();
+    fetchData();
   }, []);
 
-  if (error) return <Alert variant="danger">Błąd: {error}</Alert>;
+  const fetchWorkSessionsWithFilters = async () => {
+    try {
+      const queryParams = new URLSearchParams(filters).toString();
+      const response = await api.get(`/worksession/?${queryParams}`);
+      setWorkSessions(response.data);
+    } catch (error) {
+      setError("Nie udało się załadować danych sesji pracy z filtrami.");
+    }
+  };
+
+  if (error) return <Alert variant="danger">{error}</Alert>;
   if (!workSessions.length) return <Spinner animation="border" role="status"><span className="visually-hidden">Ładowanie...</span></Spinner>;
 
   return (
     <Container>
       <h1 className="my-4">Sesje pracy</h1>
-      <Button variant="success" onClick={() => navigate('/add-work-hour')} className="mb-4">Dodaj</Button>
+      <Button variant="success" onClick={() => navigate("/add-work-hour")} className="mb-4">Dodaj</Button>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Group>
+              <Form.Label>Profil</Form.Label>
+              <Form.Control as="select" value={filters.profile} onChange={e => setFilters({...filters, profile: e.target.value})}>
+                <option value="">Wybierz profil</option>
+                {profiles.map(profile => (
+                  <option key={profile.id} value={profile.id}>{profile.full_name}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label>Miejsce pracy</Form.Label>
+              <Form.Control as="select" value={filters.workplace} onChange={e => setFilters({...filters, workplace: e.target.value})}>
+                <option value="">Wybierz miejsce pracy</option>
+                {workplaces.map(workplace => (
+                  <option key={workplace.id} value={workplace.id}>{workplace.street}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Form.Group>
+              <Form.Label>Data rozpoczęcia (Od)</Form.Label>
+              <Form.Control type="date" value={filters.start_min} onChange={e => setFilters({...filters, start_min: e.target.value})} />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label>Data rozpoczęcia (Do)</Form.Label>
+              <Form.Control type="date" value={filters.start_max} onChange={e => setFilters({...filters, start_max: e.target.value})} />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Button onClick={fetchWorkSessionsWithFilters} variant="primary">Filtruj</Button>
+      </Form>
+
       <Row xs={1} md={2} lg={3} className="g-4">
         {workSessions.map((session) => (
           <Col key={session.id}>
@@ -65,15 +129,9 @@ const WorkHour: React.FC = () => {
                 <Card.Text>
                   Miejsce pracy: {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
                 </Card.Text>
-                <Card.Text>
-                  Czas rozpoczęcia: {session.start_time}
-                </Card.Text>
-                <Card.Text>
-                  Czas zakończenia: {session.end_time}
-                </Card.Text>
-                <Card.Text>
-                  Łączny czas: {session.total_time}
-                </Card.Text>
+                <Card.Text>Czas rozpoczęcia: {session.start_time}</Card.Text>
+                <Card.Text>Czas zakończenia: {session.end_time}</Card.Text>
+                <Card.Text>Łączny czas: {session.total_time}</Card.Text>
                 <Button variant="primary" onClick={() => navigate(`/edit-work-hour/${session.id}`)}>Edytuj sesję</Button>
               </Card.Body>
             </Card>
