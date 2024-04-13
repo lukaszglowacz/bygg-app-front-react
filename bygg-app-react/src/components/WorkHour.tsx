@@ -51,6 +51,7 @@ const WorkHour: React.FC = () => {
   return (
     <Container>
       <h1 className="my-4">Sesje pracy</h1>
+      <Button variant="success" onClick={() => navigate('/add-work-hour')} className="mb-4">Dodaj</Button>
       <Row xs={1} md={2} lg={3} className="g-4">
         {workSessions.map((session) => (
           <Col key={session.id}>
