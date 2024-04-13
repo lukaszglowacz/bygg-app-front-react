@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Alert, Spinner, Button, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Spinner,
+  Button,
+  Form,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 
@@ -38,20 +47,22 @@ const WorkHour: React.FC = () => {
     start_min: "",
     start_max: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileResponse, workplaceResponse, sessionResponse] = await Promise.all([
-          api.get<Profile[]>("/profile"),
-          api.get<Workplace[]>("/workplace"),
-          api.get<WorkSession[]>("/worksession/")
-        ]);
+        const [profileResponse, workplaceResponse, sessionResponse] =
+          await Promise.all([
+            api.get<Profile[]>("/profile"),
+            api.get<Workplace[]>("/workplace"),
+            api.get<WorkSession[]>("/worksession/"),
+          ]);
         setProfiles(profileResponse.data);
         setWorkplaces(workplaceResponse.data);
         setWorkSessions(sessionResponse.data);
       } catch (error) {
-        setError('Nie udało się załadować danych sesji pracy.');
+        setError("Nie udało się załadować danych sesji pracy.");
       }
     };
     fetchData();
@@ -67,22 +78,36 @@ const WorkHour: React.FC = () => {
     }
   };
 
-  if (error) return <Alert variant="danger">{error}</Alert>;
-  if (!workSessions.length) return <Spinner animation="border" role="status"><span className="visually-hidden">Ładowanie...</span></Spinner>;
+  if (error) return <Alert variant="danger">Błąd: {error}</Alert>;
 
-  return (
-    <Container>
+  if (!workSessions.length) {
+    return (
+      <Container>
       <h1 className="my-4">Sesje pracy</h1>
-      <Button variant="success" onClick={() => navigate("/add-work-hour")} className="mb-4">Dodaj</Button>
+      <Button
+        variant="success"
+        onClick={() => navigate("/add-work-hour")}
+        className="mb-4"
+      >
+        Dodaj
+      </Button>
       <Form>
         <Row className="mb-3">
           <Col>
             <Form.Group>
               <Form.Label>Profil</Form.Label>
-              <Form.Control as="select" value={filters.profile} onChange={e => setFilters({...filters, profile: e.target.value})}>
+              <Form.Control
+                as="select"
+                value={filters.profile}
+                onChange={(e) =>
+                  setFilters({ ...filters, profile: e.target.value })
+                }
+              >
                 <option value="">Wybierz profil</option>
-                {profiles.map(profile => (
-                  <option key={profile.id} value={profile.id}>{profile.full_name}</option>
+                {profiles.map((profile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.full_name}
+                  </option>
                 ))}
               </Form.Control>
             </Form.Group>
@@ -90,10 +115,18 @@ const WorkHour: React.FC = () => {
           <Col>
             <Form.Group>
               <Form.Label>Miejsce pracy</Form.Label>
-              <Form.Control as="select" value={filters.workplace} onChange={e => setFilters({...filters, workplace: e.target.value})}>
+              <Form.Control
+                as="select"
+                value={filters.workplace}
+                onChange={(e) =>
+                  setFilters({ ...filters, workplace: e.target.value })
+                }
+              >
                 <option value="">Wybierz miejsce pracy</option>
-                {workplaces.map(workplace => (
-                  <option key={workplace.id} value={workplace.id}>{workplace.street}</option>
+                {workplaces.map((workplace) => (
+                  <option key={workplace.id} value={workplace.id}>
+                    {workplace.street}
+                  </option>
                 ))}
               </Form.Control>
             </Form.Group>
@@ -103,17 +136,122 @@ const WorkHour: React.FC = () => {
           <Col>
             <Form.Group>
               <Form.Label>Data rozpoczęcia (Od)</Form.Label>
-              <Form.Control type="date" value={filters.start_min} onChange={e => setFilters({...filters, start_min: e.target.value})} />
+              <Form.Control
+                type="date"
+                value={filters.start_min}
+                onChange={(e) =>
+                  setFilters({ ...filters, start_min: e.target.value })
+                }
+              />
             </Form.Group>
           </Col>
           <Col>
             <Form.Group>
               <Form.Label>Data rozpoczęcia (Do)</Form.Label>
-              <Form.Control type="date" value={filters.start_max} onChange={e => setFilters({...filters, start_max: e.target.value})} />
+              <Form.Control
+                type="date"
+                value={filters.start_max}
+                onChange={(e) =>
+                  setFilters({ ...filters, start_max: e.target.value })
+                }
+              />
             </Form.Group>
           </Col>
         </Row>
-        <Button onClick={fetchWorkSessionsWithFilters} variant="primary">Filtruj</Button>
+        <Button onClick={fetchWorkSessionsWithFilters} variant="primary">
+          Filtruj
+        </Button>
+      </Form>
+
+      <Row lg={1} className="g-4">
+          <Col>
+            <p className="text-center">Brak rekordow. Nikt nie pracowal.</p>
+          </Col>
+      </Row>
+    </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <h1 className="my-4">Sesje pracy</h1>
+      <Button
+        variant="success"
+        onClick={() => navigate("/add-work-hour")}
+        className="mb-4"
+      >
+        Dodaj
+      </Button>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Group>
+              <Form.Label>Profil</Form.Label>
+              <Form.Control
+                as="select"
+                value={filters.profile}
+                onChange={(e) =>
+                  setFilters({ ...filters, profile: e.target.value })
+                }
+              >
+                <option value="">Wybierz profil</option>
+                {profiles.map((profile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.full_name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label>Miejsce pracy</Form.Label>
+              <Form.Control
+                as="select"
+                value={filters.workplace}
+                onChange={(e) =>
+                  setFilters({ ...filters, workplace: e.target.value })
+                }
+              >
+                <option value="">Wybierz miejsce pracy</option>
+                {workplaces.map((workplace) => (
+                  <option key={workplace.id} value={workplace.id}>
+                    {workplace.street}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Form.Group>
+              <Form.Label>Data rozpoczęcia (Od)</Form.Label>
+              <Form.Control
+                type="date"
+                value={filters.start_min}
+                onChange={(e) =>
+                  setFilters({ ...filters, start_min: e.target.value })
+                }
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label>Data rozpoczęcia (Do)</Form.Label>
+              <Form.Control
+                type="date"
+                value={filters.start_max}
+                onChange={(e) =>
+                  setFilters({ ...filters, start_max: e.target.value })
+                }
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Button onClick={fetchWorkSessionsWithFilters} variant="primary">
+          Filtruj
+        </Button>
       </Form>
 
       <Row xs={1} md={2} lg={3} className="g-4">
@@ -127,12 +265,18 @@ const WorkHour: React.FC = () => {
                   Personnummer: {session.profile.personnummer}
                 </Card.Text>
                 <Card.Text>
-                  Miejsce pracy: {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
+                  Miejsce pracy:{" "}
+                  {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
                 </Card.Text>
                 <Card.Text>Czas rozpoczęcia: {session.start_time}</Card.Text>
                 <Card.Text>Czas zakończenia: {session.end_time}</Card.Text>
                 <Card.Text>Łączny czas: {session.total_time}</Card.Text>
-                <Button variant="primary" onClick={() => navigate(`/edit-work-hour/${session.id}`)}>Edytuj sesję</Button>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate(`/edit-work-hour/${session.id}`)}
+                >
+                  Edytuj sesję
+                </Button>
               </Card.Body>
             </Card>
           </Col>
