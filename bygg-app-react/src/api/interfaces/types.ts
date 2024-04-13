@@ -45,13 +45,33 @@ export interface IWorkTimesResponse {
     results: IWorkTimeData[];
 }
 
-export interface Session {
+// interfaces/Session.ts
+export interface Profile {
     id: number;
-    user: number;
-    workplace: number;
+    user_email: string;
+    user_id: number;
+    full_name: string;
+    first_name: string;
+    last_name: string;
+    personnummer: string;
+    created_at: string;
+    updated_at: string;
+    image: string;
+  }
+  
+  export interface Workplace {
+    id: number;
+    street: string;
+    street_number: string;
+    postal_code: string;
+    city: string;
+  }
+  
+  export interface Session {
+    id: number;
+    profile: Profile;
+    workplace: Workplace;
     start_time: string;
     status: string;
-    user_first_name: string;
-    user_last_name: string;
-    workplace_detail: string;
   }
+  

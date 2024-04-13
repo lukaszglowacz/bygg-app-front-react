@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { AxiosError } from "axios";
-import useActiveSession from "../hooks/useActiveSession";
 
 interface FieldErrors {
   email?: string[];
@@ -25,13 +24,7 @@ const LoginComponent: React.FC = () => {
   const [errors, setErrors] = useState<FieldErrors>({});
   const { login } = useAuth();
   const navigate = useNavigate();
-  const activeSession = useActiveSession();
 
-  useEffect(() => {
-    if (activeSession) {
-      navigate("/");
-    }
-  }, [activeSession, navigate]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
