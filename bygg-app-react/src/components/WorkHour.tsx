@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Alert,
-  Button,
-  Accordion,
-} from "react-bootstrap";
+import { Container, Row, Col, Alert, Button, Accordion } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { FilterForm } from "./FilterForm";
@@ -84,15 +76,24 @@ const WorkHour: React.FC = () => {
     return (
       <Container>
         <Row>
-          <Col>
-            <h1 className="my-4">Sesje pracy</h1>
+          <Col className="text-center">
+            <h1>Sesje pracy</h1>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} sm={8} md={6} lg={4} className="mx-auto">
             <Button
-              variant="success"
+              variant="outline-success"
               onClick={() => navigate("/add-work-hour")}
-              className="mb-4"
+              className="w-100 mb-4 d-block d-sm-none"
             >
               Dodaj
             </Button>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
             <FilterForm
               profiles={profiles}
               workplaces={workplaces}
@@ -182,29 +183,39 @@ const WorkHour: React.FC = () => {
                 </Accordion.Header>
 
                 <Accordion.Body>
-                  <p>
-                    <strong>Personnummer:</strong>{" "}
-                    {session.profile.personnummer}
-                  </p>
-                  <p>
-                    <strong>Miejsce pracy:</strong>
-                    {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
-                  </p>
-                  <p>
-                    <strong>Czas rozpoczęcia:</strong> {session.start_time}
-                  </p>
-                  <p>
-                    <strong>Czas zakończenia:</strong> {session.end_time}
-                  </p>
-                  <p>
-                    <strong>Łączny czas:</strong> {session.total_time}
-                  </p>
-                  <Button
-                    variant="primary"
-                    onClick={() => navigate(`/edit-work-hour/${session.id}`)}
-                  >
-                    Edytuj sesję
-                  </Button>
+                  <Container>
+                    <Row className="align-items-center">
+                      <Col className="text-center">
+                        <div>
+                          <i
+                            className="bi bi-clock-fill"
+                            style={{ fontSize: "1.5rem" }}
+                          ></i>
+                          <div>{session.start_time.split(" ")[1]}</div>
+                        </div>
+                      </Col>
+                      <Col className="text-center d-flex align-items-center justify-content-center">
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          onClick={() =>
+                            navigate(`/edit-work-hour/${session.id}`)
+                          }
+                        >
+                          Edytuj
+                        </Button>
+                      </Col>
+                      <Col className="text-center">
+                        <div>
+                          <i
+                            className="bi bi-clock-history"
+                            style={{ fontSize: "1.5rem" }}
+                          ></i>
+                          <div>{session.end_time.split(" ")[1]}</div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Container>
                 </Accordion.Body>
               </Accordion.Item>
             ))}

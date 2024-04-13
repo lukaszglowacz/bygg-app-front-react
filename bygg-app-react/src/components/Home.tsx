@@ -3,6 +3,7 @@ import { Button, Form, Alert, Container, Row, Col } from "react-bootstrap";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import ClockUpdate from "./ClockUpdate";
+import WorkplaceSelector from "./WorkplaceSelector";
 
 interface Profile {
   id: number;
@@ -33,14 +34,21 @@ interface Session {
   status: string;
 }
 
+
+
 const Home: React.FC = () => {
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
-  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<number>(-1);
+  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<string>('');
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [alertInfo, setAlertInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
   const { profileId } = useAuth();
+
+  // Funkcja do aktualizacji wybranego miejsca pracy
+  const handleSelectWorkplace = (id: string) => {
+    setSelectedWorkplaceId(id);  // Aktualizujemy stan z wybranym ID
+  };
 
   useEffect(() => {
     const fetchWorkplaces = async () => {
@@ -70,7 +78,7 @@ const Home: React.FC = () => {
   }, []);
 
   const handleStartSession = async () => {
-    if (!profileId || selectedWorkplaceId === -1 || activeSession) {
+    if (!profileId || selectedWorkplaceId === "" || activeSession) {
       setAlertInfo("Fajnie, ale gdzie dzisiaj pracujesz?");
       return;
     }
@@ -102,6 +110,8 @@ const Home: React.FC = () => {
     }
   };
 
+
+
   return (
     <Container>
       <Row className="justify-content-md-center">
@@ -110,22 +120,8 @@ const Home: React.FC = () => {
           <h2 style={{ fontSize: "24px", textAlign: "center", marginBottom: "20px" }}>
             {new Date().toLocaleDateString("pl-PL")}
           </h2>
-          <Form.Group controlId="workplaceSelect">
-            <Form.Label>Wybierz miejsce pracy</Form.Label>
-            <Form.Control
-              as="select"
-              value={selectedWorkplaceId.toString()}
-              onChange={(e) => setSelectedWorkplaceId(parseInt(e.target.value))}
-            >
-              <option value="-1">Wybierz...</option>
-              {workplaces.map((workplace) => (
-                <option key={workplace.id} value={workplace.id}>
-                  {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-          <div className="d-grid gap-2">
+          <WorkplaceSelector workplaces={workplaces} onSelect={handleSelectWorkplace}/>
+          <div className="d-grid gap-2 my-3">
             <Button variant="primary" onClick={handleStartSession} disabled={!!activeSession}>
               Start pracy
             </Button>
