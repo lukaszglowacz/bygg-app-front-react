@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, Alert, Container, Row, Col } from "react-bootstrap";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
+import ClockUpdate from "./ClockUpdate";
 
 interface Profile {
   id: number;
@@ -100,16 +101,12 @@ const Home: React.FC = () => {
       setAlertInfo("Nie udało się zakończyć sesji. Sprobuj ponownie.");
     }
   };
-  
-  
 
   return (
     <Container>
       <Row className="justify-content-md-center">
         <Col md={6}>
-          <h1 style={{ fontSize: "60px", fontWeight: "bold", textAlign: "center" }}>
-            {new Date().toLocaleTimeString()}
-          </h1>
+          <ClockUpdate />
           <h2 style={{ fontSize: "24px", textAlign: "center", marginBottom: "20px" }}>
             {new Date().toLocaleDateString("pl-PL")}
           </h2>
