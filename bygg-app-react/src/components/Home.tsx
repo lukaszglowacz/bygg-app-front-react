@@ -34,11 +34,9 @@ interface Session {
   status: string;
 }
 
-
-
 const Home: React.FC = () => {
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
-  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<string>('');
+  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<string>("");
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [alertInfo, setAlertInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
@@ -47,7 +45,7 @@ const Home: React.FC = () => {
 
   // Funkcja do aktualizacji wybranego miejsca pracy
   const handleSelectWorkplace = (id: string) => {
-    setSelectedWorkplaceId(id);  // Aktualizujemy stan z wybranym ID
+    setSelectedWorkplaceId(id); // Aktualizujemy stan z wybranym ID
   };
 
   useEffect(() => {
@@ -59,7 +57,7 @@ const Home: React.FC = () => {
 
     const fetchActiveSession = async () => {
       try {
-        const response = await api.get('/livesession/active/');
+        const response = await api.get("/livesession/active/");
         if (response.data.length > 0) {
           setActiveSession(response.data[0]);
           setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles"); // Ustawienie pierwszego elementu tablicy jako aktywną sesję
@@ -68,12 +66,12 @@ const Home: React.FC = () => {
           setAlertInfo("Kliknij Start aby zaczac prace");
         }
       } catch (error) {
-        console.error('Error fetching active session:', error);
+        console.error("Error fetching active session:", error);
         setActiveSession(null);
       }
       setIsLoading(false);
     };
-    
+
     fetchActiveSession();
   }, []);
 
@@ -96,7 +94,8 @@ const Home: React.FC = () => {
   };
 
   const handleEndSession = async () => {
-    if (!activeSession || !activeSession.id) { // Upewnienie się, że 'id' istnieje
+    if (!activeSession || !activeSession.id) {
+      // Upewnienie się, że 'id' istnieje
       setAlertInfo("Teraz nie pracujesz. Kliknij Start aby zaczac.");
       return;
     }
@@ -110,22 +109,37 @@ const Home: React.FC = () => {
     }
   };
 
-
-
   return (
     <Container>
       <Row className="justify-content-md-center">
         <Col md={6}>
           <ClockUpdate />
-          <h2 style={{ fontSize: "24px", textAlign: "center", marginBottom: "20px" }}>
+          <h2
+            style={{
+              fontSize: "24px",
+              textAlign: "center",
+              marginBottom: "20px",
+            }}
+          >
             {new Date().toLocaleDateString("pl-PL")}
           </h2>
-          <WorkplaceSelector workplaces={workplaces} onSelect={handleSelectWorkplace}/>
+          <WorkplaceSelector
+            workplaces={workplaces}
+            onSelect={handleSelectWorkplace}
+          />
           <div className="d-grid gap-2 my-3">
-            <Button variant="primary" onClick={handleStartSession} disabled={!!activeSession}>
+            <Button
+              variant="primary"
+              onClick={handleStartSession}
+              disabled={!!activeSession}
+            >
               Start pracy
             </Button>
-            <Button variant="danger" onClick={handleEndSession} disabled={!activeSession}>
+            <Button
+              variant="danger"
+              onClick={handleEndSession}
+              disabled={!activeSession}
+            >
               Koniec pracy
             </Button>
           </div>
