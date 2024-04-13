@@ -5,12 +5,12 @@ import {
   Col,
   Card,
   Alert,
-  Spinner,
   Button,
-  Form,
+  Accordion,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import { FilterForm } from "./FilterForm";
 
 interface Profile {
   id: number;
@@ -83,204 +83,133 @@ const WorkHour: React.FC = () => {
   if (!workSessions.length) {
     return (
       <Container>
-      <h1 className="my-4">Sesje pracy</h1>
-      <Button
-        variant="success"
-        onClick={() => navigate("/add-work-hour")}
-        className="mb-4"
-      >
-        Dodaj
-      </Button>
-      <Form>
-        <Row className="mb-3">
-          <Col>
-            <Form.Group>
-              <Form.Label>Profil</Form.Label>
-              <Form.Control
-                as="select"
-                value={filters.profile}
-                onChange={(e) =>
-                  setFilters({ ...filters, profile: e.target.value })
-                }
-              >
-                <option value="">Wybierz profil</option>
-                {profiles.map((profile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.full_name}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group>
-              <Form.Label>Miejsce pracy</Form.Label>
-              <Form.Control
-                as="select"
-                value={filters.workplace}
-                onChange={(e) =>
-                  setFilters({ ...filters, workplace: e.target.value })
-                }
-              >
-                <option value="">Wybierz miejsce pracy</option>
-                {workplaces.map((workplace) => (
-                  <option key={workplace.id} value={workplace.id}>
-                    {workplace.street}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Row>
         <Row>
           <Col>
-            <Form.Group>
-              <Form.Label>Data rozpoczęcia (Od)</Form.Label>
-              <Form.Control
-                type="date"
-                value={filters.start_min}
-                onChange={(e) =>
-                  setFilters({ ...filters, start_min: e.target.value })
-                }
-              />
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group>
-              <Form.Label>Data rozpoczęcia (Do)</Form.Label>
-              <Form.Control
-                type="date"
-                value={filters.start_max}
-                onChange={(e) =>
-                  setFilters({ ...filters, start_max: e.target.value })
-                }
-              />
-            </Form.Group>
+            <h1 className="my-4">Sesje pracy</h1>
+            <Button
+              variant="success"
+              onClick={() => navigate("/add-work-hour")}
+              className="mb-4"
+            >
+              Dodaj
+            </Button>
+            <FilterForm
+              profiles={profiles}
+              workplaces={workplaces}
+              filters={filters}
+              setFilters={setFilters}
+              fetchWorkSessionsWithFilters={fetchWorkSessionsWithFilters}
+            />
           </Col>
         </Row>
-        <Button onClick={fetchWorkSessionsWithFilters} variant="primary">
-          Filtruj
-        </Button>
-      </Form>
 
-      <Row lg={1} className="g-4">
+        <Row lg={1} className="g-4">
           <Col>
-            <p className="text-center">Brak rekordow. Nikt nie pracowal.</p>
+            <p className="text-center">Brak rekordow. Nie pracowales wtedy.</p>
           </Col>
-      </Row>
-    </Container>
+        </Row>
+      </Container>
     );
   }
 
   return (
-    <Container>
-      <h1 className="my-4">Sesje pracy</h1>
-      <Button
-        variant="success"
-        onClick={() => navigate("/add-work-hour")}
-        className="mb-4"
-      >
-        Dodaj
-      </Button>
-      <Form>
-        <Row className="mb-3">
-          <Col>
-            <Form.Group>
-              <Form.Label>Profil</Form.Label>
-              <Form.Control
-                as="select"
-                value={filters.profile}
-                onChange={(e) =>
-                  setFilters({ ...filters, profile: e.target.value })
-                }
-              >
-                <option value="">Wybierz profil</option>
-                {profiles.map((profile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.full_name}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group>
-              <Form.Label>Miejsce pracy</Form.Label>
-              <Form.Control
-                as="select"
-                value={filters.workplace}
-                onChange={(e) =>
-                  setFilters({ ...filters, workplace: e.target.value })
-                }
-              >
-                <option value="">Wybierz miejsce pracy</option>
-                {workplaces.map((workplace) => (
-                  <option key={workplace.id} value={workplace.id}>
-                    {workplace.street}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Form.Group>
-              <Form.Label>Data rozpoczęcia (Od)</Form.Label>
-              <Form.Control
-                type="date"
-                value={filters.start_min}
-                onChange={(e) =>
-                  setFilters({ ...filters, start_min: e.target.value })
-                }
-              />
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group>
-              <Form.Label>Data rozpoczęcia (Do)</Form.Label>
-              <Form.Control
-                type="date"
-                value={filters.start_max}
-                onChange={(e) =>
-                  setFilters({ ...filters, start_max: e.target.value })
-                }
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-        <Button onClick={fetchWorkSessionsWithFilters} variant="primary">
-          Filtruj
-        </Button>
-      </Form>
+    <Container className="fluid">
+      <Row>
+        <Col>
+          <h1 className="my-4">Sesje pracy</h1>
+          <Button
+            variant="success"
+            onClick={() => navigate("/add-work-hour")}
+            className="mb-4"
+          >
+            Dodaj
+          </Button>
+          <FilterForm
+            profiles={profiles}
+            workplaces={workplaces}
+            filters={filters}
+            setFilters={setFilters}
+            fetchWorkSessionsWithFilters={fetchWorkSessionsWithFilters}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Accordion defaultActiveKey="0">
+            {workSessions.map((session, index) => (
+              <Accordion.Item eventKey={String(index)} key={session.id}>
+                <Accordion.Header>
+                  <Container>
+                    <Row>
+                      <Col xs={12} md={3}>
+                        <span className="date-span">
+                          <i
+                            className="bi bi-calendar-event-fill"
+                            style={{ marginRight: "8px" }}
+                          ></i>
+                          {session.start_time.split(" ")[0]}
+                        </span>
+                      </Col>
+                      <Col xs={12} md={3}>
+                        <span className="name-span">
+                          <i
+                            className="bi bi-person-fill"
+                            style={{ marginRight: "8px" }}
+                          ></i>
+                          {session.profile.full_name}
+                        </span>
+                      </Col>
+                      <Col xs={12} md={3}>
+                        <span className="location-span">
+                          <i
+                            className="bi bi-geo-alt-fill"
+                            style={{ marginRight: "8px" }}
+                          ></i>
+                          {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
+                        </span>
+                      </Col>
+                      <Col xs={12} md={3}>
+                        <span className="time-span text-muted">
+                          <i
+                            className="bi bi-clock-fill"
+                            style={{ marginRight: "8px" }}
+                          ></i>
+                          {session.total_time}
+                        </span>
+                      </Col>
+                    </Row>
+                  </Container>
+                </Accordion.Header>
 
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {workSessions.map((session) => (
-          <Col key={session.id}>
-            <Card>
-              <Card.Header as="h5">Sesja #{session.id}</Card.Header>
-              <Card.Body>
-                <Card.Title>{session.profile.full_name}</Card.Title>
-                <Card.Text>
-                  Personnummer: {session.profile.personnummer}
-                </Card.Text>
-                <Card.Text>
-                  Miejsce pracy:{" "}
-                  {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
-                </Card.Text>
-                <Card.Text>Czas rozpoczęcia: {session.start_time}</Card.Text>
-                <Card.Text>Czas zakończenia: {session.end_time}</Card.Text>
-                <Card.Text>Łączny czas: {session.total_time}</Card.Text>
-                <Button
-                  variant="primary"
-                  onClick={() => navigate(`/edit-work-hour/${session.id}`)}
-                >
-                  Edytuj sesję
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+                <Accordion.Body>
+                  <p>
+                    <strong>Personnummer:</strong>{" "}
+                    {session.profile.personnummer}
+                  </p>
+                  <p>
+                    <strong>Miejsce pracy:</strong>
+                    {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
+                  </p>
+                  <p>
+                    <strong>Czas rozpoczęcia:</strong> {session.start_time}
+                  </p>
+                  <p>
+                    <strong>Czas zakończenia:</strong> {session.end_time}
+                  </p>
+                  <p>
+                    <strong>Łączny czas:</strong> {session.total_time}
+                  </p>
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate(`/edit-work-hour/${session.id}`)}
+                  >
+                    Edytuj sesję
+                  </Button>
+                </Accordion.Body>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </Col>
       </Row>
     </Container>
   );

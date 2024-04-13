@@ -56,6 +56,7 @@ const Home: React.FC = () => {
           setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles"); // Ustawienie pierwszego elementu tablicy jako aktywną sesję
         } else {
           setActiveSession(null); // Jeśli tablica jest pusta, nie ma aktywnej sesji
+          setAlertInfo("Kliknij Start aby zaczac prace");
         }
       } catch (error) {
         console.error('Error fetching active session:', error);

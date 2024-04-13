@@ -75,7 +75,7 @@ const NavbarComponent: React.FC = () => {
                   <NavDropdown.Item
                     onClick={() => navigateTo("/active-sessions")}
                   >
-                    Aktualnie pracuja
+                    Aktualna praca
                   </NavDropdown.Item>
                   <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
                     Godziny pracy
