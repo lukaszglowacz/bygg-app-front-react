@@ -41,7 +41,7 @@ const NavbarComponent: React.FC = () => {
 
   return (
     <>
-      <Navbar bg="light" expand="lg" fixed="top">
+      <Navbar bg="light" fixed="top">
         <Container>
           {isAuthenticated && userProfile.image && (
             <Navbar.Brand onClick={() => navigateTo("/")}>
@@ -58,39 +58,36 @@ const NavbarComponent: React.FC = () => {
               />
             </Navbar.Brand>
           )}
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              {isAuthenticated && (
-                <NavDropdown
-                  title={userProfile.first_name}
-                  id="basic-nav-dropdown"
+          <Nav className="ms-auto">
+            {isAuthenticated && (
+              <NavDropdown
+                title={userProfile.first_name}
+                id="basic-nav-dropdown"
+              >
+                <NavDropdown.Item onClick={() => navigateTo("/")}>
+                  Panel nawigacyjny
+                </NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo("/profile")}>
+                  Profil
+                </NavDropdown.Item>
+                <NavDropdown.Item
+                  onClick={() => navigateTo("/active-sessions")}
                 >
-                  <NavDropdown.Item onClick={() => navigateTo("/")}>
-                    Panel nawigacyjny
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => navigateTo("/profile")}>
-                    Profil
-                  </NavDropdown.Item>
-                  <NavDropdown.Item
-                    onClick={() => navigateTo("/active-sessions")}
-                  >
-                    Aktualna praca
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
-                    Godziny pracy
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
-                    Miejsca pracy
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogoutClick}>
-                    Wyloguj się
-                  </NavDropdown.Item>
-                </NavDropdown>
-              )}
-            </Nav>
-          </Navbar.Collapse>
+                  Aktualna praca
+                </NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
+                  Godziny pracy
+                </NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
+                  Miejsca pracy
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={handleLogoutClick}>
+                  Wyloguj się
+                </NavDropdown.Item>
+              </NavDropdown>
+            )}
+          </Nav>
         </Container>
       </Navbar>
       <ConfirmModal
