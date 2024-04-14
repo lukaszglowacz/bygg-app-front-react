@@ -1,38 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Form, Button, Card, Alert, Spinner } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Button,
+  Col,
+  Row,
+  Alert,
+  Spinner,
+  InputGroup,
+} from "react-bootstrap";
 import api from "../api/api";
+import { BiBuildings, BiTimeFive, BiCalendar } from "react-icons/bi";
+import { AxiosError } from "axios";
 import useGoBack from "../hooks/useGoBack";
 
 interface Profile {
   id: number;
   full_name: string;
-  personnummer: string; // Dodano zgodnie z JSON
+  personnummer: string;
 }
 
 interface Workplace {
   id: number;
   street: string;
-  street_number: string; // Dodano zgodnie z JSON
-  postal_code: string; // Dodano zgodnie z JSON
+  street_number: string;
+  postal_code: string;
   city: string;
 }
 
 interface WorkSession {
   id: number;
-  profile: Profile; // Zmieniono z profile_id na obiekt Profile
-  workplace: Workplace; // Zmieniono z workplace_id na obiekt Workplace
+  profile: Profile;
+  workplace: Workplace;
   start_time: string;
   end_time: string;
-  total_time: string; // Dodano zgodnie z JSON, oznaczony jako string
-  [key: string]: any;
 }
 
 const EditWorkHour: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [workSession, setWorkSession] = useState<WorkSession | null>(null);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -40,77 +48,79 @@ const EditWorkHour: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-            const [sessionRes, profilesRes, workplacesRes] = await Promise.all([
-                api.get<WorkSession>(`/worksession/${id}`),
-                api.get<Profile[]>("/profile"),
-                api.get<Workplace[]>("/workplace")
-            ]);
-            setWorkSession(sessionRes.data);
-            setProfiles(profilesRes.data);
-            setWorkplaces(workplacesRes.data);
-        } catch (error) {
-            setError("Nie udało się załadować danych.");
-        } finally {
-            setLoading(false);
-        }
+      try {
+        const sessionRes = await api.get<WorkSession>(`/worksession/${id}`);
+        const workplacesRes = await api.get<Workplace[]>("/workplace");
+        setWorkSession(sessionRes.data);
+        setWorkplaces(workplacesRes.data);
+      } catch (error) {
+        setError("Nie udało się załadować danych.");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
-}, [id]);
-
+  }, [id]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (workSession) {
       try {
+        const { id, profile, workplace, start_time, end_time } = workSession;
         const updatedSession = {
-          profile: workSession.profile.id, // upewnij się, że jest to liczba (id profilu)
-          workplace: workSession.workplace.id, // upewnij się, że jest to liczba (id miejsca pracy)
-          start_time: workSession.start_time,
-          end_time: workSession.end_time,
+          id,
+          profile: profile.id,
+          workplace: workplace.id,
+          start_time,
+          end_time,
         };
         await api.put(`/worksession/${id}`, updatedSession);
         navigate("/work-hours");
       } catch (err) {
-        setError("Failed to update session.");
-        console.error(err);
+        const error = err as AxiosError; // Asercja typu
+        setError(
+          `Failed to update session. ${error.response?.data || error.message}`
+        );
+        console.error(error);
       }
     }
   };
 
-  const handleDelete = async () => {
-    if (workSession) {
-      try {
-        await api.delete(`/worksession/${id}`);
-        navigate("/work-hours");
-      } catch (err) {
-        setError("Nie udało się usunąć sesji pracy.");
-        console.error(err);
-      }
-    }
-  };
-
-  const handleChange = (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
+  const handleChange = (event: React.ChangeEvent<any>) => {
     const { name, value } = event.target;
-    setWorkSession((prev) => {
-      if (prev) {
-        if (name === "profile_id" || name === "workplace_id") {
-          return {
-            ...prev,
-            [name.split("_")[0]]: {
-              ...prev[name.split("_")[0]],
-              id: Number(value),
-            },
+    setWorkSession((prev: any) => {
+      if (!prev) return null;
+
+      let updatedSession: any = { ...prev };
+
+      switch (name) {
+        case "workplace":
+          updatedSession.workplace = {
+            ...prev.workplace,
+            id: parseInt(value, 10),
           };
-        }
-        return { ...prev, [name]: value };
+          break;
+        case "start_time":
+        case "end_time":
+          updatedSession[name] = value;
+          break;
       }
-      return null;
+
+      return updatedSession;
     });
+  };
+
+  const handleDeleteClick = async (sessionId: number) => {
+    try {
+      await api.delete(`/worksession/${sessionId}`);
+      navigate("/work-hours"); // Redirects to the work hours page after deletion
+    } catch (err) {
+      const error = err as AxiosError;
+      setError(
+        `Failed to delete session. ${error.response?.data || error.message}`
+      );
+      console.error(error);
+    }
   };
 
   if (loading) return <Spinner animation="border" />;
@@ -118,71 +128,73 @@ const EditWorkHour: React.FC = () => {
 
   return (
     <Container>
-      <Card>
-        <Card.Header as="h5">Edycja Sesji Pracy #{id}</Card.Header>
-        <Card.Body>
+      <Row>
+        <Col className="text-center">
+          <h1>Edycja sesji pracy</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Profil</Form.Label>
-              <Form.Control
-                as="select"
-                name="profile_id"
-                value={workSession?.profile.id}
+            <InputGroup className="mb-3">
+              <InputGroup.Text>
+                <BiBuildings />
+              </InputGroup.Text>
+              <Form.Select
+                name="workplace"
+                value={workSession?.workplace.id || ""}
                 onChange={handleChange}
-              >
-                {profiles.map((profile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.full_name}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Miejsce pracy</Form.Label>
-              <Form.Control
-                as="select"
-                name="workplace_id"
-                value={workSession?.workplace.id}
-                onChange={handleChange}
+                required
               >
                 {workplaces.map((workplace) => (
                   <option key={workplace.id} value={workplace.id}>
-                    {workplace.street} {workplace.street_number},{" "}
-                    {workplace.postal_code} {workplace.city}
+                    {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}
                   </option>
                 ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Czas rozpoczęcia</Form.Label>
+              </Form.Select>
+            </InputGroup>
+
+            <InputGroup className="mb-3">
+              <InputGroup.Text>
+                <BiCalendar />
+              </InputGroup.Text>
               <Form.Control
                 type="datetime-local"
                 name="start_time"
-                value={workSession?.start_time}
+                value={workSession?.start_time || ""}
                 onChange={handleChange}
+                required
               />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Czas zakończenia</Form.Label>
+            </InputGroup>
+
+            <InputGroup className="mb-3">
+              <InputGroup.Text>
+                <BiTimeFive />
+              </InputGroup.Text>
               <Form.Control
                 type="datetime-local"
                 name="end_time"
-                value={workSession?.end_time}
+                value={workSession?.end_time || ""}
                 onChange={handleChange}
+                required
               />
-            </Form.Group>
+            </InputGroup>
+
             <Button variant="primary" type="submit">
               Zapisz zmiany
             </Button>
-            <Button variant="secondary" onClick={goBack}>
-              Wroc
+            <Button
+              variant="danger"
+              onClick={() => workSession && handleDeleteClick(workSession.id)}
+            >
+              Usuń
             </Button>
-            <Button variant="danger" onClick={handleDelete}>
-              Usun
+            <Button variant="secondary" onClick={goBack} className="ml-2">
+              Powrot
             </Button>
           </Form>
-        </Card.Body>
-      </Card>
+        </Col>
+      </Row>
     </Container>
   );
 };
