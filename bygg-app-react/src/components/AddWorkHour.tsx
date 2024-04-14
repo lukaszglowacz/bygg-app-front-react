@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card, Alert, Spinner } from "react-bootstrap";
 import api from "../api/api";
-import useGoBack from "../hooks/useGoBack";
-
-interface Profile {
-  id: number;
-  full_name: string;
-  personnummer: string;
-}
+import { useAuth } from "../context/AuthContext";
 
 interface Workplace {
   id: number;
@@ -19,71 +13,71 @@ interface Workplace {
 }
 
 interface WorkSession {
-  profile: number | null;
-  workplace: number | null;
+  workplaceId: number | null;  // Używamy typu number lub null dla ID miejsca pracy
   start_time: string;
   end_time: string;
 }
 
 const AddWorkHour: React.FC = () => {
   const navigate = useNavigate();
-  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
+  const { profileId, isAuthenticated } = useAuth();
   const [newSession, setNewSession] = useState<WorkSession>({
-    profile: null,
-    workplace: null,
+    workplaceId: null,
     start_time: "",
     end_time: "",
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const goBack = useGoBack();
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchWorkplaces = async () => {
       try {
-        const [profilesRes, workplacesRes] = await Promise.all([
-          api.get<Profile[]>("/profile"),
-          api.get<Workplace[]>("/workplace"),
-        ]);
-        setProfiles(profilesRes.data);
-        setWorkplaces(workplacesRes.data);
+        const response = await api.get("/workplace/");
+        setWorkplaces(response.data);
       } catch (error) {
         setError("Nie udało się załadować danych.");
       } finally {
         setLoading(false);
       }
     };
-    fetchInitialData();
+    fetchWorkplaces();
   }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const response = await api.post("/worksession/", newSession);
-      console.log("Response from server:", response);
-      console.log("Dodano miejsce pracy");
-      navigate("/work-hours");
-    } catch (err) {
-      setError("Nie udało się dodać sesji pracy.");
-      console.error("Error details:", err);
+    if (!isAuthenticated || !profileId || !newSession.workplaceId) {
+        setError("Musisz być zalogowany i wybrać miejsce pracy.");
+        return;
     }
-  };
+    try {
+        const response = await api.post("/worksession/", {
+            workplace: newSession.workplaceId,
+            profile: profileId,  // Dodajemy profileId zalogowanego użytkownika
+            start_time: newSession.start_time,
+            end_time: newSession.end_time
+        });
+        navigate("/work-hours");
+    } catch (error: any) {
+        console.error("Error starting session", error.response || error);
+        setError(`Nie udało się dodać sesji pracy. Błąd: ${error.response ? error.response.data.message : error.message}`);
+    }
+};
 
-  const handleChange: React.ChangeEventHandler<
-    HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement
-  > = (event) => {
-    const target = event.target as
-      | HTMLInputElement
-      | HTMLSelectElement
-      | HTMLTextAreaElement;
+
+  const handleChange = (event: React.ChangeEvent<HTMLElement>) => {
+    const target = event.target as HTMLInputElement | HTMLSelectElement;
     const name = target.name;
     const value = target.value;
-    // Przekonwertuj wartość na number jeśli to id profilu lub miejsca pracy
-    const updatedValue =
-      name === "profile" || name === "workplace" ? parseInt(value, 10) : value;
-    setNewSession((prev) => ({ ...prev, [name]: updatedValue }));
+    const updatedValue = name === "profile" || name === "workplace" ? parseInt(value, 10) : value;
+  
+    setNewSession((prev) => ({
+      ...prev,
+      [name]: updatedValue
+    }));
   };
+  
+  
 
   if (loading) return <Spinner animation="border" />;
   if (error) return <Alert variant="danger">{error}</Alert>;
@@ -94,43 +88,22 @@ const AddWorkHour: React.FC = () => {
         <Card.Header as="h5">Dodaj Nową Sesję Pracy</Card.Header>
         <Card.Body>
           <Form onSubmit={handleSubmit}>
-            {profiles.length > 0 && (
-              <Form.Group className="mb-3">
-                <Form.Label>Profil</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="profile"
-                  value={newSession.profile || ""}
-                  onChange={handleChange}
-                  required
-                >
-                  {profiles.map((profile) => (
-                    <option key={profile.id} value={profile.id}>
-                      {profile.full_name}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-            )}
-            {workplaces.length > 0 && (
-              <Form.Group className="mb-3">
-                <Form.Label>Miejsce pracy</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="workplace"
-                  value={newSession.workplace || ""}
-                  onChange={handleChange}
-                  required
-                >
-                  {workplaces.map((workplace) => (
-                    <option key={workplace.id} value={workplace.id}>
-                      {workplace.street} {workplace.street_number},{" "}
-                      {workplace.postal_code} {workplace.city}
-                    </option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-            )}
+            <Form.Group className="mb-3">
+              <Form.Label>Miejsce pracy</Form.Label>
+              <Form.Control
+                as="select"
+                name="workplaceId"
+                value={newSession.workplaceId || ""}
+                onChange={handleChange}
+                required
+              >
+                {workplaces.map((workplace) => (
+                  <option key={workplace.id} value={workplace.id}>
+                    {workplace.street} {workplace.street_number}, {workplace.postal_code} {workplace.city}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Czas rozpoczęcia</Form.Label>
@@ -152,12 +125,7 @@ const AddWorkHour: React.FC = () => {
                 required
               />
             </Form.Group>
-            <Button variant="primary" type="submit">
-              Dodaj Sesję
-            </Button>
-            <Button variant="secondary" onClick={goBack}>
-              Wróć
-            </Button>
+            <Button variant="primary" type="submit">Dodaj Sesję</Button>
           </Form>
         </Card.Body>
       </Card>
