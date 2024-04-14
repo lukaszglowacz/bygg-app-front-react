@@ -36,7 +36,7 @@ interface Session {
 
 const Home: React.FC = () => {
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
-  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<string>("");
+  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<number>(0);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [alertInfo, setAlertInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
@@ -45,44 +45,35 @@ const Home: React.FC = () => {
   const { profileId } = useAuth();
 
   // Funkcja do aktualizacji wybranego miejsca pracy
-  const handleSelectWorkplace = (id: string) => {
-    setSelectedWorkplaceId(id); // Aktualizujemy stan z wybranym ID
+  const handleSelectWorkplace = (id: number) => {
+    setSelectedWorkplaceId(id);
   };
 
   useEffect(() => {
-    const fetchWorkplaces = async () => {
-      const response = await api.get("/workplace/");
-      setWorkplaces(response.data);
-    };
-    fetchWorkplaces();
+    const fetchWorkplacesAndSession = async () => {
+      const workplacesResponse = await api.get("/workplace/");
+      setWorkplaces(workplacesResponse.data);
 
-    const fetchActiveSession = async () => {
-      try {
-        const response = await api.get("/livesession/active/");
-        console.log("Active session data:", response.data);
-        if (response.data.length > 0) {
-          setActiveSession(response.data[0]);
-          setIsActiveSession(true)
-          setSelectedWorkplaceId(response.data[0].workplace?.id.toString())
-          setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles"); // Ustawienie pierwszego elementu tablicy jako aktywną sesję
-        } else {
-          setActiveSession(null); // Jeśli tablica jest pusta, nie ma aktywnej sesji
-          setIsActiveSession(false)
-          setAlertInfo("Kliknij Start aby zaczac prace");
-        }
-      } catch (error) {
-        console.error("Error fetching active session:", error);
+      const sessionResponse = await api.get("/livesession/active/");
+      if (sessionResponse.data.length > 0) {
+        const activeSession = sessionResponse.data[0];
+        setActiveSession(activeSession);
+        setIsActiveSession(true);
+        setSelectedWorkplaceId(activeSession.workplace.id);
+        setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles");
+      } else {
         setActiveSession(null);
         setIsActiveSession(false);
+        setSelectedWorkplaceId(0);
+        setAlertInfo("Kliknij Start aby zaczac prace");
       }
-      setIsLoading(false);
     };
 
-    fetchActiveSession();
+    fetchWorkplacesAndSession();
   }, []);
 
   const handleStartSession = async () => {
-    if (!profileId || selectedWorkplaceId === "" || activeSession) {
+    if (!profileId || selectedWorkplaceId === null || activeSession) {
       setAlertInfo("Fajnie, ale gdzie dzisiaj pracujesz?");
       return;
     }
@@ -92,7 +83,7 @@ const Home: React.FC = () => {
         profile: profileId,
       });
       setActiveSession(response.data);
-      setIsActiveSession(true)
+      setIsActiveSession(true);
       setAlertInfo("Praca rozpoczęta.");
     } catch (error) {
       console.error("Error starting session", error);
@@ -109,7 +100,8 @@ const Home: React.FC = () => {
     try {
       await api.patch(`/livesession/end/${activeSession.id}/`);
       setActiveSession(null); // Resetowanie stanu aktywnej sesji
-      setIsActiveSession(false)
+      setIsActiveSession(false);
+      setSelectedWorkplaceId(0);
       setAlertInfo("Gratulacje! To byl dobry dzien pracy.");
     } catch (error) {
       console.error("Error ending session", error);
@@ -133,6 +125,7 @@ const Home: React.FC = () => {
           </h2>
           <WorkplaceSelector
             workplaces={workplaces}
+            selectedWorkplaceId={selectedWorkplaceId}
             onSelect={handleSelectWorkplace}
             isActiveSession={isActiveSession}
           />

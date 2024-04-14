@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Dropdown, Container } from "react-bootstrap";
 import { BiBuildingHouse } from "react-icons/bi"; // Ikona dla miejsca pracy
 
@@ -12,21 +12,20 @@ interface Workplace {
 
 interface WorkplaceSelectorProps {
   workplaces: Workplace[];
-  onSelect: (id: string) => void;
+  onSelect: (id: number) => void;
   isActiveSession: boolean;
+  selectedWorkplaceId: number;
 }
 
 const WorkplaceSelector: React.FC<WorkplaceSelectorProps> = ({
   workplaces,
   onSelect,
   isActiveSession,
+  selectedWorkplaceId,
 }) => {
-  const [selectedWorkplace, setSelectedWorkplace] = useState<string>("");
-
   const handleSelect = (eventKey: string | null) => {
-    const newSelectedWorkplace = eventKey ?? "";
-    setSelectedWorkplace(newSelectedWorkplace);
-    onSelect(newSelectedWorkplace);
+    const newSelectedWorkplaceId = parseInt(eventKey ?? "0");
+    onSelect(newSelectedWorkplaceId);
   };
 
   return (
@@ -55,21 +54,17 @@ const WorkplaceSelector: React.FC<WorkplaceSelectorProps> = ({
           />
         </Dropdown.Toggle>
 
-        {(isActiveSession || selectedWorkplace) && (
+        {(isActiveSession || selectedWorkplaceId !== 0) && (
           <div className="text-success mt-2 text-center">
             {`${
-              workplaces.find((wp) => wp.id.toString() === selectedWorkplace)
-                ?.street
+              workplaces.find((wp) => wp.id === selectedWorkplaceId)?.street
             } ${
-              workplaces.find((wp) => wp.id.toString() === selectedWorkplace)
+              workplaces.find((wp) => wp.id === selectedWorkplaceId)
                 ?.street_number
             }, ${
-              workplaces.find((wp) => wp.id.toString() === selectedWorkplace)
+              workplaces.find((wp) => wp.id === selectedWorkplaceId)
                 ?.postal_code
-            } ${
-              workplaces.find((wp) => wp.id.toString() === selectedWorkplace)
-                ?.city
-            }`}
+            } ${workplaces.find((wp) => wp.id === selectedWorkplaceId)?.city}`}
           </div>
         )}
 
@@ -78,6 +73,7 @@ const WorkplaceSelector: React.FC<WorkplaceSelectorProps> = ({
             <Dropdown.Item
               key={workplace.id}
               eventKey={workplace.id.toString()}
+              onClick={() => handleSelect(workplace.id.toString())}
             >
               <BiBuildingHouse style={{ marginRight: "5px" }} />
               {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}
