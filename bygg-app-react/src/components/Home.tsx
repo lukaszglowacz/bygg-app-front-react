@@ -56,11 +56,18 @@ const Home: React.FC = () => {
 
       const sessionResponse = await api.get("/livesession/active/");
       if (sessionResponse.data.length > 0) {
-        const activeSession = sessionResponse.data[0];
-        setActiveSession(activeSession);
-        setIsActiveSession(true);
-        setSelectedWorkplaceId(activeSession.workplace.id);
-        setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles");
+        const userActiveSession = sessionResponse.data.find((session: Session) => session.profile.id === Number(profileId));
+        if (userActiveSession) {
+          setActiveSession(userActiveSession);
+          setIsActiveSession(true);
+          setSelectedWorkplaceId(userActiveSession.workplace.id);
+          setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles");
+        } else {
+          setActiveSession(null);
+          setIsActiveSession(false);
+          setSelectedWorkplaceId(0);
+          setAlertInfo("Brak aktywnej sesji dla tego użytkownika.");
+        }
       } else {
         setActiveSession(null);
         setIsActiveSession(false);
@@ -70,10 +77,10 @@ const Home: React.FC = () => {
     };
 
     fetchWorkplacesAndSession();
-  }, []);
+  }, [profileId]);
 
   const handleStartSession = async () => {
-    if (!profileId || selectedWorkplaceId === null || activeSession) {
+    if (!profileId || selectedWorkplaceId <= 0  || activeSession) {
       setAlertInfo("Fajnie, ale gdzie dzisiaj pracujesz?");
       return;
     }
