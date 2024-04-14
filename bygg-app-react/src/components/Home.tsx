@@ -4,6 +4,7 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import ClockUpdate from "./ClockUpdate";
 import WorkplaceSelector from "./WorkplaceSelector";
+import { FaLess } from "react-icons/fa";
 
 interface Profile {
   id: number;
@@ -56,7 +57,9 @@ const Home: React.FC = () => {
 
       const sessionResponse = await api.get("/livesession/active/");
       if (sessionResponse.data.length > 0) {
-        const userActiveSession = sessionResponse.data.find((session: Session) => session.profile.id === Number(profileId));
+        const userActiveSession = sessionResponse.data.find(
+          (session: Session) => session.profile.id === Number(profileId)
+        );
         if (userActiveSession) {
           setActiveSession(userActiveSession);
           setIsActiveSession(true);
@@ -80,7 +83,7 @@ const Home: React.FC = () => {
   }, [profileId]);
 
   const handleStartSession = async () => {
-    if (!profileId || selectedWorkplaceId <= 0  || activeSession) {
+    if (!profileId || selectedWorkplaceId <= 0 || activeSession) {
       setAlertInfo("Fajnie, ale gdzie dzisiaj pracujesz?");
       return;
     }
@@ -137,20 +140,28 @@ const Home: React.FC = () => {
             isActiveSession={isActiveSession}
           />
           <div className="d-grid gap-2 my-3">
-            <Button
-              variant="primary"
-              onClick={handleStartSession}
-              disabled={!!activeSession}
-            >
-              Start pracy
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleEndSession}
-              disabled={!activeSession}
-            >
-              Koniec pracy
-            </Button>
+            {!activeSession && (
+              <Button
+                variant="primary"
+                onClick={handleStartSession}
+                disabled={!!activeSession}
+                className="btn-lg"
+                style={{ padding: '15px 25px', fontSize: '1rem' }}
+              >
+                Start pracy
+              </Button>
+            )}
+            {activeSession && (
+              <Button
+                variant="danger"
+                onClick={handleEndSession}
+                disabled={!activeSession}
+                className="btn-lg"
+                style={{ padding: '15px 25px', fontSize: '1rem' }}
+              >
+                Koniec pracy
+              </Button>
+            )}
           </div>
           {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
         </Col>
