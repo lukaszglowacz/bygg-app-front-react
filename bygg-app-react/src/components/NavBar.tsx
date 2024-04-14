@@ -41,6 +41,7 @@ const NavbarComponent: React.FC = () => {
 
   return (
     <>
+    
       <Navbar bg="light" fixed="top">
         <Container>
           {isAuthenticated && userProfile.image && (
@@ -63,7 +64,6 @@ const NavbarComponent: React.FC = () => {
               <NavDropdown
                 title={userProfile.first_name}
                 id="basic-nav-dropdown"
-                align="end" 
               >
                 <NavDropdown.Item onClick={() => navigateTo("/")}>
                   Panel nawigacyjny

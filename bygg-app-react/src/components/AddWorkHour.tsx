@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
+import useGoBack from "../hooks/useGoBack";
 
 interface Workplace {
   id: number;
@@ -37,6 +38,7 @@ const AddWorkHour: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const goBack = useGoBack();
 
   useEffect(() => {
     const fetchWorkplaces = async () => {
@@ -73,8 +75,7 @@ const AddWorkHour: React.FC = () => {
         setError("Nie udało się dodać sesji pracy z nieznanego powodu.");
       }
     }
-};
-
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLElement>) => {
     const target = event.target as HTMLInputElement | HTMLSelectElement;
@@ -103,7 +104,7 @@ const AddWorkHour: React.FC = () => {
         <Col>
           <Form onSubmit={handleSubmit}>
             <Form.Group as={Row} className="mb-3" controlId="workplaceSelect">
-              <Col md={6}>
+              <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text">
@@ -130,7 +131,7 @@ const AddWorkHour: React.FC = () => {
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="startDateTime">
-              <Col md={6}>
+              <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text">
@@ -149,7 +150,7 @@ const AddWorkHour: React.FC = () => {
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="endDateTime">
-              <Col md={6}>
+              <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text">
@@ -167,10 +168,25 @@ const AddWorkHour: React.FC = () => {
               </Col>
             </Form.Group>
 
-            <Row>
-              <Col className="text-center">
-                <Button variant="primary" type="submit">
+            <Row className="mb-3">
+              <Col md={6} className="mx-auto">
+                <Button
+                  variant="success"
+                  type="submit"
+                  className="w-100 w-md-auto"
+                >
                   Dodaj
+                </Button>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col md={6} className="mx-auto">
+                <Button
+                  variant="outline-secondary"
+                  onClick={goBack}
+                  className="w-100 w-md-auto"
+                >
+                  Cofnij
                 </Button>
               </Col>
             </Row>

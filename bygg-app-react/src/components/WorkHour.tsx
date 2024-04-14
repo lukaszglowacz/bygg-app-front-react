@@ -3,6 +3,7 @@ import { Container, Row, Col, Alert, Button, Accordion } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { FilterForm } from "./FilterForm";
+import useGoBack from "../hooks/useGoBack";
 
 interface Profile {
   id: number;
@@ -40,6 +41,7 @@ const WorkHour: React.FC = () => {
     start_max: "",
   });
   const [isLoading, setIsLoading] = useState(true);
+  const goBack = useGoBack();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,18 +78,19 @@ const WorkHour: React.FC = () => {
     return (
       <Container>
         <Row>
-          <Col className="text-center">
-            <h1>Sesje pracy</h1>
+          <Col>
+            <h1 className="text-center">Sesje pracy</h1>
           </Col>
         </Row>
-        <Row>
-          <Col xs={12} sm={8} md={6} lg={4} className="mx-auto">
+
+        <Row className="mb-3">
+          <Col>
             <Button
               variant="outline-success"
               onClick={() => navigate("/add-work-hour")}
-              className="w-100 mb-4 d-block d-sm-none"
+              className="w-100 w-md-auto"
             >
-              Dodaj
+              Dodaj miejsce pracy
             </Button>
           </Col>
         </Row>
@@ -114,17 +117,27 @@ const WorkHour: React.FC = () => {
   }
 
   return (
-    <Container className="fluid">
+    <Container>
       <Row>
         <Col>
-          <h1 className="my-4">Sesje pracy</h1>
+          <h1 className="text-center">Sesje pracy</h1>
+        </Col>
+      </Row>
+
+      <Row className="mb-3">
+        <Col>
           <Button
-            variant="success"
+            variant="outline-dark"
             onClick={() => navigate("/add-work-hour")}
-            className="mb-4"
+            className="w-100 w-md-auto"
           >
-            Dodaj
+            Dodaj miejsce pracy
           </Button>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
           <FilterForm
             profiles={profiles}
             workplaces={workplaces}

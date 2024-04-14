@@ -127,14 +127,14 @@ const EditWorkHour: React.FC = () => {
   if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
-    <Container>
+    <Container className="container-sm">
       <Row>
         <Col className="text-center">
           <h1>Edycja sesji pracy</h1>
         </Col>
       </Row>
       <Row>
-        <Col>
+        <Col md={6} className="mx-auto">
           <Form onSubmit={handleSubmit}>
             <InputGroup className="mb-3">
               <InputGroup.Text>
@@ -180,18 +180,41 @@ const EditWorkHour: React.FC = () => {
               />
             </InputGroup>
 
-            <Button variant="primary" type="submit">
-              Zapisz zmiany
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => workSession && handleDeleteClick(workSession.id)}
-            >
-              Usuń
-            </Button>
-            <Button variant="secondary" onClick={goBack} className="ml-2">
-              Powrot
-            </Button>
+            <Row className="mb-3">
+              <Col>
+                <Button
+                  variant="success"
+                  type="submit"
+                  className="w-100 w-md-auto"
+                >
+                  Zapisz
+                </Button>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col>
+                <Button
+                  variant="outline-danger"
+                  onClick={() =>
+                    workSession && handleDeleteClick(workSession.id)
+                  }
+                  className="w-100 w-md-auto"
+                >
+                  Usuń
+                </Button>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col>
+                <Button
+                  variant="outline-secondary"
+                  onClick={goBack}
+                  className="w-100 w-md-auto"
+                >
+                  Cofnij
+                </Button>
+              </Col>
+            </Row>
           </Form>
         </Col>
       </Row>
