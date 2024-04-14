@@ -40,6 +40,7 @@ const Home: React.FC = () => {
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [alertInfo, setAlertInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isActiveSession, setIsActiveSession] = useState(false);
 
   const { profileId } = useAuth();
 
@@ -58,16 +59,21 @@ const Home: React.FC = () => {
     const fetchActiveSession = async () => {
       try {
         const response = await api.get("/livesession/active/");
+        console.log("Active session data:", response.data);
         if (response.data.length > 0) {
           setActiveSession(response.data[0]);
+          setIsActiveSession(true)
+          setSelectedWorkplaceId(response.data[0].workplace?.id.toString())
           setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles"); // Ustawienie pierwszego elementu tablicy jako aktywną sesję
         } else {
           setActiveSession(null); // Jeśli tablica jest pusta, nie ma aktywnej sesji
+          setIsActiveSession(false)
           setAlertInfo("Kliknij Start aby zaczac prace");
         }
       } catch (error) {
         console.error("Error fetching active session:", error);
         setActiveSession(null);
+        setIsActiveSession(false);
       }
       setIsLoading(false);
     };
@@ -86,6 +92,7 @@ const Home: React.FC = () => {
         profile: profileId,
       });
       setActiveSession(response.data);
+      setIsActiveSession(true)
       setAlertInfo("Praca rozpoczęta.");
     } catch (error) {
       console.error("Error starting session", error);
@@ -102,6 +109,7 @@ const Home: React.FC = () => {
     try {
       await api.patch(`/livesession/end/${activeSession.id}/`);
       setActiveSession(null); // Resetowanie stanu aktywnej sesji
+      setIsActiveSession(false)
       setAlertInfo("Gratulacje! To byl dobry dzien pracy.");
     } catch (error) {
       console.error("Error ending session", error);
@@ -126,6 +134,7 @@ const Home: React.FC = () => {
           <WorkplaceSelector
             workplaces={workplaces}
             onSelect={handleSelectWorkplace}
+            isActiveSession={isActiveSession}
           />
           <div className="d-grid gap-2 my-3">
             <Button
