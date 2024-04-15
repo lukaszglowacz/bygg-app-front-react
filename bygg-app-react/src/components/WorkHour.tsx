@@ -90,7 +90,7 @@ const WorkHour: React.FC = () => {
               onClick={() => navigate("/add-work-hour")}
               className="w-100 w-md-auto"
             >
-              Dodaj miejsce pracy
+              Dodaj czas pracy
             </Button>
           </Col>
         </Row>
@@ -131,7 +131,7 @@ const WorkHour: React.FC = () => {
             onClick={() => navigate("/add-work-hour")}
             className="w-100 w-md-auto"
           >
-            Dodaj miejsce pracy
+            Dodaj czas pracy
           </Button>
         </Col>
       </Row>
