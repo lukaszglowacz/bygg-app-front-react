@@ -9,7 +9,7 @@ const WorkPlaceContainer: React.FC = () => {
   const navigate = useNavigate();
 
   const handleAddClick = () => {
-    navigate("/add-work-session"); // Przekierowanie do AddWorkSession
+    navigate("/add-work-place"); // Przekierowanie do AddWorkPlace
   };
 
   
