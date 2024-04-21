@@ -12,8 +12,6 @@ const WorkPlaceContainer: React.FC = () => {
     navigate("/add-work-place"); // Przekierowanie do AddWorkPlace
   };
 
-  
-
   const formatAddress = (workplace: IWorkPlacesData) => {
     return `${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`;
   };
