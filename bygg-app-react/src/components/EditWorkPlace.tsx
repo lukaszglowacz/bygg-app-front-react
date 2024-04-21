@@ -1,19 +1,17 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Form, Button, Alert, Col, Row } from "react-bootstrap";
+import { Container, Form, Button, Col, Row } from "react-bootstrap";
 import api from "../api/api";
-import { IWorkPlacesData } from "../api/interfaces/types"; // Zakładam, że ten interfejs jest już zdefiniowany
+import { IWorkPlacesData } from "../api/interfaces/types";
 import { deleteWorkPlace } from "../api/api";
-import useGoBack from "../hooks/useGoBack";
 
 const EditWorkPlace: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Użycie generycznego typu bezpośrednio
+  const { id } = useParams<{ id: string }>();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
-  const goBack = useGoBack();
 
   const [workplace, setWorkplace] = useState<IWorkPlacesData>({
-    id: 0, // początkowa wartość jako 0, ale zostanie zaktualizowana po pobraniu danych
+    id: 0,
     street: "",
     street_number: "",
     postal_code: "",
@@ -58,15 +56,17 @@ const EditWorkPlace: React.FC = () => {
   const handleDeleteClick = async (id: number) => {
     if (window.confirm("Czy na pewno chcesz usunąć to miejsce pracy?")) {
       try {
-        await deleteWorkPlace(id);
+        // Przykładowe wywołanie metody delete przy użyciu Axios
+        await api.delete(`/workplace/${id}/`);
         alert("Miejsce pracy zostało usunięte.");
-        navigate("/work-places"); // Odświeżenie listy może być potrzebne
+        navigate("/work-places");
       } catch (error) {
         console.error("Wystąpił błąd podczas usuwania miejsca pracy: ", error);
         alert("Nie udało się usunąć miejsca pracy.");
       }
     }
   };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -82,83 +82,117 @@ const EditWorkPlace: React.FC = () => {
       alert("Miejsce pracy zostało zaktualizowane.");
       navigate("/work-places");
     } catch (error) {
-      console.error(
-        "Wystąpił błąd podczas aktualizacji miejsca pracy: ",
-        error
-      );
+      console.error("Wystąpił błąd podczas aktualizacji miejsca pracy: ", error);
     }
   };
 
   return (
     <Container>
       <Row>
+        <Col className="text-center">
+          <h1>Edytuj miejsce pracy</h1>
+        </Col>
+      </Row>
+      <Row>
         <Col>
           <Form onSubmit={handleSubmit}>
-            {/* Ulica */}
-            <Form.Group className="mb-3">
-              <Form.Label>Ulica</Form.Label>
-              <Form.Control
-                type="text"
-                name="street"
-                value={workplace.street}
-                onChange={handleChange}
-                required
-              />
+            <Form.Group as={Row} className="mb-3" controlId="streetInput">
+              <Col md={6} className="mx-auto">
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text"><i className="bi bi-signpost-2"></i></span>
+                  </div>
+                  <Form.Control
+                    type="text"
+                    name="street"
+                    value={workplace.street}
+                    onChange={handleChange}
+                    required
+                    isInvalid={!!errors.street}
+                  />
+                  <Form.Control.Feedback type="invalid">{errors.street}</Form.Control.Feedback>
+                </div>
+              </Col>
             </Form.Group>
 
-            {/* Numer ulicy */}
-            <Form.Group className="mb-3">
-              <Form.Label>Numer ulicy</Form.Label>
-              <Form.Control
-                type="text"
-                name="street_number"
-                value={workplace.street_number}
-                onChange={handleChange}
-                required
-              />
+            <Form.Group as={Row} className="mb-3" controlId="streetNumberInput">
+              <Col md={6} className="mx-auto">
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text"><i className="bi bi-hash"></i></span>
+                  </div>
+                  <Form.Control
+                    type="text"
+                    name="street_number"
+                    value={workplace.street_number}
+                    onChange={handleChange}
+                    required
+                    isInvalid={!!errors.street_number}
+                  />
+                  <Form.Control.Feedback type="invalid">{errors.street_number}</Form.Control.Feedback>
+                </div>
+              </Col>
             </Form.Group>
 
-            {/* Kod pocztowy */}
-            <Form.Group className="mb-3">
-              <Form.Label>Kod pocztowy</Form.Label>
-              <Form.Control
-                type="text"
-                name="postal_code"
-                value={workplace.postal_code}
-                onChange={handleChange}
-                required
-              />
+            <Form.Group as={Row} className="mb-3" controlId="postalCodeInput">
+              <Col md={6} className="mx-auto">
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text"><i className="bi bi-envelope"></i></span>
+                  </div>
+                  <Form.Control
+                    type="text"
+                    name="postal_code"
+                    value={workplace.postal_code}
+                    onChange={handleChange}
+                    required
+                    isInvalid={!!errors.postal_code}
+                  />
+                  <Form.Control.Feedback type="invalid">{errors.postal_code}</Form.Control.Feedback>
+                </div>
+              </Col>
             </Form.Group>
 
-            {/* Miasto */}
-            <Form.Group className="mb-3">
-              <Form.Label>Miasto</Form.Label>
-              <Form.Control
-                type="text"
-                name="city"
-                value={workplace.city}
-                onChange={handleChange}
-                required
-              />
+            <Form.Group as={Row} className="mb-3" controlId="cityInput">
+              <Col md={6} className="mx-auto">
+                <div className="input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text"><i className="bi bi-building"></i></span>
+                  </div>
+                  <Form.Control
+                    type="text"
+                    name="city"
+                    value={workplace.city}
+                    onChange={handleChange}
+                    required
+                    isInvalid={!!errors.city}
+                  />
+                  <Form.Control.Feedback type="invalid">{errors.city}</Form.Control.Feedback>
+                </div>
+              </Col>
             </Form.Group>
-            {Object.keys(errors).map((key) => (
-              <Alert key={key} variant="danger">
-                {errors[key]}
-              </Alert>
-            ))}
 
-            <Button variant="primary" type="submit">
-              Zaktualizuj
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => handleDeleteClick(workplace.id)}
-            >
-              Usuń
-            </Button>
-            <Button variant="secondary" onClick={goBack} className="ml-2">
-              Powrot
-            </Button>
+            <Row className="mb-3">
+              <Col md={6} className="mx-auto">
+                <Button variant="primary" type="submit" className="w-100">
+                  Edytuj
+                </Button>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col md={6} className="mx-auto">
+                <Button variant="danger" onClick={() => handleDeleteClick(workplace.id)} className="w-100">
+                  Usuń
+                </Button>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col md={6} className="mx-auto">
+                <Button variant="outline-secondary" onClick={() => navigate("/work-places")} className="w-100">
+                  Powrót
+                </Button>
+              </Col>
+            </Row>
           </Form>
         </Col>
       </Row>
