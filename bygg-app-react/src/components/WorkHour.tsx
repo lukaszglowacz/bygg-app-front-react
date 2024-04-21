@@ -55,7 +55,12 @@ const WorkHour: React.FC = () => {
           ]);
         setProfiles(profileResponse.data);
         setWorkplaces(workplaceResponse.data);
-        setWorkSessions(sessionResponse.data);
+        const correctedSessions = sessionResponse.data.map(session => ({
+          ...session,
+          start_time: convertUTCToLocalTime(session.start_time),
+          end_time: convertUTCToLocalTime(session.end_time)
+        }));
+        setWorkSessions(correctedSessions);
       } catch (error) {
         setError("Nie udało się załadować danych sesji pracy.");
       }
@@ -72,6 +77,8 @@ const WorkHour: React.FC = () => {
       setError("Nie udało się załadować danych sesji pracy z filtrami.");
     }
   };
+
+  
 
   if (error) return <Alert variant="danger">Błąd: {error}</Alert>;
 

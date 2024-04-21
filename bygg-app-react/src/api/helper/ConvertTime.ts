@@ -1,23 +1,26 @@
-// utils/convertTime.ts
+// src/utils/convertTime.ts
 
 /**
- * Konwertuje datę i czas UTC na czas lokalny dla Sztokholmu.
- * @param utcDateTime Ciąg reprezentujący datę i czas UTC w formacie 'YY.MM.DD HH:MM'
- * @returns Sformatowany czas lokalny jako ciąg 'HH:MM'
+ * Konwertuje czas UTC na czas lokalny dla strefy czasowej Stockholm.
+ * @param utcDateString String daty i czasu w formacie 'YY.MM.DD HH:MM', gdzie rok jest dwucyfrowy.
+ * @returns String daty i czasu w lokalnej strefie czasowej Stockholm w formacie 'YYYY.MM.DD HH:MM'.
  */
-export const convertUTCToLocalTime = (utcDateTime: string): string => {
-    const dateTimeParts = utcDateTime.split(" ");
-    const datePart = dateTimeParts[0];
-    const timePart = dateTimeParts[1];
+export function convertUTCToLocalTime(utcDateString: string): string {
+    const [datePart, timePart] = utcDateString.split(" ");
+    const [year, month, day] = datePart.split(".");
+    const [hour, minute] = timePart.split(":");
   
-    // Konwersja formatu daty na standard ISO 8601, który jest dobrze obsługiwany przez JavaScript Date
-    const isoFormattedDate = `20${datePart.replace(/\./g, '-')}` + 'T' + timePart + ':00Z';
+    // Rozszerzanie dwucyfrowego roku do czterocyfrowego, zakładając, że dotyczy to lat 2000+.
+    const fullYear = parseInt(year) + 2000;
   
-    const date = new Date(isoFormattedDate);
-    return date.toLocaleTimeString('sv-SE', {
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/Stockholm'
-    });
-  };
+    // Utworzenie obiektu Date z czasem UTC
+    const utcDate = new Date(Date.UTC(fullYear, parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute)));
+  
+    // Stockholm jest w UTC+2, konwertujemy czas
+    const localDate = new Date(utcDate.getTime() + (2 * 3600000)); // Dodaje 2 godziny
+  
+    // Formatowanie daty do formatu 'YYYY.MM.DD HH:MM'
+    const pad = (num: number) => num.toString().padStart(2, '0');
+    return `${localDate.getUTCFullYear()}.${pad(localDate.getUTCMonth() + 1)}.${pad(localDate.getUTCDate())} ${pad(localDate.getUTCHours())}:${pad(localDate.getUTCMinutes())}`;
+  }
   
