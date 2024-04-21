@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode, FunctionComponent } from 'react';
 
 interface Profile {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
   image: string;
@@ -10,10 +10,10 @@ interface Profile {
 
 interface UserProfileContextType {
   profile: Profile | null;
-  updateProfile: (data: Profile) => void;
+  setProfile: (profile: Profile) => void;
 }
 
-const UserProfileContext = createContext<UserProfileContextType | null>(null);
+const UserProfileContext = createContext<UserProfileContextType | undefined>(undefined);
 
 interface UserProfileProviderProps {
   children: ReactNode;
@@ -22,12 +22,12 @@ interface UserProfileProviderProps {
 export const UserProfileProvider: FunctionComponent<UserProfileProviderProps> = ({ children }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
 
-  const updateProfile = (data: Profile) => {
-    setProfile(data);
+  const updateProfile = (newProfile: Profile) => {
+    setProfile(newProfile);
   };
 
   return (
-    <UserProfileContext.Provider value={{ profile, updateProfile }}>
+    <UserProfileContext.Provider value={{ profile, setProfile: updateProfile }}>
       {children}
     </UserProfileContext.Provider>
   );

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Zakładając, że masz taki hook
-import { useProfileData } from "../hooks/useProfileData";
+import { useAuth } from "../context/AuthContext";
 import useLogout from "../hooks/useLogOut";
 import ConfirmModal from "./ConfirmModal";
 import { useUserProfile } from "../context/UserProfileContext";
@@ -11,12 +10,10 @@ const NavbarComponent: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const profiles = useProfileData();
   const logout = useLogout();
   const [showModal, setShowModal] = useState(false);
-  const { profile } = useUserProfile();
+  const { profile } = useUserProfile();  // Użyj profilu z kontekstu
 
-  // Przekierowanie na stronę logowania, jeśli użytkownik nie jest zalogowany
   useEffect(() => {
     if (!isLoading && !isAuthenticated && location.pathname !== "/register") {
       navigate("/login");
@@ -37,17 +34,14 @@ const NavbarComponent: React.FC = () => {
     navigate(path);
   };
 
-  const userProfile = profiles[0] || {};
-
   return (
     <>
-    
       <Navbar bg="light" fixed="top">
         <Container>
-          {isAuthenticated && userProfile.image && (
+          {isAuthenticated && profile && (
             <Navbar.Brand onClick={() => navigateTo("/")}>
               <img
-                src={userProfile.image}
+                src={profile.image}
                 alt="Profile"
                 style={{
                   width: "60px",
@@ -60,9 +54,9 @@ const NavbarComponent: React.FC = () => {
             </Navbar.Brand>
           )}
           <Nav className="ms-auto">
-            {isAuthenticated && (
+            {isAuthenticated && profile && (
               <NavDropdown
-                title={userProfile.first_name}
+                title={profile.firstName}
                 id="basic-nav-dropdown"
                 menuVariant="light"
                 align="end"
@@ -73,9 +67,7 @@ const NavbarComponent: React.FC = () => {
                 <NavDropdown.Item onClick={() => navigateTo("/profile")}>
                   Profil
                 </NavDropdown.Item>
-                <NavDropdown.Item
-                  onClick={() => navigateTo("/active-sessions")}
-                >
+                <NavDropdown.Item onClick={() => navigateTo("/active-sessions")}>
                   Aktualna praca
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
