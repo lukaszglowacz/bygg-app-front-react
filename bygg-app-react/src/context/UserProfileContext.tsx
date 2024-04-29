@@ -1,12 +1,7 @@
 // Plik: context/UserProfileContext.tsx
 import React, { createContext, useContext, useState, ReactNode, FunctionComponent } from 'react';
+import { Profile } from '../api/interfaces/types';
 
-interface Profile {
-  id: number;
-  firstName: string;
-  lastName: string;
-  image: string;
-}
 
 interface UserProfileContextType {
   profile: Profile | null;

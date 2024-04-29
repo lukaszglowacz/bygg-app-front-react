@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { AxiosError } from "axios";
+import { useUserProfile } from "../context/UserProfileContext";
 
 interface FieldErrors {
   email?: string[];
@@ -24,6 +25,7 @@ const LoginComponent: React.FC = () => {
   const [errors, setErrors] = useState<FieldErrors>({});
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { setProfile } = useUserProfile();
 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +33,15 @@ const LoginComponent: React.FC = () => {
     setErrors(prev => ({ ...prev, [name]: undefined }));
     if (name === 'email') setEmail(value);
     if (name === 'password') setPassword(value);
+  };
+
+  const loadUserProfile = async (profileId: string) => {
+    try {
+      const response = await api.get(`/profile/${profileId}/`);
+      setProfile(response.data); // Aktualizacja kontekstu profilu
+    } catch (error) {
+      console.error("Failed to load user profile:", error);
+    }
   };
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -41,9 +52,8 @@ const LoginComponent: React.FC = () => {
       const response = await api.post("/api/token/", { email, password });
       const { access, refresh, user_id, profile_id } = response.data;
       if (access && refresh && user_id && profile_id) {
-        const expiresIn = 24 * 60 * 60 * 1000;
-        const expiresAt = new Date().getTime() + expiresIn;
-        login(access, refresh, user_id, profile_id, expiresAt);
+        login(access, refresh, user_id, profile_id, new Date().getTime() + 86400000);
+        await loadUserProfile(profile_id); // Ładowanie profilu
         navigate("/");
       }
     } catch (error) {
@@ -55,6 +65,7 @@ const LoginComponent: React.FC = () => {
       }
     }
   };
+
   return (
     <Container>
       <Row className="justify-content-center">

@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import api from "../api/api";
-import { IProfileData } from "../api/interfaces/types";
+import { Profile } from "../api/interfaces/types";
 import { useAuth } from "../context/AuthContext"; // Importujemy nasz hook do korzystania z kontekstu
 
-export const useProfileData = (): IProfileData[] => {
-  const [profiles, setProfiles] = useState<IProfileData[]>([]);
+export const useProfileData = (): Profile[] => {
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const { userId } = useAuth(); // Używamy naszego hooka useAuth do dostępu do danych kontekstu
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export const useProfileData = (): IProfileData[] => {
 
       try {
         // Zakładam, że endpoint '/profile/' może przyjąć userID jako parametr lub filtr
-        const response = await api.get<IProfileData[]>(`/profile/?userId=${userId}`);
+        const response = await api.get<Profile[]>(`/profile/?userId=${userId}`);
         setProfiles(response.data); // Zakładamy, że API zwraca bezpośrednio profil(y) użytkownika
       } catch (error) {
         console.error("Wystąpił błąd podczas pobierania danych o profilach użytkowników", error);

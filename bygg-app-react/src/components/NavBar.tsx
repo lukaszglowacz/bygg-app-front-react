@@ -12,9 +12,11 @@ const NavbarComponent: React.FC = () => {
   const location = useLocation();
   const logout = useLogout();
   const [showModal, setShowModal] = useState(false);
-  const { profile } = useUserProfile();  // Użyj profilu z kontekstu
+  const { profile } = useUserProfile(); // Użyj profilu z kontekstu
 
   useEffect(() => {
+    console.log("Profile:", profile);
+    console.log("Authenticated:", isAuthenticated);
     if (!isLoading && !isAuthenticated && location.pathname !== "/register") {
       navigate("/login");
     }
@@ -56,7 +58,7 @@ const NavbarComponent: React.FC = () => {
           <Nav className="ms-auto">
             {isAuthenticated && profile && (
               <NavDropdown
-                title={profile.firstName}
+                title={profile.first_name}
                 id="basic-nav-dropdown"
                 menuVariant="light"
                 align="end"
@@ -67,7 +69,9 @@ const NavbarComponent: React.FC = () => {
                 <NavDropdown.Item onClick={() => navigateTo("/profile")}>
                   Profil
                 </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigateTo("/active-sessions")}>
+                <NavDropdown.Item
+                  onClick={() => navigateTo("/active-sessions")}
+                >
                   Aktualna praca
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
