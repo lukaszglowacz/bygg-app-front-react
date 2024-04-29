@@ -3,9 +3,11 @@ import { Container, Row, Col, Card, Image, Form, Button, OverlayTrigger, Tooltip
 import { PencilSquare } from 'react-bootstrap-icons';
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
+import { useUserProfile } from "../context/UserProfileContext";
 
 const ProfileComponent = () => {
   const profiles = useProfileData();
+  const { loadProfile } = useUserProfile(); 
   const [selectedFiles, setSelectedFiles] = useState<Map<number, File>>(new Map());
   const [previewUrls, setPreviewUrls] = useState<Map<number, string>>(new Map());
   const [formData, setFormData] = useState<Map<number, { firstName: string; lastName: string; personnummer: string }>>(new Map());
@@ -58,6 +60,7 @@ const ProfileComponent = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Profil został zaktualizowany.");
+      loadProfile();
     } catch (error) {
       console.error("Wystąpił błąd przy aktualizacji profilu:", error);
       alert("Nie udało się zaktualizować profilu.");
