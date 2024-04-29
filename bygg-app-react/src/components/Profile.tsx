@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Image, Form, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { PencilSquare } from 'react-bootstrap-icons';
+import { PencilSquare, PersonFill, EnvelopeFill, Hash } from 'react-bootstrap-icons';
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
 import { useUserProfile } from "../context/UserProfileContext";
@@ -12,8 +12,6 @@ const ProfileComponent = () => {
   const [previewUrls, setPreviewUrls] = useState<Map<number, string>>(new Map());
   const [formData, setFormData] = useState<Map<number, { firstName: string; lastName: string; personnummer: string }>>(new Map());
   
-  
-
   useEffect(() => {
     const newFormData = new Map();
     profiles.forEach(profile => {
@@ -41,7 +39,6 @@ const ProfileComponent = () => {
     setFormData(new Map(formData.set(profileId, updated)));
   };
 
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, profileId: number) => {
     event.preventDefault();
     const payload = new FormData();
@@ -60,7 +57,7 @@ const ProfileComponent = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Profil został zaktualizowany.");
-      loadProfile();
+      loadProfile(); // Odświeżanie profilu w kontekście po aktualizacji
     } catch (error) {
       console.error("Wystąpił błąd przy aktualizacji profilu:", error);
       alert("Nie udało się zaktualizować profilu.");
@@ -72,46 +69,45 @@ const ProfileComponent = () => {
       <Row className="justify-content-center">
         {profiles.map((profile) => (
           <Col md={6} lg={4} key={profile.id} className="mb-3">
-            <Card>
-              <Card.Header className="text-center">
-                <Image src={previewUrls.get(profile.id) || profile.image} roundedCircle fluid style={{ width: "100px", height: "100px", objectFit: "cover", margin: "0 auto"}} />
-                <OverlayTrigger
-                  placement="right"
-                  overlay={<Tooltip>Edytuj zdjęcie</Tooltip>}
-                >
-                  <label className="btn btn-secondary">
+            <Card className="mt-5">
+              <Card.Header className="text-center position-relative">
+                <Image src={previewUrls.get(profile.id) || profile.image} roundedCircle fluid style={{ width: "140px", height: "140px", objectFit: "cover", margin: "0 auto", position: 'absolute', top: '-70px', left: 'calc(50% - 70px)'}} />
+                <OverlayTrigger placement="right" overlay={<Tooltip>Edytuj zdjęcie</Tooltip>}>
+                  <label className="btn btn-light position-absolute" style={{ top: '10px', right: '10px' }}>
                     <PencilSquare /> <input type="file" hidden onChange={(e) => handleFileChange(profile.id, e)} />
                   </label>
                 </OverlayTrigger>
-                <p className="mt-2 mb-0 text-muted" style={{ fontSize: '16px', fontWeight: 'bold' }}>{profile.user_email}</p>
               </Card.Header>
-              <Card.Body>
+              <Card.Body className="pt-5 mt-3">
                 <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Imię</Form.Label>
+                    <Form.Label><PersonFill /> Imię</Form.Label>
                     <Form.Control
                       type="text"
+                      placeholder="Wpisz imię"
                       value={formData.get(profile.id)?.firstName || ""}
                       onChange={(e) => handleInputChange(profile.id, 'firstName', e.target.value)}
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>Nazwisko</Form.Label>
+                    <Form.Label><EnvelopeFill /> Nazwisko</Form.Label>
                     <Form.Control
                       type="text"
+                      placeholder="Wpisz nazwisko"
                       value={formData.get(profile.id)?.lastName || ""}
                       onChange={(e) => handleInputChange(profile.id, 'lastName', e.target.value)}
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>Personnummer</Form.Label>
+                    <Form.Label><Hash /> Personnummer</Form.Label>
                     <Form.Control
                       type="text"
+                      placeholder="Wpisz personnummer"
                       value={formData.get(profile.id)?.personnummer || ""}
                       onChange={(e) => handleInputChange(profile.id, 'personnummer', e.target.value)}
                     />
                   </Form.Group>
-                  <Button variant="primary" type="submit">Zaktualizuj</Button>
+                  <Button variant="primary" type="submit" className="w-100">Zaktualizuj</Button>
                 </Form>
               </Card.Body>
             </Card>

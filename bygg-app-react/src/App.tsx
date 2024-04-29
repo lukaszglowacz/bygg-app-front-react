@@ -20,7 +20,7 @@ const App: React.FC = () => {
     <UserProfileProvider>
       <Router>
         <NavbarComponent />
-        <Container style={{ marginTop: "100px" }}>
+        <Container style={{ marginTop: "150px" }}>
           <Row>
             <Col>
               <Routes>
