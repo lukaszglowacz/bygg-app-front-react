@@ -15,8 +15,8 @@ interface Profile {
 interface Workplace {
   id: number;
   street: string;
-  street_number: string;
-  postal_code: string;
+  street_number: number;
+  postal_code: number;
   city: string;
 }
 
@@ -187,7 +187,7 @@ const WorkHour: React.FC = () => {
                             className="bi bi-geo-alt-fill"
                             style={{ marginRight: "8px" }}
                           ></i>
-                          {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
+                          {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.postal_code} ${session.workplace.city}`}
                         </span>
                       </Col>
                       <Col xs={12} md={3}>

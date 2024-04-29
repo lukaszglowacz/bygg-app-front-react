@@ -9,6 +9,9 @@ interface FilterFormProps {
   workplaces: Array<{
     id: number;
     street: string;
+    street_number: number;
+    postal_code: number;
+    city: string;
   }>;
   filters: {
     profile: string;
@@ -77,7 +80,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                 <option value="">Wybierz miejsce pracy</option>
                 {workplaces.map((workplace) => (
                   <option key={workplace.id} value={workplace.id}>
-                    {workplace.street}
+                    {workplace.street} {workplace.street_number}, {workplace.postal_code} {workplace.city}
                   </option>
                 ))}
               </Form.Control>
