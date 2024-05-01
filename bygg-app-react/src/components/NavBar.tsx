@@ -83,6 +83,9 @@ const NavbarComponent: React.FC = () => {
                 <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
                   Miejsca pracy
                 </NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigateTo("/employees")}>
+                  Dane Pracodawcy
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogoutClick}>
                   Wyloguj się

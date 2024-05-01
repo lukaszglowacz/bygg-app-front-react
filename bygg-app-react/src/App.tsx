@@ -13,6 +13,8 @@ import ActiveSessions from "./components/ActiveSessions";
 import EditWorkHour from "./components/EditWorkHour";
 import AddWorkHour from "./components/AddWorkHour";
 import AddWorkPlace from "./components/AddWorkPlace";
+import EmployeeList from "./components/EmployeeList";
+import EmployeeDetails from "./components/EmployeeDetails";
 import { UserProfileProvider } from "./context/UserProfileContext";
 
 const App: React.FC = () => {
@@ -35,6 +37,8 @@ const App: React.FC = () => {
                 <Route path="/edit-work-place/:id" element={<EditWorkPlace />} />
                 <Route path="/register" element={<RegisterUser />} />
                 <Route path="/active-sessions" element={<ActiveSessions />} />
+                <Route path="/employees" element={<EmployeeList />} />
+                <Route path="/employees/:id" element={<EmployeeDetails />} />
               </Routes>
             </Col>
           </Row>
