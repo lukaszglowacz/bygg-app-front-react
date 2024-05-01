@@ -1,29 +1,46 @@
-// src/components/EmployeeList.tsx
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ListGroup, ListGroupItem } from 'react-bootstrap';
-import { Employee } from '../api/interfaces/types';
+import React, { useState, useEffect } from 'react';
+import { Dropdown } from 'react-bootstrap';
+import api from '../api/api'; // Zaimportuj konfigurację Axios
+import { Profile } from '../api/interfaces/types'; // Załóżmy, że interfejs profilu jest już zdefiniowany
 
 const EmployeeList: React.FC = () => {
-  const navigate = useNavigate();
-  const employees: Employee[] = [
-    { id: 1, name: "Jan Kowalski", details: { hoursWorked: 40, workPlace: "Biuro Główne", startHour: "08:00", endHour: "16:00" } },
-    { id: 2, name: "Anna Nowak", details: { hoursWorked: 35, workPlace: "Oddział Warszawa", startHour: "09:00", endHour: "17:00" } },
-    { id: 3, name: "Piotr Zalewski", details: { hoursWorked: 45, workPlace: "Biuro Kraków", startHour: "10:00", endHour: "18:00" } }
-  ];
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSelectEmployee = (employeeId: number) => {
-    navigate(`/employees/${employeeId}`);
-  };
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const response = await api.get<Profile[]>('/profile');
+        setProfiles(response.data); // Zakładamy, że odpowiedź API to bezpośrednio lista profili
+        setLoading(false);
+      } catch (err: any) {
+        console.error("Error fetching profiles:", err);
+        setError('Failed to fetch profiles');
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <ListGroup>
-      {employees.map(employee => (
-        <ListGroupItem key={employee.id} action onClick={() => handleSelectEmployee(employee.id)}>
-          {employee.name}
-        </ListGroupItem>
-      ))}
-    </ListGroup>
+    <Dropdown>
+      <Dropdown.Toggle variant="success" id="dropdown-basic">
+        Employee List
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        {profiles.map(profile => (
+          <Dropdown.Item key={profile.id} href={`/profile/${profile.id}`}>
+            {profile.first_name}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
   );
 };
 
