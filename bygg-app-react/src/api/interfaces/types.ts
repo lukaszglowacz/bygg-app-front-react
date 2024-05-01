@@ -74,4 +74,16 @@ export interface Profile {
     start_time: string;
     status: string;
   }
+
+  export interface Employee {
+    id: number;
+    name: string;
+    details: {
+      hoursWorked: number;
+      workPlace: string;
+      startHour: string;
+      endHour: string;
+    };
+  }
+  
   
