@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import Accordion from 'react-bootstrap/Accordion';
-import api from '../api/api'; // Upewnij się, że ścieżka do API jest poprawna
-import { Employee } from '../api/interfaces/types'; // Upewnij się, że ten typ danych jest poprawnie zdefiniowany
-import { Button } from 'react-bootstrap';
-import { CalendarDate, Person, GeoAlt, ClockHistory, InfoCircleFill, CircleFill } from 'react-bootstrap-icons';
+import React, { useState, useEffect } from "react";
+import Accordion from "react-bootstrap/Accordion";
+import api from "../api/api"; // Upewnij się, że ścieżka do API jest poprawna
+import { Employee } from "../api/interfaces/types"; // Upewnij się, że ten typ danych jest poprawnie zdefiniowany
+import { Button } from "react-bootstrap";
+import {
+  HourglassSplit,
+  Person,
+  GeoAlt,
+  ClockHistory,
+  InfoCircleFill,
+} from "react-bootstrap-icons";
+import TimeElapsed from "./TimeElapsed";
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -13,12 +20,12 @@ const EmployeeList: React.FC = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await api.get<Employee[]>('/employee');
+        const response = await api.get<Employee[]>("/employee");
         setEmployees(response.data); // Zakładamy, że odpowiedź API to bezpośrednio lista pracowników
         setLoading(false);
       } catch (err: any) {
         console.error("Error fetching employees:", err);
-        setError('Failed to fetch employees');
+        setError("Failed to fetch employees");
         setLoading(false);
       }
     };
@@ -37,21 +44,46 @@ const EmployeeList: React.FC = () => {
             <Person className="me-2" /> {employee.full_name}
           </Accordion.Header>
           <Accordion.Body>
-          <div>
-      <InfoCircleFill className="me-2" />
-      {employee.current_session_status} 
-      {employee.current_session_status === 'Trwa' ? (
-        <CircleFill color="green" className="me-2" />
-      ) : (
-        <CircleFill color="red" className="me-2" />
-      )}
-      
-    </div>
-            <div><GeoAlt className="me-2" />{employee.current_workplace}</div>
-            <div><ClockHistory className="me-2" />{employee.current_session_start_time}</div>
-            <Button variant="link" onClick={() => alert('Szczegóły pracownika')}>
-              <InfoCircleFill className="me-2" /> Szczegóły pracownika
-            </Button>
+            <div>
+              <InfoCircleFill className="me-2" style={{ color: "blue" }} />
+              <strong>Aktualnie pracuje: </strong>
+              {employee.current_session_status === "Trwa" ? (
+                <i className="bi bi-check-circle-fill text-success"></i>
+              ) : (
+                <i className="bi bi-x-circle-fill text-danger"></i>
+              )}
+            </div>
+            {employee.current_session_status === "Trwa" && (
+              <>
+                <div>
+                  <GeoAlt className="me-2" />
+                  <strong>Miejsce pracy: </strong>
+                  {employee.current_workplace}
+                </div>
+                <div>
+                  <i className="bi bi-clock-fill me-2"></i>
+                  <strong>Rozpoczecie: </strong>
+                  {employee.current_session_start_time}
+                </div>
+                <div>
+                  <HourglassSplit className="me-2" />
+                  <strong>Uplynelo: </strong>
+                  <TimeElapsed
+                    startTime={employee.current_session_start_time}
+                  />
+                </div>
+              </>
+            )}
+
+            <div>
+              <Button
+                variant="outline-success"
+                className="btn-sm mt-3"
+                onClick={() => alert("Szczegóły pracownika")}
+              >
+                <i className="bi bi-person-exclamation me-1"></i> Pokaz wiecej
+              </Button>
+            </div>
           </Accordion.Body>
         </Accordion.Item>
       ))}

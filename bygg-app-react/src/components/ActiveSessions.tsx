@@ -5,6 +5,7 @@ import useAllLiveSessions from "../hooks/useAllLiveSessions"; // Założenie, ż
 import { useNavigate } from "react-router-dom";
 import TimeElapsed from "./TimeElapsed";
 import { Session } from "../api/interfaces/types";
+import { HourglassSplit, InfoCircleFill, PlayFill, StopFill } from "react-bootstrap-icons";
 
 const ActiveSessions: React.FC = () => {
   const sessions: Session[] = useAllLiveSessions();
@@ -22,7 +23,7 @@ const ActiveSessions: React.FC = () => {
 
   return (
     <Container>
-      <h1>Aktualnie pracują</h1>
+      <h1>Aktualna praca:</h1>
       <Accordion defaultActiveKey="0">
         {sessions.map((session, index) => (
           <Accordion.Item eventKey={String(index)} key={session.id}>
@@ -69,19 +70,19 @@ const ActiveSessions: React.FC = () => {
               </Container>
             </Accordion.Header>
             <Accordion.Body>
-              <p>
-                <strong>Status:</strong> {session.status}
+              <div>
+              <InfoCircleFill className="me-2" style={{ color: "blue" }}/>
+
+                <strong>Aktualnie pracuje: </strong>
                 {session.status === "Trwa" && (
-                  <i
-                    className="bi bi-check-circle-fill text-success"
-                    style={{ marginLeft: "10px" }}
-                  ></i>
+                  <i className="bi bi-check-circle-fill text-success"></i>
                 )}
-              </p>
-              <p>
+              </div>
+              <div>
+                <HourglassSplit className="me-2" />
                 <strong>Uplynelo:</strong>{" "}
                 <TimeElapsed startTime={session.start_time} />
-              </p>
+              </div>
             </Accordion.Body>
           </Accordion.Item>
         ))}
