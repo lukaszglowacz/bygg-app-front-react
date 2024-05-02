@@ -77,13 +77,10 @@ export interface Profile {
 
   export interface Employee {
     id: number;
-    name: string;
-    details: {
-      hoursWorked: number;
-      workPlace: string;
-      startHour: string;
-      endHour: string;
-    };
+    full_name: string;  // Format daty zależny od backendu, tutaj przyjęto string
+    current_session_start_time: string;
+    current_session_status: string;
+    current_workplace: string;
   }
   
   
