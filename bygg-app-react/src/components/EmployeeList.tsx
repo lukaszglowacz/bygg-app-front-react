@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 import api from "../api/api"; // Upewnij się, że ścieżka do API jest poprawna
 import { Employee } from "../api/interfaces/types"; // Upewnij się, że ten typ danych jest poprawnie zdefiniowany
@@ -16,6 +17,7 @@ const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -32,6 +34,10 @@ const EmployeeList: React.FC = () => {
 
     fetchEmployees();
   }, []);
+
+  const handleEmployee = (id: number) => {
+    navigate(`/employees/${id}`); // Przekierowanie do formularza edycji z ID miejsca pracy
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -79,7 +85,7 @@ const EmployeeList: React.FC = () => {
               <Button
                 variant="outline-success"
                 className="btn-sm mt-3"
-                onClick={() => alert("Szczegóły pracownika")}
+                onClick={() => handleEmployee(employee.id)}
               >
                 <i className="bi bi-person-exclamation me-1"></i> Pokaz wiecej
               </Button>

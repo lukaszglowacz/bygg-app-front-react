@@ -81,6 +81,9 @@ export interface Profile {
     current_session_start_time: string;
     current_session_status: string;
     current_workplace: string;
+    personnummer: number;
+    user_email: string;
+    image: string;
   }
   
   

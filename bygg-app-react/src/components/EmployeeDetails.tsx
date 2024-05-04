@@ -1,94 +1,69 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Button, InputGroup, FormControl } from "react-bootstrap";
-import { Download } from "react-bootstrap-icons";
+import api from "../api/api";
 import { Employee } from "../api/interfaces/types";
-
-interface Params {
-  [key: string]: string | undefined;
-}
+import useGoBack from "../hooks/useGoBack";
+import { Button, Image, Container, Row, Col } from "react-bootstrap";
 
 const EmployeeDetails: React.FC = () => {
-  const { id } = useParams<Params>();
+  const { id } = useParams<{ id: string }>();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [week, setWeek] = useState<string>("1");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const goBack = useGoBack();
 
   useEffect(() => {
-    // Sprawdzenie czy id istnieje i jest poprawne, zanim wykonamy parsowanie i szukanie pracownika
-    if (id) {
-      const employeeId = parseInt(id, 10);
-      if (!isNaN(employeeId)) {
-        const employeeData = findEmployeeById(employeeId);
-        setEmployee(employeeData);
+    const fetchEmployeeDetails = async () => {
+      try {
+        const response = await api.get<Employee>(`/employee/${id}`);
+        setEmployee(response.data);
+        setLoading(false);
+      } catch (err: any) {
+        console.error("Error fetching employee details:", err);
+        setError("Failed to fetch employee details");
+        setLoading(false);
       }
-    }
+    };
+
+    if (id) fetchEmployeeDetails();
   }, [id]);
 
-  if (!employee)
-    return <Card body>Wybierz pracownika, aby zobaczyć szczegóły.</Card>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!employee) return <div>Brak znalezionego pracownika</div>;
 
   return (
-    <Card>
-      <Card.Header>Szczegóły pracownika: {employee?.name}</Card.Header>
-      <Card.Body>
-        <InputGroup className="mb-3">
-          <FormControl
-            placeholder="Tydzień (1-52)"
-            aria-label="Tydzień"
-            type="number"
-            min="1"
-            max="52"
-            value={week}
-            onChange={(e) => setWeek(e.target.value)}
+    <Container className="my-5">
+      <Row className="justify-content-center">
+        <Col md={6} className="text-center">
+          <Image
+            src={employee?.image}
+            roundedCircle
+            fluid
+            style={{ width: "200px", height: "200px", objectFit: "cover" }}
           />
-        </InputGroup>
-        <Button
-          variant="primary"
-          onClick={() => console.log("Eksportowanie do PDF")}
-        >
-          <Download /> Eksportuj tydzień {week} do PDF
-        </Button>
-      </Card.Body>
-    </Card>
+          <h1 className="mt-3">{employee?.full_name}</h1>
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-3">
+        <Col md={6}>
+          <p>
+            <strong>Personnummer:</strong> {employee?.personnummer}
+          </p>
+          <p>
+            <strong>E-mail:</strong> {employee?.user_email}
+          </p>
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
+        <Col md={6} className="text-center">
+          <Button onClick={goBack} variant="outline-danger">
+            Cofnij
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
-};
-
-const findEmployeeById = (id: number): Employee | null => {
-  // Implementacja funkcji zależy od dostępu do danych
-  // Poniżej przykładowa implementacja
-  const employees: Employee[] = [
-    {
-      id: 1,
-      name: "Jan Kowalski",
-      details: {
-        hoursWorked: 40,
-        workPlace: "Biuro Główne",
-        startHour: "08:00",
-        endHour: "16:00",
-      },
-    },
-    {
-      id: 2,
-      name: "Anna Nowak",
-      details: {
-        hoursWorked: 35,
-        workPlace: "Oddział Warszawa",
-        startHour: "09:00",
-        endHour: "17:00",
-      },
-    },
-    {
-      id: 3,
-      name: "Piotr Zalewski",
-      details: {
-        hoursWorked: 45,
-        workPlace: "Biuro Kraków",
-        startHour: "10:00",
-        endHour: "18:00",
-      },
-    },
-  ];
-  return employees.find((employee) => employee.id === id) || null;
 };
 
 export default EmployeeDetails;
