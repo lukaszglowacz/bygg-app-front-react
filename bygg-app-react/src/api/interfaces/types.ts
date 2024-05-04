@@ -84,6 +84,15 @@ export interface Profile {
     personnummer: number;
     user_email: string;
     image: string;
+    work_session: WorkSession[];
+  }
+
+  export interface WorkSession {
+    id: number;
+    workplace: string;
+    start_time: string;
+    end_time: string;
+    total_time: string;
   }
   
   
