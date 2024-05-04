@@ -3,14 +3,17 @@ import { useParams } from "react-router-dom";
 import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
 import useGoBack from "../hooks/useGoBack";
-import { Button, Image, Container, Row, Col } from "react-bootstrap";
+import { Button, Image, Container, Row, Col, Card } from "react-bootstrap";
 import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 import { sumTotalTime } from "../api/helper/timeUtils";
+import { FaDownload } from "react-icons/fa";
 
 const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [sessions, setSessions] = useState<WorkSession[]>([]);
+  const [sessionsByDay, setSessionsByDay] = useState<
+    Map<string, WorkSession[]>
+  >(new Map());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,7 +28,14 @@ const EmployeeDetails: React.FC = () => {
     try {
       const response = await api.get<Employee>(`/employee/${id}`);
       setEmployee(response.data);
-      updateFilteredSessions(response.data.work_session);
+      const filteredSessions = filterSessionsByMonth(
+        response.data.work_session
+      );
+      const sessionsMap = groupSessionsByDay(filteredSessions);
+      setSessionsByDay(sessionsMap);
+      const totalTimeCalculated = sumTotalTime(filteredSessions);
+      setTotalTime(totalTimeCalculated);
+      setLoading(false);
     } catch (err: any) {
       console.error("Error fetching employee details:", err);
       setError("Failed to fetch employee details");
@@ -33,31 +43,112 @@ const EmployeeDetails: React.FC = () => {
     }
   };
 
-  const updateFilteredSessions = (workSessions: WorkSession[]) => {
-    const filteredSessions = filterSessionsByMonth(workSessions);
-    setSessions(filteredSessions);
-    const totalTimeCalculated = sumTotalTime(filteredSessions);
-    setTotalTime(totalTimeCalculated);
-    setLoading(false);
+  const daysInMonth = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // JavaScript miesiące są od 0, więc +1
+    return new Array(new Date(year, month, 0).getDate())
+      .fill(null)
+      .map(
+        (_, i) =>
+          `${year}-${month.toString().padStart(2, "0")}-${(i + 1)
+            .toString()
+            .padStart(2, "0")}`
+      );
+  };
+
+  const displayDaysWithSessions = () => {
+    const days = daysInMonth();
+    return days.map((day) => {
+      const daySessions = sessionsByDay.get(day) || [];
+      return (
+        <Row key={day} className="mb-3">
+          <Col
+            xs={12}
+            className="d-flex justify-content-between align-items-center bg-light p-2"
+          >
+            <div>{day}</div>
+            <ChevronRight />
+          </Col>
+          {daySessions.length > 0 ? (
+            daySessions.map((session) => (
+              <Col
+                xs={12}
+                className="d-flex justify-content-between align-items-center p-2"
+                key={session.id}
+              >
+                <div>
+                  <div>
+                    <small>{session.workplace.split(",")[0]}</small>
+                  </div>{" "}
+                  {/* Ulica i numer */}
+                  <small className="text-muted">
+                    {session.workplace.split(",").slice(1).join(",")}
+                  </small>{" "}
+                  {/* Miasto i kod */}
+                </div>
+                <div>
+                  <small>{session.total_time}</small>
+                </div>
+              </Col>
+            ))
+          ) : (
+            <Col xs={12} className="text-center p-2">
+              <small>Brak pracy</small>
+            </Col>
+          )}
+        </Row>
+      );
+    });
   };
 
   const filterSessionsByMonth = (sessions: WorkSession[]): WorkSession[] => {
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1;
-    return sessions.filter(session => {
-      const sessionDate = new Date(session.start_time);
-      return sessionDate.getFullYear() === year && sessionDate.getMonth() + 1 === month;
+    const month = currentDate.getMonth() + 1; // JavaScript month is 0-indexed, add 1 for correct comparison
+    return sessions.filter((session) => {
+      const sessionStart = new Date(session.start_time);
+      return (
+        sessionStart.getFullYear() === year &&
+        sessionStart.getMonth() + 1 === month
+      );
     });
   };
 
+  const groupSessionsByDay = (
+    sessions: WorkSession[]
+  ): Map<string, WorkSession[]> => {
+    const map = new Map<string, WorkSession[]>();
+    sessions.forEach((session) => {
+      const day = session.start_time.split(" ")[0].replace(/\./g, "-"); // Assuming start_time is 'YYYY-MM-DD HH:MM'
+      const existing = map.get(day) || [];
+      existing.push(session);
+      map.set(day, existing);
+    });
+    return map;
+  };
+
   const handleMonthChange = (offset: number) => {
-    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
+    const newDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + offset,
+      1
+    );
     setCurrentDate(newDate);
+    if (employee) {
+      const newFilteredSessions = filterSessionsByMonth(employee.work_session);
+      const newSessionsMap = groupSessionsByDay(newFilteredSessions);
+      setSessionsByDay(newSessionsMap);
+      const newTotalTime = sumTotalTime(newFilteredSessions);
+      setTotalTime(newTotalTime);
+    }
   };
 
   useEffect(() => {
     if (employee) {
-      updateFilteredSessions(employee.work_session);
+      const filteredSessions = filterSessionsByMonth(employee.work_session);
+      const sessionsMap = groupSessionsByDay(filteredSessions);
+      setSessionsByDay(sessionsMap);
+      const newTotalTime = sumTotalTime(filteredSessions);
+      setTotalTime(newTotalTime);
     }
   }, [currentDate]); // This will trigger re-filtering and re-summing when currentDate changes.
 
@@ -75,47 +166,58 @@ const EmployeeDetails: React.FC = () => {
             fluid
             style={{ width: "200px", height: "200px", objectFit: "cover" }}
           />
-          <h1 className="mt-3">{employee?.full_name}</h1>
         </Col>
       </Row>
       <Row className="justify-content-center mt-3">
         <Col md={6}>
-          <p>
-            <strong>Personnummer:</strong> {employee?.personnummer}
-          </p>
-          <p>
-            <strong>E-mail:</strong> {employee?.user_email}
-          </p>
+          <Card className="mt-3 mb-3">
+            <Card.Header
+              as="h6"
+              className="d-flex justify-content-between align-items-center"
+            >
+              Zestawienie miesięczne <FaDownload style={{ color: "grey" }} />
+            </Card.Header>
+            <Card.Body>
+              <Card.Text className="small text-muted">
+                {employee?.full_name}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                {employee?.personnummer}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                {employee?.user_email}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                <strong>{totalTime}</strong>
+              </Card.Text>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
+
       <Row className="justify-content-center mt-3">
         <Col md={6} className="text-center">
-          <Button onClick={() => handleMonthChange(-1)} variant="outline-secondary">
+          <Button
+            onClick={() => handleMonthChange(-1)}
+            variant="outline-secondary"
+          >
             <ChevronLeft />
           </Button>
           <span className="mx-3">
-            {currentDate.toLocaleString("default", { month: "long" })} {currentDate.getFullYear()}
+            {currentDate.toLocaleString("default", { month: "long" })}{" "}
+            {currentDate.getFullYear()}
           </span>
-          <Button onClick={() => handleMonthChange(1)} variant="outline-secondary">
+          <Button
+            onClick={() => handleMonthChange(1)}
+            variant="outline-secondary"
+          >
             <ChevronRight />
           </Button>
         </Col>
       </Row>
-      <Row>
-        <Col>
-          <p>
-            <strong>Laczny czas pracy w miesiacu:</strong> {totalTime}
-          </p>
-        </Col>
-      </Row>
+
       <Row className="justify-content-center mt-3">
-        <Col md={6}>
-          {sessions.map(session => (
-            <div key={session.id}>
-              <p>{session.workplace}: {session.start_time} - {session.end_time} ({session.total_time})</p>
-            </div>
-          ))}
-        </Col>
+        <Col md={6}>{displayDaysWithSessions()}</Col>
       </Row>
       <Row className="justify-content-center">
         <Col md={6} className="text-center">
