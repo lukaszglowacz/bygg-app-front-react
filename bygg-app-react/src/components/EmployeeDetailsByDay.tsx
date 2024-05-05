@@ -1,87 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import api from '../api/api';
-import { Employee, WorkSession } from '../api/interfaces/types';
-import { Button, Image, Container, Row, Col, Card } from 'react-bootstrap';
-import { ChevronLeft, ChevronRight } from 'react-bootstrap-icons';
-import { FaDownload } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import api from "../api/api";
+import { WorkSession, Employee } from "../api/interfaces/types";
+import {
+  Container,
+  Row,
+  Col,
+  Alert,
+  ListGroup,
+  Button,
+  Card,
+} from "react-bootstrap";
+import {
+  House,
+  ClockHistory,
+  ClockFill,
+  HourglassSplit,
+  PersonBadge,
+  Envelope,
+  PersonCircle,
+} from "react-bootstrap-icons";
+import useGoBack from "../hooks/useGoBack";
+import { FaDownload } from "react-icons/fa";
+import { sumTotalTime } from "../api/helper/timeUtils";
+import {} from "react-bootstrap-icons";
 
 const EmployeeDetailsByDay: React.FC = () => {
-  const { id, date } = useParams<{ id: string; date: string }>();
+  const { id, date } = useParams<{ id: string; date?: string }>();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [daySessions, setDaySessions] = useState<WorkSession[]>([]);
-  const [totalTime, setTotalTime] = useState<string>('0 h, 0 min');
+  const [sessions, setSessions] = useState<WorkSession[]>([]);
+  const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const history = useHistory();
+  const goBack = useGoBack();
 
   useEffect(() => {
-    fetchEmployeeDetailsByDay();
+    const fetchEmployeeAndSessions = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get<Employee>(`/employee/${id}`);
+        setEmployee(response.data);
+        const daySessions = response.data.work_session.filter(
+          (session) =>
+            new Date(session.start_time).toISOString().split("T")[0] === date
+        );
+        setSessions(daySessions);
+        setTotalTime(sumTotalTime(daySessions)); // Calculate the total time of the filtered sessions
+        setLoading(false);
+      } catch (err) {
+        setError("Nie udało się pobrać danych sesji pracy.");
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeAndSessions();
   }, [id, date]);
 
-  const fetchEmployeeDetailsByDay = async () => {
-    try {
-      const response = await api.get<Employee>(`/employee/${id}/day/${date}`);
-      setEmployee(response.data);
-      setDaySessions(response.data.work_session);
-      setTotalTime(response.data.total_time);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching employee day details:', err);
-      setError('Failed to fetch employee day details');
-      setLoading(false);
-    }
+  const formatTime = (dateTime: string) => {
+    return dateTime.split(" ")[1].slice(0, 5); // Only displaying HH:MM
   };
-
-  const handleDayChange = (offset: number) => {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + offset);
-    history.push(`/employee/${id}/${newDate.toISOString().split('T')[0]}`);
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!employee) return <div>Brak znalezionego pracownika</div>;
 
   return (
-    <Container className="my-5">
-      <Row className="justify-content-center">
-        <Col md={6} className="text-center">
-          <Image src={employee?.image} roundedCircle fluid style={{ width: "200px", height: "200px", objectFit: "cover" }} />
-        </Col>
-      </Row>
+    <Container className="mt-4">
+      <h2 className="mb-3 text-center">{date}</h2>
       <Row className="justify-content-center mt-3">
         <Col md={6}>
-          <Card className="text-center mt-4">
-            <Card.Header as="h5" className="text-muted">Zestawienie dnia {date}</Card.Header>
+          <Card className="mt-3 mb-3">
+            <Card.Header
+              as="h6"
+              className="d-flex justify-content-between align-items-center"
+            >
+              Zestawienie dzienne <FaDownload style={{ color: "grey" }} />
+            </Card.Header>
             <Card.Body>
-              {daySessions.map(session => (
-                <Card.Text key={session.id} className="text-left">
-                  <strong>Miejsce pracy:</strong> {session.workplace}
-                  <br />
-                  <strong>Rozpoczęcie:</strong> {session.start_time}
-                  <br />
-                  <strong>Zakończenie:</strong> {session.end_time}
-                  <br />
-                  <strong>Czas pracy:</strong> {session.total_time}
-                </Card.Text>
-              ))}
-              <Card.Text>
-                <strong>Suma godzin w dniu:</strong> {totalTime}
-              </Card.Text>
+              <Card.Text className="small text-muted"><PersonCircle className="me-2"/>{employee?.full_name}</Card.Text>
+              <Card.Text className="small text-muted"><PersonBadge className="me-2"/>{employee?.personnummer}</Card.Text>
+              <Card.Text className="small text-muted"><Envelope className="me-2"/>{employee?.user_email}</Card.Text>
+              <Card.Text className="small text-muted"><HourglassSplit className="me-2"/><strong>{totalTime}</strong></Card.Text>
             </Card.Body>
           </Card>
         </Col>
       </Row>
-      <Row className="justify-content-center mt-3">
-        <Col md={6} className="text-center">
-          <Button onClick={() => handleDayChange(-1)} variant="outline-secondary"><ChevronLeft /></Button>
-          <Button onClick={() => handleDayChange(1)} variant="outline-secondary" className="ml-3"><ChevronRight /></Button>
-        </Col>
-      </Row>
-      <Row className="justify-content-center">
-        <Col md={6} className="text-center">
-          <Button onClick={() => history.goBack()} variant="outline-danger">Cofnij</Button>
+      {loading ? (
+        <Alert variant="info">Ładowanie danych...</Alert>
+      ) : error ? (
+        <Alert variant="danger">{error}</Alert>
+      ) : (
+        <ListGroup className="mb-4">
+          {sessions.length > 0 ? (
+            sessions.map((session) => (
+              <Row className="justify-content-center">
+                <Col md={6}>
+                  <ListGroup.Item key={session.id} className="mb-2 small">
+                    <Row className="align-items-center">
+                      <Col xs={12}>
+                        <House className="me-2" /> {session.workplace}
+                      </Col>
+                      <Col xs={12}>
+                        <ClockFill className="me-2" />{" "}
+                        {formatTime(session.start_time)}
+                      </Col>
+                      <Col xs={12}>
+                        <ClockHistory className="me-2" />{" "}
+                        {formatTime(session.end_time)}
+                      </Col>
+                      <Col xs={12}>
+                        <HourglassSplit className="me-2" /> {session.total_time}
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                </Col>
+              </Row>
+            ))
+          ) : (
+            <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
+          )}
+        </ListGroup>
+      )}
+      <Row>
+        <Col md={{ span: 4, offset: 4 }} className="text-center">
+          <Button onClick={goBack} variant="outline-secondary">
+            Cofnij
+          </Button>
         </Col>
       </Row>
     </Container>
