@@ -1,13 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import api from '../api/api';
-import { ProfileWorksession } from '../api/interfaces/types';
-import useGoBack from '../hooks/useGoBack';
-import { Button, Container, Row, Col, Card } from 'react-bootstrap';
-import { ChevronLeft, ChevronRight } from 'react-bootstrap-icons';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../api/api";
+import { ProfileWorksession, Profile } from "../api/interfaces/types";
+import useGoBack from "../hooks/useGoBack";
+import { Button, Container, Row, Col, Card } from "react-bootstrap";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PersonCircle,
+  PersonBadge,
+  Envelope,
+  HourglassSplit,
+} from "react-bootstrap-icons";
 
 const WorkHour: React.FC = () => {
-  const [sessionsByDay, setSessionsByDay] = useState<Map<string, ProfileWorksession[]>>(new Map());
+  const [sessionsByDay, setSessionsByDay] = useState<
+    Map<string, ProfileWorksession[]>
+  >(new Map());
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,13 +30,20 @@ const WorkHour: React.FC = () => {
 
   const fetchWorkSessions = async () => {
     try {
-      const response = await api.get<ProfileWorksession[]>('/profile/worksessions');
+      const response = await api.get<ProfileWorksession[]>(
+        "/profile/worksessions"
+      );
       const filteredSessions = filterSessionsByMonth(response.data);
       const sessionsMap = groupSessionsByDay(filteredSessions);
+      const sessions = response.data;
+      if (sessions.length > 0) {
+        setProfile(sessions[0].profile); // Set profile data from the first session
+      }
+
       setSessionsByDay(sessionsMap);
       setLoading(false);
     } catch (error: any) {
-      setError('Failed to fetch work sessions');
+      setError("Failed to fetch work sessions");
       setLoading(false);
     }
   };
@@ -55,7 +72,7 @@ const WorkHour: React.FC = () => {
             className="d-flex justify-content-between align-items-center bg-light p-2"
           >
             <div>{day}</div>
-            <ChevronRight onClick={() => navigate(`/work-hours/day/${day}`)}/>
+            <ChevronRight onClick={() => navigate(`/work-hours/day/${day}`)} />
           </Col>
           {daySessions.length > 0 ? (
             daySessions.map((session) => (
@@ -66,10 +83,13 @@ const WorkHour: React.FC = () => {
               >
                 <div>
                   <div>
-                    <small>{session.workplace.street}, {session.workplace.street_number}</small>
+                    <small>
+                      {session.workplace.street} {" "}
+                      {session.workplace.street_number}
+                    </small>
                   </div>
                   <small className="text-muted">
-                    {session.workplace.city}, {session.workplace.postal_code}
+                    {session.workplace.postal_code} {session.workplace.city}
                   </small>
                 </div>
                 <div>
@@ -87,19 +107,22 @@ const WorkHour: React.FC = () => {
     });
   };
 
-  const filterSessionsByMonth = (sessions: ProfileWorksession[]): ProfileWorksession[] => {
+  const filterSessionsByMonth = (
+    sessions: ProfileWorksession[]
+  ): ProfileWorksession[] => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth(); // JavaScript month is 0-indexed
     return sessions.filter((session) => {
       const sessionDate = new Date(session.start_time); // Directly use the ISO-like format
       return (
-        sessionDate.getFullYear() === year &&
-        sessionDate.getMonth() === month
+        sessionDate.getFullYear() === year && sessionDate.getMonth() === month
       );
     });
   };
-  
-  const groupSessionsByDay = (sessions: ProfileWorksession[]): Map<string, ProfileWorksession[]> => {
+
+  const groupSessionsByDay = (
+    sessions: ProfileWorksession[]
+  ): Map<string, ProfileWorksession[]> => {
     const map = new Map<string, ProfileWorksession[]>();
     sessions.forEach((session) => {
       const day = session.start_time.split(" ")[0]; // Split and take the date part directly
@@ -109,9 +132,13 @@ const WorkHour: React.FC = () => {
     });
     return map;
   };
-  
+
   const handleMonthChange = (offset: number) => {
-    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
+    const newDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + offset,
+      1
+    );
     setCurrentDate(newDate);
   };
 
@@ -120,16 +147,44 @@ const WorkHour: React.FC = () => {
 
   return (
     <Container className="my-5">
+      {profile && (
+        <Row>
+          <Col>
+            <Card className="mb-3">
+              <Card.Body>
+                <Card.Text className="small text-muted">
+                  <PersonCircle className="me-2" />
+                  {profile.full_name}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <PersonBadge className="me-2" />
+                  {profile.personnummer}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <Envelope className="me-2" />
+                  {profile.user_email}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      )}
       <Row className="justify-content-center mt-3">
         <Col md={6} className="text-center">
-          <Button onClick={() => handleMonthChange(-1)} variant="outline-secondary">
+          <Button
+            onClick={() => handleMonthChange(-1)}
+            variant="outline-secondary"
+          >
             <ChevronLeft />
           </Button>
           <span className="mx-3">
             {currentDate.toLocaleString("default", { month: "long" })}{" "}
             {currentDate.getFullYear()}
           </span>
-          <Button onClick={() => handleMonthChange(1)} variant="outline-secondary">
+          <Button
+            onClick={() => handleMonthChange(1)}
+            variant="outline-secondary"
+          >
             <ChevronRight />
           </Button>
         </Col>
