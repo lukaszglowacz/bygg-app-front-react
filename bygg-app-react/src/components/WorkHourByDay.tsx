@@ -7,8 +7,13 @@ import { Container, Row, Col, Card, Alert, Button, ListGroup } from "react-boots
 import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle } from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
 
+interface Params {
+    date: string;
+  }
+
 const WorkHourByDay: React.FC = () => {
   const { date } = useParams<{ date: string }>();
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState<ProfileWorksession[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -43,13 +48,26 @@ const WorkHourByDay: React.FC = () => {
     return dateTime.split(" ")[1].slice(0, 5); // Display only HH:MM
   };
 
+  const changeDay = (offset: number): void => {
+    const currentDate = new Date(date);
+    currentDate.setDate(currentDate.getDate() + offset);
+    const newDate = currentDate.toISOString().split("T")[0];
+    navigate(`/work-hours/day/${newDate}`);
+  };
+
   if (loading) return <Alert variant="info">Ładowanie danych...</Alert>;
   if (error) return <Alert variant="danger">{error}</Alert>;
-  if (!sessions.length) return <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>;
+  
 
   return (
     <Container className="mt-4">
       <h2 className="mb-3 text-center">{date}</h2>
+      <Row className="justify-content-center">
+        <Col xs={12} className="text-center">
+          <Button onClick={() => changeDay(-1)} variant="secondary">Poprzedni dzień</Button>
+          <Button onClick={() => changeDay(1)} variant="secondary" className="ms-2">Następny dzień</Button>
+        </Col>
+      </Row>
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>
