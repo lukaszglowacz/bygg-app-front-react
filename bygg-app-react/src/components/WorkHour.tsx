@@ -48,7 +48,6 @@ const WorkHour: React.FC = () => {
     const days = daysInMonth();
     return days.map((day) => {
       const daySessions = sessionsByDay.get(day) || [];
-      console.log(`Displaying sessions on: ${day}, found: ${daySessions.length}`);
       return (
         <Row key={day} className="mb-3">
           <Col
@@ -93,7 +92,6 @@ const WorkHour: React.FC = () => {
     const month = currentDate.getMonth(); // JavaScript month is 0-indexed
     return sessions.filter((session) => {
       const sessionDate = new Date(session.start_time); // Directly use the ISO-like format
-      console.log(`Session date: ${sessionDate.toISOString()} | Session year: ${sessionDate.getFullYear()} and month: ${sessionDate.getMonth() + 1}`);
       return (
         sessionDate.getFullYear() === year &&
         sessionDate.getMonth() === month
@@ -101,12 +99,10 @@ const WorkHour: React.FC = () => {
     });
   };
   
-  
   const groupSessionsByDay = (sessions: ProfileWorksession[]): Map<string, ProfileWorksession[]> => {
     const map = new Map<string, ProfileWorksession[]>();
     sessions.forEach((session) => {
       const day = session.start_time.split(" ")[0]; // Split and take the date part directly
-      console.log(`Grouping session for: ${day}`); // Debug log
       const existing = map.get(day) || [];
       existing.push(session);
       map.set(day, existing);
@@ -114,7 +110,6 @@ const WorkHour: React.FC = () => {
     return map;
   };
   
-
   const handleMonthChange = (offset: number) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
     setCurrentDate(newDate);
