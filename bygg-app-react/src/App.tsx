@@ -6,6 +6,7 @@ import ProfileComponent from "./components/Profile";
 import LoginComponent from "./components/Login";
 import NavbarComponent from "./components/NavBar";
 import WorkHour from "./components/WorkHour";
+import WorkHourByDay from "./components/WorkHourByDay";
 import WorkPlace from "./components/WorkPlace";
 import EditWorkPlace from "./components/EditWorkPlace";
 import RegisterUser from "./components/RegisterUser";
@@ -32,7 +33,7 @@ const App: React.FC = () => {
                 <Route path="/login" element={<LoginComponent />} />
                 <Route path="/add-work-hour" element={<AddWorkHour />} />
                 <Route path="/work-hours" element={<WorkHour />} />
-                <Route path="/work-hours/day/:date" element={<EmployeeDetailsByDay />} />
+                <Route path="/work-hours/day/:date" element={<WorkHourByDay />} />
                 <Route path="/edit-work-hour/:id" element={<EditWorkHour />} />
                 <Route path="/work-places" element={<WorkPlace />} />
                 <Route path="/add-work-place" element={<AddWorkPlace />} />
