@@ -12,6 +12,7 @@ import {
   Envelope,
   HourglassSplit,
 } from "react-bootstrap-icons";
+import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
 
 const WorkHour: React.FC = () => {
   const [sessionsByDay, setSessionsByDay] = useState<
@@ -19,6 +20,7 @@ const WorkHour: React.FC = () => {
   >(new Map());
   const [profile, setProfile] = useState<Profile | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -41,6 +43,8 @@ const WorkHour: React.FC = () => {
       }
 
       setSessionsByDay(sessionsMap);
+      const totalTimeCalculated = sumTotalTimeForProfile(filteredSessions);
+      setTotalTime(totalTimeCalculated);
       setLoading(false);
     } catch (error: any) {
       setError("Failed to fetch work sessions");
@@ -84,7 +88,7 @@ const WorkHour: React.FC = () => {
                 <div>
                   <div>
                     <small>
-                      {session.workplace.street} {" "}
+                      {session.workplace.street}{" "}
                       {session.workplace.street_number}
                     </small>
                   </div>
@@ -93,7 +97,7 @@ const WorkHour: React.FC = () => {
                   </small>
                 </div>
                 <div>
-                  <small>{session.total_time}</small>
+                  <small style={{ color: "green" }}>{session.total_time}</small>
                 </div>
               </Col>
             ))
@@ -148,9 +152,15 @@ const WorkHour: React.FC = () => {
   return (
     <Container className="my-5">
       {profile && (
-        <Row>
-          <Col>
-            <Card className="mb-3">
+        <Row className="justify-content-center mt-3">
+          <Col md={6}>
+            <Card className="mt-3 mb-3">
+              <Card.Header
+                as="h6"
+                className="d-flex justify-content-between align-items-center"
+              >
+                Zestawienie miesięczne
+              </Card.Header>
               <Card.Body>
                 <Card.Text className="small text-muted">
                   <PersonCircle className="me-2" />
@@ -163,6 +173,10 @@ const WorkHour: React.FC = () => {
                 <Card.Text className="small text-muted">
                   <Envelope className="me-2" />
                   {profile.user_email}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <HourglassSplit className="me-2" />
+                  <strong>{totalTime}</strong>
                 </Card.Text>
               </Card.Body>
             </Card>

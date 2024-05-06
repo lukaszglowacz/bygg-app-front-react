@@ -88,7 +88,7 @@ const EmployeeDetails: React.FC = () => {
                   {/* Miasto i kod */}
                 </div>
                 <div>
-                  <small>{session.total_time}</small>
+                  <small style={{ color: 'green' }}>{session.total_time}</small>
                 </div>
               </Col>
             ))
