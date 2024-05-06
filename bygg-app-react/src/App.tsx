@@ -32,6 +32,7 @@ const App: React.FC = () => {
                 <Route path="/login" element={<LoginComponent />} />
                 <Route path="/add-work-hour" element={<AddWorkHour />} />
                 <Route path="/work-hours" element={<WorkHour />} />
+                <Route path="/work-hours/day/:date" element={<EmployeeDetailsByDay />} />
                 <Route path="/edit-work-hour/:id" element={<EditWorkHour />} />
                 <Route path="/work-places" element={<WorkPlace />} />
                 <Route path="/add-work-place" element={<AddWorkPlace />} />

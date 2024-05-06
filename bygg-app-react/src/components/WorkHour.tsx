@@ -1,246 +1,153 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Alert, Button, Accordion } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import api from "../api/api";
-import { FilterForm } from "./FilterForm";
-import useGoBack from "../hooks/useGoBack";
-import { convertUTCToLocalTime } from "../api/helper/ConvertTime";
-
-interface Profile {
-  id: number;
-  full_name: string;
-  personnummer: string;
-}
-
-interface Workplace {
-  id: number;
-  street: string;
-  street_number: number;
-  postal_code: number;
-  city: string;
-}
-
-interface WorkSession {
-  id: number;
-  profile: Profile;
-  workplace: Workplace;
-  start_time: string;
-  end_time: string;
-  total_time: string;
-}
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import api from '../api/api';
+import { ProfileWorksession } from '../api/interfaces/types';
+import useGoBack from '../hooks/useGoBack';
+import { Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { ChevronLeft, ChevronRight } from 'react-bootstrap-icons';
 
 const WorkHour: React.FC = () => {
-  const navigate = useNavigate();
-  const [workSessions, setWorkSessions] = useState<WorkSession[]>([]);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
+  const [sessionsByDay, setSessionsByDay] = useState<Map<string, ProfileWorksession[]>>(new Map());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({
-    profile: "",
-    workplace: "",
-    start_min: "",
-    start_max: "",
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
   const goBack = useGoBack();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [profileResponse, workplaceResponse, sessionResponse] =
-          await Promise.all([
-            api.get<Profile[]>("/profile"),
-            api.get<Workplace[]>("/workplace"),
-            api.get<WorkSession[]>("/worksession/"),
-          ]);
-        setProfiles(profileResponse.data);
-        setWorkplaces(workplaceResponse.data);
-        const correctedSessions = sessionResponse.data.map(session => ({
-          ...session,
-          start_time: convertUTCToLocalTime(session.start_time),
-          end_time: convertUTCToLocalTime(session.end_time)
-        }));
-        setWorkSessions(correctedSessions);
-      } catch (error) {
-        setError("Nie udało się załadować danych sesji pracy.");
-      }
-    };
-    fetchData();
-  }, []);
+    fetchWorkSessions();
+  }, [currentDate]);
 
-  const fetchWorkSessionsWithFilters = async () => {
+  const fetchWorkSessions = async () => {
     try {
-      const queryParams = new URLSearchParams(filters).toString();
-      const response = await api.get(`/worksession/?${queryParams}`);
-      setWorkSessions(response.data);
-    } catch (error) {
-      setError("Nie udało się załadować danych sesji pracy z filtrami.");
+      const response = await api.get<ProfileWorksession[]>('/profile/worksessions');
+      const filteredSessions = filterSessionsByMonth(response.data);
+      const sessionsMap = groupSessionsByDay(filteredSessions);
+      setSessionsByDay(sessionsMap);
+      setLoading(false);
+    } catch (error: any) {
+      setError('Failed to fetch work sessions');
+      setLoading(false);
     }
   };
 
+  const daysInMonth = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // JavaScript miesiące są od 0, więc +1
+    return new Array(new Date(year, month, 0).getDate())
+      .fill(null)
+      .map(
+        (_, i) =>
+          `${year}-${month.toString().padStart(2, "0")}-${(i + 1)
+            .toString()
+            .padStart(2, "0")}`
+      );
+  };
+
+  const displayDaysWithSessions = () => {
+    const days = daysInMonth();
+    return days.map((day) => {
+      const daySessions = sessionsByDay.get(day) || [];
+      console.log(`Displaying sessions on: ${day}, found: ${daySessions.length}`);
+      return (
+        <Row key={day} className="mb-3">
+          <Col
+            xs={12}
+            className="d-flex justify-content-between align-items-center bg-light p-2"
+          >
+            <div>{day}</div>
+            <ChevronRight onClick={() => navigate(`/work-hours/day/${day}`)}/>
+          </Col>
+          {daySessions.length > 0 ? (
+            daySessions.map((session) => (
+              <Col
+                xs={12}
+                className="d-flex justify-content-between align-items-center p-2"
+                key={session.id}
+              >
+                <div>
+                  <div>
+                    <small>{session.workplace.street}, {session.workplace.street_number}</small>
+                  </div>
+                  <small className="text-muted">
+                    {session.workplace.city}, {session.workplace.postal_code}
+                  </small>
+                </div>
+                <div>
+                  <small>{session.total_time}</small>
+                </div>
+              </Col>
+            ))
+          ) : (
+            <Col xs={12} className="text-center p-2">
+              <small>Brak pracy</small>
+            </Col>
+          )}
+        </Row>
+      );
+    });
+  };
+
+  const filterSessionsByMonth = (sessions: ProfileWorksession[]): ProfileWorksession[] => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth(); // JavaScript month is 0-indexed
+    return sessions.filter((session) => {
+      const sessionDate = new Date(session.start_time); // Directly use the ISO-like format
+      console.log(`Session date: ${sessionDate.toISOString()} | Session year: ${sessionDate.getFullYear()} and month: ${sessionDate.getMonth() + 1}`);
+      return (
+        sessionDate.getFullYear() === year &&
+        sessionDate.getMonth() === month
+      );
+    });
+  };
+  
+  
+  const groupSessionsByDay = (sessions: ProfileWorksession[]): Map<string, ProfileWorksession[]> => {
+    const map = new Map<string, ProfileWorksession[]>();
+    sessions.forEach((session) => {
+      const day = session.start_time.split(" ")[0]; // Split and take the date part directly
+      console.log(`Grouping session for: ${day}`); // Debug log
+      const existing = map.get(day) || [];
+      existing.push(session);
+      map.set(day, existing);
+    });
+    return map;
+  };
   
 
-  if (error) return <Alert variant="danger">Błąd: {error}</Alert>;
+  const handleMonthChange = (offset: number) => {
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
+    setCurrentDate(newDate);
+  };
 
-  if (!workSessions.length) {
-    return (
-      <Container>
-        <Row>
-          <Col>
-            <h1 className="text-center">Sesje pracy</h1>
-          </Col>
-        </Row>
-
-        <Row className="mb-3">
-          <Col>
-            <Button
-              variant="outline-dark"
-              onClick={() => navigate("/add-work-hour")}
-              className="w-100 w-md-auto"
-            >
-              Dodaj sesje pracy
-            </Button>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col>
-            <FilterForm
-              profiles={profiles}
-              workplaces={workplaces}
-              filters={filters}
-              setFilters={setFilters}
-              fetchWorkSessionsWithFilters={fetchWorkSessionsWithFilters}
-            />
-          </Col>
-        </Row>
-
-        <Row lg={1} className="g-4">
-          <Col>
-            <p className="text-center">Brak rekordow. Nie pracowales wtedy.</p>
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <Container>
-      <Row>
-        <Col>
-          <h1 className="text-center">Sesje pracy</h1>
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col>
-          <Button
-            variant="outline-dark"
-            onClick={() => navigate("/add-work-hour")}
-            className="w-100 w-md-auto"
-          >
-            Dodaj sesje pracy
+    <Container className="my-5">
+      <Row className="justify-content-center mt-3">
+        <Col md={6} className="text-center">
+          <Button onClick={() => handleMonthChange(-1)} variant="outline-secondary">
+            <ChevronLeft />
+          </Button>
+          <span className="mx-3">
+            {currentDate.toLocaleString("default", { month: "long" })}{" "}
+            {currentDate.getFullYear()}
+          </span>
+          <Button onClick={() => handleMonthChange(1)} variant="outline-secondary">
+            <ChevronRight />
           </Button>
         </Col>
       </Row>
 
-      <Row>
-        <Col>
-          <FilterForm
-            profiles={profiles}
-            workplaces={workplaces}
-            filters={filters}
-            setFilters={setFilters}
-            fetchWorkSessionsWithFilters={fetchWorkSessionsWithFilters}
-          />
-        </Col>
+      <Row className="justify-content-center mt-3">
+        <Col md={6}>{displayDaysWithSessions()}</Col>
       </Row>
-      <Row>
-        <Col>
-          <Accordion defaultActiveKey="0">
-            {workSessions.map((session, index) => (
-              <Accordion.Item eventKey={String(index)} key={session.id}>
-                <Accordion.Header>
-                  <Container>
-                    <Row>
-                      <Col xs={12} md={3}>
-                        <span className="date-span">
-                          <i
-                            className="bi bi-calendar-event-fill"
-                            style={{ marginRight: "8px" }}
-                          ></i>
-                          {session.start_time.split(" ")[0]}
-                        </span>
-                      </Col>
-                      <Col xs={12} md={3}>
-                        <span className="name-span">
-                          <i
-                            className="bi bi-person-fill"
-                            style={{ marginRight: "8px" }}
-                          ></i>
-                          {session.profile.full_name}
-                        </span>
-                      </Col>
-                      <Col xs={12} md={3}>
-                        <span className="location-span">
-                          <i
-                            className="bi bi-geo-alt-fill"
-                            style={{ marginRight: "8px" }}
-                          ></i>
-                          {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.postal_code} ${session.workplace.city}`}
-                        </span>
-                      </Col>
-                      <Col xs={12} md={3}>
-                        <span className="time-span text-muted">
-                          <i
-                            className="bi bi-clock-fill"
-                            style={{ marginRight: "8px" }}
-                          ></i>
-                          {session.total_time}
-                        </span>
-                      </Col>
-                    </Row>
-                  </Container>
-                </Accordion.Header>
-
-                <Accordion.Body>
-                  <Container>
-                    <Row className="align-items-center">
-                      <Col className="text-center">
-                        <div>
-                          <i
-                            className="bi bi-clock-fill"
-                            style={{ fontSize: "1.5rem" }}
-                          ></i>
-                          <div>{session.start_time.split(" ")[1]}</div>
-                        </div>
-                      </Col>
-                      <Col className="text-center d-flex align-items-center justify-content-center">
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() =>
-                            navigate(`/edit-work-hour/${session.id}`)
-                          }
-                        >
-                          Edytuj
-                        </Button>
-                      </Col>
-                      <Col className="text-center">
-                        <div>
-                          <i
-                            className="bi bi-clock-history"
-                            style={{ fontSize: "1.5rem" }}
-                          ></i>
-                          <div>{session.end_time.split(" ")[1]}</div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Container>
-                </Accordion.Body>
-              </Accordion.Item>
-            ))}
-          </Accordion>
+      <Row className="justify-content-center">
+        <Col md={6} className="text-center">
+          <Button onClick={goBack} variant="outline-danger">
+            Cofnij
+          </Button>
         </Col>
       </Row>
     </Container>

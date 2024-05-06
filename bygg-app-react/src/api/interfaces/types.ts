@@ -89,10 +89,19 @@ export interface Profile {
 
   export interface WorkSession {
     id: number;
+    profile: Profile;
     workplace: string;
     start_time: string;
     end_time: string;
     total_time: string;
   }
   
+  export interface ProfileWorksession {
+    id: number;
+    profile: Profile;
+    workplace: Workplace;
+    start_time: string;
+    end_time: string;
+    total_time: string;
+  }
   
