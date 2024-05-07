@@ -70,11 +70,16 @@ const WorkHourByDay: React.FC = () => {
   };
 
   const changeDay = (offset: number): void => {
+    if (!date) {
+      console.error("Date is undefined");
+      return;
+    }
     const currentDate = new Date(date);
     currentDate.setDate(currentDate.getDate() + offset);
     const newDate = currentDate.toISOString().split("T")[0];
     navigate(`/work-hours/day/${newDate}`);
   };
+  
 
   if (loading) return <Alert variant="info">Ładowanie danych...</Alert>;
   if (error) return <Alert variant="danger">{error}</Alert>;

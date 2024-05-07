@@ -65,10 +65,14 @@ const EmployeeDetailsByDay: React.FC = () => {
   };
 
   const changeDay = (offset: number): void => {
+    if (!date) {
+      console.error("Date is undefined");
+      return;
+    }
     const currentDate = new Date(date);
     currentDate.setDate(currentDate.getDate() + offset);
     const newDate = currentDate.toISOString().split("T")[0];
-    navigate(`/employee/${id}/day/${newDate}`); 
+    navigate(`/employee/${id}/day/${newDate}`);
   };
 
   return (
