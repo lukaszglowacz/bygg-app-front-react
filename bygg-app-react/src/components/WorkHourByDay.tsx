@@ -135,11 +135,26 @@ const WorkHourByDay: React.FC = () => {
         </Col>
       </Row>
       {loading ? (
-        <Alert variant="info">Ładowanie danych...</Alert>
+        <Row className="justify-content-center my-3">
+            <Col md={6} className="text-center">
+            <Alert  variant="info">Ładowanie danych...</Alert>
+            </Col>
+        </Row>
+        
       ) : error ? (
-        <Alert variant="danger">{error}</Alert>
+        <Row className="justify-content-center my-3">
+            <Col md={6} className="text-center">
+            <Alert variant="danger">{error}</Alert>
+            </Col>
+        </Row>
+        
       ) : !sessions.length ? (
-        <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
+        <Row className="justify-content-center my-3">
+            <Col md={6} className="text-center">
+            <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
+            </Col>
+        </Row>
+        
       ) : (
         <>
           <ListGroup className="mb-4">
