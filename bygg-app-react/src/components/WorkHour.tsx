@@ -76,7 +76,9 @@ const WorkHour: React.FC = () => {
             className="d-flex justify-content-between align-items-center bg-light p-2"
           >
             <div>{day}</div>
-            <ChevronRight onClick={() => navigate(`/work-hours/day/${day}`)} />
+            <Button onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-secondary" size="sm">
+              <ChevronRight />
+            </Button>
           </Col>
           {daySessions.length > 0 ? (
             daySessions.map((session) => (

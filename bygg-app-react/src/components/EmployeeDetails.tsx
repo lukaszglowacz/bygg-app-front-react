@@ -4,7 +4,14 @@ import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
 import useGoBack from "../hooks/useGoBack";
 import { Button, Image, Container, Row, Col, Card } from "react-bootstrap";
-import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, HourglassSplit } from "react-bootstrap-icons";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PersonCircle,
+  PersonBadge,
+  Envelope,
+  HourglassSplit,
+} from "react-bootstrap-icons";
 import { sumTotalTime } from "../api/helper/timeUtils";
 import { FaDownload } from "react-icons/fa";
 
@@ -68,7 +75,13 @@ const EmployeeDetails: React.FC = () => {
             className="d-flex justify-content-between align-items-center bg-light p-2"
           >
             <div>{day}</div>
-            <ChevronRight onClick={() => navigate(`/employee/${id}/day/${day}`)}/>
+            <Button
+              onClick={() => navigate(`/employee/${id}/day/${day}`)}
+              variant="outline-secondary"
+              size="sm"
+            >
+              <ChevronRight />
+            </Button>
           </Col>
           {daySessions.length > 0 ? (
             daySessions.map((session) => (
@@ -88,7 +101,7 @@ const EmployeeDetails: React.FC = () => {
                   {/* Miasto i kod */}
                 </div>
                 <div>
-                  <small style={{ color: 'green' }}>{session.total_time}</small>
+                  <small style={{ color: "green" }}>{session.total_time}</small>
                 </div>
               </Col>
             ))
@@ -179,10 +192,22 @@ const EmployeeDetails: React.FC = () => {
               Zestawienie miesięczne <FaDownload style={{ color: "grey" }} />
             </Card.Header>
             <Card.Body>
-              <Card.Text className="small text-muted"><PersonCircle className="me-2"/>{employee?.full_name}</Card.Text>
-              <Card.Text className="small text-muted"><PersonBadge className="me-2"/>{employee?.personnummer}</Card.Text>
-              <Card.Text className="small text-muted"><Envelope className="me-2"/>{employee?.user_email}</Card.Text>
-              <Card.Text className="small text-muted"><HourglassSplit className="me-2"/><strong>{totalTime}</strong></Card.Text>
+              <Card.Text className="small text-muted">
+                <PersonCircle className="me-2" />
+                {employee?.full_name}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                <PersonBadge className="me-2" />
+                {employee?.personnummer}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                <Envelope className="me-2" />
+                {employee?.user_email}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                <HourglassSplit className="me-2" />
+                <strong>{totalTime}</strong>
+              </Card.Text>
             </Card.Body>
           </Card>
         </Col>
