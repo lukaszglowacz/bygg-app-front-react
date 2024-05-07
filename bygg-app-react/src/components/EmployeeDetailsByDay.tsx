@@ -20,13 +20,12 @@ import {
   Envelope,
   PersonCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
 } from "react-bootstrap-icons";
 import useGoBack from "../hooks/useGoBack";
 import { FaDownload } from "react-icons/fa";
 import { sumTotalTime } from "../api/helper/timeUtils";
 import { useNavigate } from "react-router-dom";
-
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
@@ -77,7 +76,6 @@ const EmployeeDetailsByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
-      
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">
@@ -88,10 +86,22 @@ const EmployeeDetailsByDay: React.FC = () => {
               Zestawienie dzienne <FaDownload style={{ color: "grey" }} />
             </Card.Header>
             <Card.Body>
-              <Card.Text className="small text-muted"><PersonCircle className="me-2"/>{employee?.full_name}</Card.Text>
-              <Card.Text className="small text-muted"><PersonBadge className="me-2"/>{employee?.personnummer}</Card.Text>
-              <Card.Text className="small text-muted"><Envelope className="me-2"/>{employee?.user_email}</Card.Text>
-              <Card.Text className="small text-muted"><HourglassSplit className="me-2"/><strong>{totalTime}</strong></Card.Text>
+              <Card.Text className="small text-muted">
+                <PersonCircle className="me-2" />
+                {employee?.full_name}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                <PersonBadge className="me-2" />
+                {employee?.personnummer}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                <Envelope className="me-2" />
+                {employee?.user_email}
+              </Card.Text>
+              <Card.Text className="small text-muted">
+                <HourglassSplit className="me-2" />
+                <strong>{totalTime}</strong>
+              </Card.Text>
             </Card.Body>
           </Card>
         </Col>
@@ -147,13 +157,6 @@ const EmployeeDetailsByDay: React.FC = () => {
           )}
         </ListGroup>
       )}
-      <Row>
-        <Col md={{ span: 4, offset: 4 }} className="text-center">
-          <Button onClick={goBack} variant="outline-secondary">
-            Cofnij
-          </Button>
-        </Col>
-      </Row>
     </Container>
   );
 };
