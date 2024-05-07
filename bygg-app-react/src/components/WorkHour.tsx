@@ -209,13 +209,6 @@ const WorkHour: React.FC = () => {
       <Row className="justify-content-center mt-3">
         <Col md={6}>{displayDaysWithSessions()}</Col>
       </Row>
-      <Row className="justify-content-center">
-        <Col md={6} className="text-center">
-          <Button onClick={goBack} variant="outline-danger">
-            Cofnij
-          </Button>
-        </Col>
-      </Row>
     </Container>
   );
 };
