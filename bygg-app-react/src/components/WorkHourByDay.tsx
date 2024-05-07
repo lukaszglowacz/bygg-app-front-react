@@ -3,13 +3,31 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
 import useGoBack from "../hooks/useGoBack";
-import { Container, Row, Col, Card, Alert, Button, ListGroup } from "react-bootstrap";
-import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle } from "react-bootstrap-icons";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Button,
+  ListGroup,
+} from "react-bootstrap";
+import {
+  House,
+  ClockHistory,
+  ClockFill,
+  HourglassSplit,
+  PersonBadge,
+  Envelope,
+  PersonCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
 
 interface Params {
-    date: string;
-  }
+  date: string;
+}
 
 const WorkHourByDay: React.FC = () => {
   const { date } = useParams<{ date: string }>();
@@ -25,9 +43,12 @@ const WorkHourByDay: React.FC = () => {
     const fetchSessionsByDay = async () => {
       try {
         setLoading(true);
-        const response = await api.get<ProfileWorksession[]>("/profile/worksessions");
+        const response = await api.get<ProfileWorksession[]>(
+          "/profile/worksessions"
+        );
         const daySessions = response.data.filter(
-          (session) => new Date(session.start_time).toISOString().split("T")[0] === date
+          (session) =>
+            new Date(session.start_time).toISOString().split("T")[0] === date
         );
         if (daySessions.length > 0) {
           setProfile(daySessions[0].profile); // Set profile data from the first session
@@ -57,30 +78,51 @@ const WorkHourByDay: React.FC = () => {
 
   if (loading) return <Alert variant="info">Ładowanie danych...</Alert>;
   if (error) return <Alert variant="danger">{error}</Alert>;
-  
 
   return (
     <Container className="mt-4">
-      <h2 className="mb-3 text-center">{date}</h2>
-      <Row className="justify-content-center">
-        <Col xs={12} className="text-center">
-          <Button onClick={() => changeDay(-1)} variant="secondary">Poprzedni dzień</Button>
-          <Button onClick={() => changeDay(1)} variant="secondary" className="ms-2">Następny dzień</Button>
+      <Row className="justify-content-center mt-3">
+        <Col md={6} className="text-center">
+          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
+            <ChevronLeft />
+          </Button>
+          <span className="mx-3">{date}</span>
+          <Button
+            onClick={() => changeDay(1)}
+            variant="outline-secondary"
+            className="ms-2"
+          >
+            <ChevronRight />
+          </Button>
         </Col>
       </Row>
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>
             <Card className="mt-3 mb-3">
-              <Card.Header as="h6" className="d-flex justify-content-between align-items-center">
+              <Card.Header
+                as="h6"
+                className="d-flex justify-content-between align-items-center"
+              >
                 Zestawienie dzienne
               </Card.Header>
               <Card.Body>
-                <Card.Text className="small text-muted"><PersonCircle className="me-2"/>{profile.full_name}</Card.Text>
-                <Card.Text className="small text-muted"><PersonBadge className="me-2"/>{profile.personnummer}</Card.Text>
-                <Card.Text className="small text-muted"><Envelope className="me-2"/>{profile.user_email}</Card.Text>
-                <Card.Text className="small text-muted"><HourglassSplit className="me-2"/><strong>{totalTime}</strong></Card.Text>
-
+                <Card.Text className="small text-muted">
+                  <PersonCircle className="me-2" />
+                  {profile.full_name}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <PersonBadge className="me-2" />
+                  {profile.personnummer}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <Envelope className="me-2" />
+                  {profile.user_email}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <HourglassSplit className="me-2" />
+                  <strong>{totalTime}</strong>
+                </Card.Text>
               </Card.Body>
             </Card>
           </Col>
@@ -93,13 +135,16 @@ const WorkHourByDay: React.FC = () => {
               <ListGroup.Item className="mb-2 small">
                 <Row className="align-items-center">
                   <Col xs={12}>
-                    <House className="me-2" /> {session.workplace.street} {session.workplace.street_number}
+                    <House className="me-2" /> {session.workplace.street}{" "}
+                    {session.workplace.street_number}
                   </Col>
                   <Col xs={12}>
-                    <ClockFill className="me-2" /> {formatTime(session.start_time)}
+                    <ClockFill className="me-2" />{" "}
+                    {formatTime(session.start_time)}
                   </Col>
                   <Col xs={12}>
-                    <ClockHistory className="me-2" /> {formatTime(session.end_time)}
+                    <ClockHistory className="me-2" />{" "}
+                    {formatTime(session.end_time)}
                   </Col>
                   <Col xs={12}>
                     <HourglassSplit className="me-2" /> {session.total_time}
@@ -112,7 +157,9 @@ const WorkHourByDay: React.FC = () => {
       </ListGroup>
       <Row>
         <Col md={{ span: 4, offset: 4 }} className="text-center">
-          <Button onClick={goBack} variant="outline-secondary">Cofnij</Button>
+          <Button onClick={goBack} variant="outline-secondary">
+            Cofnij
+          </Button>
         </Col>
       </Row>
     </Container>
