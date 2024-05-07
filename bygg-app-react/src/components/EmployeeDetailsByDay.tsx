@@ -68,7 +68,7 @@ const EmployeeDetailsByDay: React.FC = () => {
     const currentDate = new Date(date);
     currentDate.setDate(currentDate.getDate() + offset);
     const newDate = currentDate.toISOString().split("T")[0];
-    navigate(`/employee/:id/day/${newDate}`);
+    navigate(`/employee/${id}/day/${newDate}`); 
   };
 
   return (

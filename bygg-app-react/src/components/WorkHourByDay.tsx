@@ -128,40 +128,50 @@ const WorkHourByDay: React.FC = () => {
           </Col>
         </Row>
       )}
-      <ListGroup className="mb-4">
-        {sessions.map((session) => (
-          <Row className="justify-content-center" key={session.id}>
-            <Col md={6}>
-              <ListGroup.Item className="mb-2 small">
-                <Row className="align-items-center">
-                  <Col xs={12}>
-                    <House className="me-2" /> {session.workplace.street}{" "}
-                    {session.workplace.street_number}
-                  </Col>
-                  <Col xs={12}>
-                    <ClockFill className="me-2" />{" "}
-                    {formatTime(session.start_time)}
-                  </Col>
-                  <Col xs={12}>
-                    <ClockHistory className="me-2" />{" "}
-                    {formatTime(session.end_time)}
-                  </Col>
-                  <Col xs={12}>
-                    <HourglassSplit className="me-2" /> {session.total_time}
-                  </Col>
-                </Row>
-              </ListGroup.Item>
+      {loading ? (
+        <Alert variant="info">Ładowanie danych...</Alert>
+      ) : error ? (
+        <Alert variant="danger">{error}</Alert>
+      ) : !sessions.length ? (
+        <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
+      ) : (
+        <>
+          <ListGroup className="mb-4">
+            {sessions.map((session) => (
+              <Row className="justify-content-center" key={session.id}>
+                <Col md={6}>
+                  <ListGroup.Item className="mb-2 small">
+                    <Row className="align-items-center">
+                      <Col xs={12}>
+                        <House className="me-2" /> {session.workplace.street}{" "}
+                        {session.workplace.street_number}
+                      </Col>
+                      <Col xs={12}>
+                        <ClockFill className="me-2" />{" "}
+                        {formatTime(session.start_time)}
+                      </Col>
+                      <Col xs={12}>
+                        <ClockHistory className="me-2" />{" "}
+                        {formatTime(session.end_time)}
+                      </Col>
+                      <Col xs={12}>
+                        <HourglassSplit className="me-2" /> {session.total_time}
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                </Col>
+              </Row>
+            ))}
+          </ListGroup>
+          <Row>
+            <Col md={{ span: 4, offset: 4 }} className="text-center">
+              <Button onClick={goBack} variant="outline-secondary">
+                Cofnij
+              </Button>
             </Col>
           </Row>
-        ))}
-      </ListGroup>
-      <Row>
-        <Col md={{ span: 4, offset: 4 }} className="text-center">
-          <Button onClick={goBack} variant="outline-secondary">
-            Cofnij
-          </Button>
-        </Col>
-      </Row>
+        </>
+      )}
     </Container>
   );
 };
