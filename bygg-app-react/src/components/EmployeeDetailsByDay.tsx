@@ -77,21 +77,7 @@ const EmployeeDetailsByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
-      <Row className="justify-content-center mt-3">
-        <Col md={6} className="text-center">
-          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
-            <ChevronLeft />
-          </Button>
-          <span className="mx-3">{date}</span>
-          <Button
-            onClick={() => changeDay(1)}
-            variant="outline-secondary"
-            className="ms-2"
-          >
-            <ChevronRight />
-          </Button>
-        </Col>
-      </Row>
+      
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">
@@ -108,6 +94,21 @@ const EmployeeDetailsByDay: React.FC = () => {
               <Card.Text className="small text-muted"><HourglassSplit className="me-2"/><strong>{totalTime}</strong></Card.Text>
             </Card.Body>
           </Card>
+        </Col>
+      </Row>
+      <Row className="justify-content-center my-3">
+        <Col md={6} className="text-center">
+          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
+            <ChevronLeft />
+          </Button>
+          <span className="mx-3">{date}</span>
+          <Button
+            onClick={() => changeDay(1)}
+            variant="outline-secondary"
+            className="ms-2"
+          >
+            <ChevronRight />
+          </Button>
         </Col>
       </Row>
       {loading ? (

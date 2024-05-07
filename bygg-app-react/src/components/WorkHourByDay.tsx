@@ -86,21 +86,7 @@ const WorkHourByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
-      <Row className="justify-content-center mt-3">
-        <Col md={6} className="text-center">
-          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
-            <ChevronLeft />
-          </Button>
-          <span className="mx-3">{date}</span>
-          <Button
-            onClick={() => changeDay(1)}
-            variant="outline-secondary"
-            className="ms-2"
-          >
-            <ChevronRight />
-          </Button>
-        </Col>
-      </Row>
+      
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>
@@ -133,6 +119,21 @@ const WorkHourByDay: React.FC = () => {
           </Col>
         </Row>
       )}
+      <Row className="justify-content-center my-3">
+        <Col md={6} className="text-center">
+          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
+            <ChevronLeft />
+          </Button>
+          <span className="mx-3">{date}</span>
+          <Button
+            onClick={() => changeDay(1)}
+            variant="outline-secondary"
+            className="ms-2"
+          >
+            <ChevronRight />
+          </Button>
+        </Col>
+      </Row>
       {loading ? (
         <Alert variant="info">Ładowanie danych...</Alert>
       ) : error ? (
@@ -168,13 +169,6 @@ const WorkHourByDay: React.FC = () => {
               </Row>
             ))}
           </ListGroup>
-          <Row>
-            <Col md={{ span: 4, offset: 4 }} className="text-center">
-              <Button onClick={goBack} variant="outline-secondary">
-                Cofnij
-              </Button>
-            </Col>
-          </Row>
         </>
       )}
     </Container>
