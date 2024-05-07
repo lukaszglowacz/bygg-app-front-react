@@ -19,11 +19,14 @@ import {
   PersonBadge,
   Envelope,
   PersonCircle,
+  ChevronLeft,
+  ChevronRight
 } from "react-bootstrap-icons";
 import useGoBack from "../hooks/useGoBack";
 import { FaDownload } from "react-icons/fa";
 import { sumTotalTime } from "../api/helper/timeUtils";
-import {} from "react-bootstrap-icons";
+import { useNavigate } from "react-router-dom";
+
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
@@ -33,6 +36,7 @@ const EmployeeDetailsByDay: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const goBack = useGoBack();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEmployeeAndSessions = async () => {
@@ -60,9 +64,30 @@ const EmployeeDetailsByDay: React.FC = () => {
     return dateTime.split(" ")[1].slice(0, 5); // Only displaying HH:MM
   };
 
+  const changeDay = (offset: number): void => {
+    const currentDate = new Date(date);
+    currentDate.setDate(currentDate.getDate() + offset);
+    const newDate = currentDate.toISOString().split("T")[0];
+    navigate(`/employee/:id/day/${newDate}`);
+  };
+
   return (
     <Container className="mt-4">
-      <h2 className="mb-3 text-center">{date}</h2>
+      <Row className="justify-content-center mt-3">
+        <Col md={6} className="text-center">
+          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
+            <ChevronLeft />
+          </Button>
+          <span className="mx-3">{date}</span>
+          <Button
+            onClick={() => changeDay(1)}
+            variant="outline-secondary"
+            className="ms-2"
+          >
+            <ChevronRight />
+          </Button>
+        </Col>
+      </Row>
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">
