@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col } from "react-bootstrap";
 
 const ClockUpdate: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
@@ -12,9 +13,25 @@ const ClockUpdate: React.FC = () => {
   }, []); // Pusta tablica zależności oznacza, że efekt uruchomi się tylko przy montowaniu
 
   return (
-    <h1 style={{ fontSize: '60px', fontWeight: 'bold', textAlign: 'center' }}>
-      {currentTime.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-    </h1>
+    <Container>
+      <Row>
+        <Col>
+          <h1
+            style={{
+              fontSize: "70px",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            {currentTime.toLocaleTimeString([], {
+              hour12: false,
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </h1>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

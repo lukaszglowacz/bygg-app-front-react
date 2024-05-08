@@ -119,6 +119,19 @@ const Home: React.FC = () => {
     }
   };
 
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString("sv-SE", {
+      weekday: "long", // nazwa dnia tygodnia
+      day: "numeric", // numer dnia
+      month: "long", // nazwa miesiąca
+      year: "numeric", // rok
+    });
+  };
+
+  // Użycie:
+  const today = new Date();
+  const formattedDate = formatDate(today); // przykładowo, 'söndag, 7 maj 2024'
+
   return (
     <Container>
       <Row className="justify-content-md-center">
@@ -126,12 +139,13 @@ const Home: React.FC = () => {
           <ClockUpdate />
           <h2
             style={{
-              fontSize: "24px",
+              fontSize: "20px",
               textAlign: "center",
               marginBottom: "20px",
             }}
+            className="text-secondary"
           >
-            {new Date().toLocaleDateString("pl-PL")}
+            {formattedDate}
           </h2>
           <WorkplaceSelector
             workplaces={workplaces}
@@ -146,18 +160,18 @@ const Home: React.FC = () => {
                 onClick={handleStartSession}
                 disabled={!!activeSession}
                 className="btn-lg"
-                style={{ padding: '15px 25px', fontSize: '1rem' }}
+                style={{ padding: "15px 25px", fontSize: "1rem" }}
               >
                 Start pracy
               </Button>
             )}
             {activeSession && (
               <Button
-                variant="danger"
+                variant="success"
                 onClick={handleEndSession}
                 disabled={!activeSession}
                 className="btn-lg"
-                style={{ padding: '15px 25px', fontSize: '1rem' }}
+                style={{ padding: "15px 25px", fontSize: "1rem" }}
               >
                 Koniec pracy
               </Button>

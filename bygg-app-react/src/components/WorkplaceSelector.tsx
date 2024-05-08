@@ -42,7 +42,7 @@ const WorkplaceSelector: React.FC<WorkplaceSelectorProps> = ({
             alignItems: "center",
             justifyContent: "center",
             padding: "0",
-            backgroundColor: isActiveSession ? "transparent" : "green",
+            backgroundColor: isActiveSession ? "transparent" : "grey",
             border: "none",
           }}
         >
@@ -55,7 +55,7 @@ const WorkplaceSelector: React.FC<WorkplaceSelectorProps> = ({
         </Dropdown.Toggle>
 
         {(isActiveSession || selectedWorkplaceId !== 0) && (
-          <div className="text-success mt-2 text-center">
+          <div className="text-secondary mt-2 text-center">
             {`${
               workplaces.find((wp) => wp.id === selectedWorkplaceId)?.street
             } ${
