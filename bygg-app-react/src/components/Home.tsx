@@ -120,13 +120,18 @@ const Home: React.FC = () => {
   };
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("sv-SE", {
+    const weekday = new Date(date).toLocaleDateString("sv-SE", {
       weekday: "long", // nazwa dnia tygodnia
+    });
+    const restOfDate = new Date(date).toLocaleDateString("sv-SE", {
       day: "numeric", // numer dnia
       month: "long", // nazwa miesiąca
       year: "numeric", // rok
     });
+  
+    return `${weekday}, ${restOfDate}`;
   };
+  
 
   // Użycie:
   const today = new Date();
@@ -134,51 +139,59 @@ const Home: React.FC = () => {
 
   return (
     <Container>
+      <Row className="justify-content-md-center mt-3">
+        <Col md={6}>
+          <Row className="mb-0" >
+            <Col className="text-secondary text-center mb-0">
+              <h2 style={{ fontSize: "20px" }}>{formattedDate}</h2>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col className="text-center mb-4 mt-0">
+              <ClockUpdate />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
       <Row className="justify-content-md-center">
         <Col md={6}>
-          <ClockUpdate />
-          <h2
-            style={{
-              fontSize: "20px",
-              textAlign: "center",
-              marginBottom: "20px",
-            }}
-            className="text-secondary"
-          >
-            {formattedDate}
-          </h2>
           <WorkplaceSelector
             workplaces={workplaces}
             selectedWorkplaceId={selectedWorkplaceId}
             onSelect={handleSelectWorkplace}
             isActiveSession={isActiveSession}
           />
-          <div className="d-grid gap-2 my-3">
-            {!activeSession && (
-              <Button
-                variant="secondary"
-                onClick={handleStartSession}
-                disabled={!!activeSession}
-                className="btn-lg"
-                style={{ padding: "15px 25px", fontSize: "1rem" }}
-              >
-                Start pracy
-              </Button>
-            )}
-            {activeSession && (
-              <Button
-                variant="success"
-                onClick={handleEndSession}
-                disabled={!activeSession}
-                className="btn-lg"
-                style={{ padding: "15px 25px", fontSize: "1rem" }}
-              >
-                Koniec pracy
-              </Button>
-            )}
-          </div>
-          {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
         </Col>
+      </Row>
+      <Row className="justify-content-md-center">
+        <Col className="d-grid gap-2 my-3" md={6}>
+          {!activeSession && (
+            <Button
+              variant="secondary"
+              onClick={handleStartSession}
+              disabled={!!activeSession}
+              className="btn-lg"
+              style={{ padding: "15px 25px", fontSize: "1rem" }}
+            >
+              Start pracy
+            </Button>
+          )}
+          {activeSession && (
+            <Button
+              variant="success"
+              onClick={handleEndSession}
+              disabled={!activeSession}
+              className="btn-lg"
+              style={{ padding: "15px 25px", fontSize: "1rem" }}
+            >
+              Koniec pracy
+            </Button>
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-md-center">
+        <Col md={6}>{alertInfo && <Alert variant="info">{alertInfo}</Alert>}</Col>
       </Row>
     </Container>
   );
