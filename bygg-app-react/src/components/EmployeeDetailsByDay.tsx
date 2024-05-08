@@ -26,6 +26,8 @@ import useGoBack from "../hooks/useGoBack";
 import { FaDownload } from "react-icons/fa";
 import { sumTotalTime } from "../api/helper/timeUtils";
 import { useNavigate } from "react-router-dom";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
@@ -73,6 +75,8 @@ const EmployeeDetailsByDay: React.FC = () => {
     const newDate = currentDate.toISOString().split("T")[0];
     navigate(`/employee/${id}/day/${newDate}`);
   };
+
+  
 
   return (
     <Container className="mt-4">

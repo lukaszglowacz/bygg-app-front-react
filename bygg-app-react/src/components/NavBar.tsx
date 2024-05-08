@@ -42,7 +42,7 @@ const NavbarComponent: React.FC = () => {
   return (
     <>
       <Navbar bg="light" fixed="top">
-        <Container>
+        <Container >
           {isAuthenticated && profile && (
             <Navbar.Brand onClick={() => navigateTo("/")}>
               <img
