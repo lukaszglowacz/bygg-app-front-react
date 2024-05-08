@@ -55,7 +55,11 @@ const WorkplaceSelector: React.FC<WorkplaceSelectorProps> = ({
         </Dropdown.Toggle>
 
         {(isActiveSession || selectedWorkplaceId !== 0) && (
-          <div className="text-secondary mt-2 text-center">
+          <div
+            className={`${
+              isActiveSession ? "text-success" : "text-secondary"
+            } mt-2 text-center`}
+          >
             {`${
               workplaces.find((wp) => wp.id === selectedWorkplaceId)?.street
             } ${
@@ -73,7 +77,10 @@ const WorkplaceSelector: React.FC<WorkplaceSelectorProps> = ({
             <Dropdown.Item
               key={workplace.id}
               eventKey={workplace.id.toString()}
-              onClick={() => handleSelect(workplace.id.toString())}
+              onClick={() =>
+                !isActiveSession && handleSelect(workplace.id.toString())
+              } // Tylko jeśli sesja nie jest aktywna, pozwól na wybór
+              disabled={isActiveSession} // Wyłączenie opcji, gdy sesja jest aktywna
             >
               <BiBuildingHouse style={{ marginRight: "5px" }} />
               {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}

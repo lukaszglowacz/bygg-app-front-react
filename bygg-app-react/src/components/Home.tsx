@@ -156,7 +156,7 @@ const Home: React.FC = () => {
           <div className="d-grid gap-2 my-3">
             {!activeSession && (
               <Button
-                variant="primary"
+                variant="secondary"
                 onClick={handleStartSession}
                 disabled={!!activeSession}
                 className="btn-lg"

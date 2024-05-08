@@ -21,7 +21,7 @@ const ActiveSessions: React.FC = () => {
       <Container>
         <Row className="justify-content-center my-3">
           <Col md={6}>
-            <Alert className="text-center" variant="info">
+            <Alert className="text-center" variant="warning">
               Aktualnie nie pracujesz
             </Alert>
           </Col>
