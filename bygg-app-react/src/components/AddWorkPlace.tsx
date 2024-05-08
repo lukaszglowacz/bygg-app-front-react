@@ -45,11 +45,6 @@ const AddWorkPlace: React.FC = () => {
   return (
     <Container>
       <Row>
-        <Col className="text-center">
-          <h1>Dodaj miejsce pracy</h1>
-        </Col>
-      </Row>
-      <Row>
         <Col>
           <Form onSubmit={handleSubmit}>
             <Form.Group as={Row} className="mb-3" controlId="streetInput">
@@ -140,17 +135,17 @@ const AddWorkPlace: React.FC = () => {
               </Col>
             </Form.Group>
 
-            <Row className="mb-3">
+            <Row className="mb-3 mt-5">
               <Col md={6} className="mx-auto">
-                <Button variant="success" type="submit" className="w-100">
+                <Button variant="success" type="submit" className="w-100" size="sm">
                   Dodaj
                 </Button>
               </Col>
             </Row>
             <Row className="mb-3">
               <Col md={6} className="mx-auto">
-                <Button variant="outline-secondary" onClick={() => navigate("/work-places")} className="w-100">
-                  Cofnij
+                <Button variant="outline-secondary" onClick={() => navigate("/work-places")} className="w-100" size="sm">
+                  Powrot
                 </Button>
               </Col>
             </Row>

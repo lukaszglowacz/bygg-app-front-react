@@ -89,11 +89,6 @@ const EditWorkPlace: React.FC = () => {
   return (
     <Container>
       <Row>
-        <Col className="text-center">
-          <h1>Edytuj miejsce pracy</h1>
-        </Col>
-      </Row>
-      <Row>
         <Col>
           <Form onSubmit={handleSubmit}>
             <Form.Group as={Row} className="mb-3" controlId="streetInput">
@@ -172,27 +167,28 @@ const EditWorkPlace: React.FC = () => {
               </Col>
             </Form.Group>
 
-            <Row className="mb-3">
-              <Col md={6} className="mx-auto">
-                <Button variant="primary" type="submit" className="w-100">
+            <Row className="justify-content-center mb-3 mt-5">
+              <Col md={6} className="d-flex justify-content-center">
+                <Button variant="success" type="submit" size="sm" className="w-100">
                   Edytuj
                 </Button>
               </Col>
             </Row>
-            <Row className="mb-3">
-              <Col md={6} className="mx-auto">
-                <Button variant="danger" onClick={() => handleDeleteClick(workplace.id)} className="w-100">
-                  Usuń
-                </Button>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col md={6} className="mx-auto">
-                <Button variant="outline-secondary" onClick={() => navigate("/work-places")} className="w-100">
+            <Row className="justify-content-center my-3">
+              <Col md={6} className="d-flex justify-content-center">
+                <Button variant="outline-secondary" onClick={() => navigate("/work-places")} size="sm" className="w-100">
                   Powrót
                 </Button>
               </Col>
             </Row>
+            <Row className="justify-content-center my-3">
+              <Col md={6} className="d-flex justify-content-center">
+                <Button variant="outline-danger" onClick={() => handleDeleteClick(workplace.id)} size="sm" className="w-100">
+                  Usuń
+                </Button>
+              </Col>
+            </Row>
+            
           </Form>
         </Col>
       </Row>

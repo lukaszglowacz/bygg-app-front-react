@@ -22,26 +22,19 @@ const WorkPlaceContainer: React.FC = () => {
 
   return (
     <Container>
-      <Row>
-        <Col>
-          <h1 className="text-center">Miejsca pracy</h1>
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col>
+      <Row className="justify-content-center my-3">
+        <Col md={6} className="d-flex justify-content-end">
           <Button
-            variant="outline-dark"
+            variant="outline-secondary"
             onClick={handleAddClick}
-            className="w-100"
+            size="sm"
           >
-            Dodaj miejsce pracy
+            Dodaj miejsce
           </Button>
         </Col>
       </Row>
-
-      <Row>
-        <Col>
+      <Row className="justify-content-center mt-3"> 
+        <Col md={6}>
           <Accordion defaultActiveKey="0" className="text-center">
             {workplaces.map((workplace, index) => (
               <Accordion.Item eventKey={String(index)} key={workplace.id}>
@@ -53,7 +46,7 @@ const WorkPlaceContainer: React.FC = () => {
               </Accordion.Header>
                 <Accordion.Body>
                   <Button
-                    variant="outline-primary"
+                    variant="outline-success"
                     size="sm"
                     onClick={() => handleEditClick(workplace.id)}
                     
