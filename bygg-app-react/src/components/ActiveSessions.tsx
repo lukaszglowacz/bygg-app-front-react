@@ -19,9 +19,13 @@ const ActiveSessions: React.FC = () => {
   if (sessions.length === 0) {
     return (
       <Container>
-        <Alert className="text-center" variant="info">
-          Nie pracujesz.
-        </Alert>
+        <Row className="justify-content-center my-3">
+          <Col md={6}>
+            <Alert className="text-center" variant="info">
+              Aktualnie nie pracujesz
+            </Alert>
+          </Col>
+        </Row>
       </Container>
     );
   }
