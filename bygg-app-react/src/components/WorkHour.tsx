@@ -13,6 +13,7 @@ import {
   HourglassSplit,
 } from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
+import MonthYearDisplay from "./MonthYearDisplay";
 
 const WorkHour: React.FC = () => {
   const [sessionsByDay, setSessionsByDay] = useState<
@@ -185,24 +186,24 @@ const WorkHour: React.FC = () => {
           </Col>
         </Row>
       )}
-      <Row className="justify-content-center mt-3">
-        <Col md={6} className="text-center">
-          <Button
-            onClick={() => handleMonthChange(-1)}
-            variant="outline-secondary"
-          >
-            <ChevronLeft />
-          </Button>
-          <span className="mx-3">
-            {currentDate.toLocaleString("default", { month: "long" })}{" "}
-            {currentDate.getFullYear()}
-          </span>
-          <Button
-            onClick={() => handleMonthChange(1)}
-            variant="outline-secondary"
-          >
-            <ChevronRight />
-          </Button>
+      
+      <Row className="justify-content-center mt-3 align-items-center">
+        <Col md={6}>
+          <Row className="align-items-center">
+            <Col xs={2} className="text-start">
+              <Button onClick={() => handleMonthChange(-1)} variant="success">
+                <ChevronLeft />
+              </Button>
+            </Col>
+            <Col xs={8} className="text-center">
+              <MonthYearDisplay currentDate={currentDate} />
+            </Col>
+            <Col xs={2} className="text-end">
+              <Button onClick={() => handleMonthChange(1)} variant="success">
+                <ChevronRight />
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
 
