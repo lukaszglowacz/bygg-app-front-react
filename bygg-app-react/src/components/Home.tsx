@@ -69,13 +69,13 @@ const Home: React.FC = () => {
           setActiveSession(null);
           setIsActiveSession(false);
           setSelectedWorkplaceId(0);
-          setAlertInfo("Brak aktywnej sesji dla tego użytkownika.");
+          setAlertInfo("Brak aktywnej sesji dla tego użytkownika");
         }
       } else {
         setActiveSession(null);
         setIsActiveSession(false);
         setSelectedWorkplaceId(0);
-        setAlertInfo("Kliknij Start aby zaczac prace");
+        setAlertInfo("Kliknij Start pracy aby zaczac prace");
       }
     };
 
@@ -155,7 +155,7 @@ const Home: React.FC = () => {
         </Col>
       </Row>
       <Row className="justify-content-md-center">
-        <Col md={6}>
+        <Col md={4}>
           <WorkplaceSelector
             workplaces={workplaces}
             selectedWorkplaceId={selectedWorkplaceId}
@@ -165,7 +165,7 @@ const Home: React.FC = () => {
         </Col>
       </Row>
       <Row className="justify-content-md-center">
-        <Col className="d-grid gap-2 my-3" md={6}>
+        <Col className="d-grid gap-2 my-3" md={4}>
           {!activeSession && (
             <Button
               variant="secondary"
@@ -191,7 +191,7 @@ const Home: React.FC = () => {
         </Col>
       </Row>
       <Row className="justify-content-md-center">
-        <Col md={6}>{alertInfo && <Alert variant="info">{alertInfo}</Alert>}</Col>
+        <Col md={4} className="text-center">{alertInfo && <Alert variant="info">{alertInfo}</Alert>}</Col>
       </Row>
     </Container>
   );

@@ -26,8 +26,8 @@ import useGoBack from "../hooks/useGoBack";
 import { FaDownload } from "react-icons/fa";
 import { sumTotalTime } from "../api/helper/timeUtils";
 import { useNavigate } from "react-router-dom";
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
@@ -76,8 +76,6 @@ const EmployeeDetailsByDay: React.FC = () => {
     navigate(`/employee/${id}/day/${newDate}`);
   };
 
-  
-
   return (
     <Container className="mt-4">
       <Row className="justify-content-center mt-3">
@@ -111,34 +109,59 @@ const EmployeeDetailsByDay: React.FC = () => {
         </Col>
       </Row>
       <Row className="justify-content-center my-3">
-        <Col md={6} className="text-center">
-          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
-            <ChevronLeft />
-          </Button>
-          <span className="mx-3">{date}</span>
-          <Button
-            onClick={() => changeDay(1)}
-            variant="outline-secondary"
-            className="ms-2"
-          >
-            <ChevronRight />
-          </Button>
+        <Col md={6}>
+          <Row className="justify-content-between">
+            <Col className="text-start">
+              <Button onClick={() => changeDay(-1)} variant="success">
+                <ChevronLeft />
+              </Button>
+            </Col>
+
+            <Col className="text-center">
+              {date ? (
+                <>
+                  <div
+                    className="font-weight-bold"
+                    style={{ fontSize: "15px" }}
+                  >
+                    {new Date(date).toLocaleDateString("sv-SE", {
+                      day: "numeric", // numer dnia
+                      month: "long", // nazwa miesiąca
+                      year: "numeric", // rok
+                    })}
+                  </div>
+                  <small className="text-muted">
+                    {new Date(date).toLocaleDateString("sv-SE", {
+                      weekday: "long", // nazwa dnia tygodnia
+                    })}
+                  </small>
+                </>
+              ) : (
+                <span>Data nie jest dostępna</span>
+              )}
+            </Col>
+
+            <Col className="text-end">
+              <Button onClick={() => changeDay(1)} variant="success">
+                <ChevronRight />
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
+
       {loading ? (
         <Row className="justify-content-center my-3">
-            <Col md={6} className="text-center">
+          <Col md={6} className="text-center">
             <Alert variant="info">Ładowanie danych...</Alert>
-            </Col>
+          </Col>
         </Row>
-        
       ) : error ? (
         <Row className="justify-content-center my-3">
-            <Col md={6} className="text-center">
+          <Col md={6} className="text-center">
             <Alert variant="danger">{error}</Alert>
-            </Col>
+          </Col>
         </Row>
-        
       ) : (
         <ListGroup className="mb-4">
           {sessions.length > 0 ? (
@@ -168,11 +191,10 @@ const EmployeeDetailsByDay: React.FC = () => {
             ))
           ) : (
             <Row className="justify-content-center my-3">
-                <Col md={6} className="text-center">
+              <Col md={6} className="text-center">
                 <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
-                </Col>
+              </Col>
             </Row>
-            
           )}
         </ListGroup>
       )}

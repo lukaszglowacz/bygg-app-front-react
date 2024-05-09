@@ -79,14 +79,12 @@ const WorkHourByDay: React.FC = () => {
     const newDate = currentDate.toISOString().split("T")[0];
     navigate(`/work-hours/day/${newDate}`);
   };
-  
 
   if (loading) return <Alert variant="info">Ładowanie danych...</Alert>;
   if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
     <Container className="mt-4">
-      
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>
@@ -120,41 +118,65 @@ const WorkHourByDay: React.FC = () => {
         </Row>
       )}
       <Row className="justify-content-center my-3">
-        <Col md={6} className="text-center">
-          <Button onClick={() => changeDay(-1)} variant="outline-secondary">
-            <ChevronLeft />
-          </Button>
-          <span className="mx-3">{date}</span>
-          <Button
-            onClick={() => changeDay(1)}
-            variant="outline-secondary"
-            className="ms-2"
-          >
-            <ChevronRight />
-          </Button>
+        <Col md={6}>
+          <Row className="justify-content-between">
+            <Col className="text-start">
+              <Button onClick={() => changeDay(-1)} variant="success">
+                <ChevronLeft />
+              </Button>
+            </Col>
+
+            <Col className="text-center">
+              {date ? (
+                <>
+                  <div
+                    className="font-weight-bold"
+                    style={{ fontSize: "15px" }}
+                  >
+                    {new Date(date).toLocaleDateString("sv-SE", {
+                      day: "numeric", // numer dnia
+                      month: "long", // nazwa miesiąca
+                      year: "numeric", // rok
+                    })}
+                  </div>
+                  <small className="text-muted">
+                    {new Date(date).toLocaleDateString("sv-SE", {
+                      weekday: "long", // nazwa dnia tygodnia
+                    })}
+                  </small>
+                </>
+              ) : (
+                <span>Data nie jest dostępna</span>
+              )}
+            </Col>
+
+            <Col className="text-end">
+              <Button onClick={() => changeDay(1)} variant="success">
+                <ChevronRight />
+              </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
+
       {loading ? (
         <Row className="justify-content-center my-3">
-            <Col md={6} className="text-center">
-            <Alert  variant="info">Ładowanie danych...</Alert>
-            </Col>
+          <Col md={6} className="text-center">
+            <Alert variant="info">Ładowanie danych...</Alert>
+          </Col>
         </Row>
-        
       ) : error ? (
         <Row className="justify-content-center my-3">
-            <Col md={6} className="text-center">
+          <Col md={6} className="text-center">
             <Alert variant="danger">{error}</Alert>
-            </Col>
+          </Col>
         </Row>
-        
       ) : !sessions.length ? (
         <Row className="justify-content-center my-3">
-            <Col md={6} className="text-center">
+          <Col md={6} className="text-center">
             <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
-            </Col>
+          </Col>
         </Row>
-        
       ) : (
         <>
           <ListGroup className="mb-4">
