@@ -5,12 +5,7 @@ import useAllLiveSessions from "../hooks/useAllLiveSessions"; // Założenie, ż
 import { useNavigate } from "react-router-dom";
 import TimeElapsed from "./TimeElapsed";
 import { Session } from "../api/interfaces/types";
-import {
-  HourglassSplit,
-  InfoCircleFill,
-  PlayFill,
-  StopFill,
-} from "react-bootstrap-icons";
+import { HourglassSplit, InfoCircleFill } from "react-bootstrap-icons";
 
 const ActiveSessions: React.FC = () => {
   const sessions: Session[] = useAllLiveSessions();
@@ -22,7 +17,7 @@ const ActiveSessions: React.FC = () => {
         <Row className="justify-content-center my-3">
           <Col md={6}>
             <Alert className="text-center" variant="warning">
-              Aktualnie nie pracujesz
+              You are not currently working.
             </Alert>
           </Col>
         </Row>
@@ -86,14 +81,14 @@ const ActiveSessions: React.FC = () => {
                       style={{ color: "blue" }}
                     />
 
-                    <strong>Aktualnie pracuje: </strong>
+                    <strong>Currently working: </strong>
                     {session.status === "Trwa" && (
                       <i className="bi bi-check-circle-fill text-success"></i>
                     )}
                   </div>
                   <div>
                     <HourglassSplit className="me-2" />
-                    <strong>Uplynelo:</strong>{" "}
+                    <strong>Expired:</strong>{" "}
                     <TimeElapsed startTime={session.start_time} />
                   </div>
                 </Accordion.Body>

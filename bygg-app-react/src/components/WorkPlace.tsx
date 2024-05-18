@@ -29,30 +29,28 @@ const WorkPlaceContainer: React.FC = () => {
             onClick={handleAddClick}
             size="sm"
           >
-            Dodaj miejsce
+            Add
           </Button>
         </Col>
       </Row>
-      <Row className="justify-content-center mt-3"> 
+      <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Accordion defaultActiveKey="0" className="text-center">
             {workplaces.map((workplace, index) => (
               <Accordion.Item eventKey={String(index)} key={workplace.id}>
                 <Accordion.Header className="text-center">
-                <div className="d-flex flex-column justify-content-center">
-                  <span>{`${workplace.street} ${workplace.street_number}`}</span>
-                  <span>{` ${workplace.postal_code} ${workplace.city}`}</span>
-                </div>
-              </Accordion.Header>
+                  <div className="d-flex flex-column justify-content-center">
+                    <span>{`${workplace.street} ${workplace.street_number}`}</span>
+                    <span>{` ${workplace.postal_code} ${workplace.city}`}</span>
+                  </div>
+                </Accordion.Header>
                 <Accordion.Body>
                   <Button
                     variant="outline-success"
                     size="sm"
                     onClick={() => handleEditClick(workplace.id)}
-                    
-                    
                   >
-                    Edytuj
+                    Edit
                   </Button>
                 </Accordion.Body>
               </Accordion.Item>

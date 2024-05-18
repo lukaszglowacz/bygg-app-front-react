@@ -16,7 +16,7 @@ export const useProfileData = (): Profile[] => {
         const response = await api.get<Profile[]>(`/profile/?userId=${userId}`);
         setProfiles(response.data); // Zakładamy, że API zwraca bezpośrednio profil(y) użytkownika
       } catch (error) {
-        console.error("Wystąpił błąd podczas pobierania danych o profilach użytkowników", error);
+        console.error("An error occurred while retrieving user profile data", error);
       }
     };
 

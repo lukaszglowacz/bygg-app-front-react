@@ -53,7 +53,7 @@ const EmployeeDetailsByDay: React.FC = () => {
         setTotalTime(sumTotalTime(daySessions)); // Calculate the total time of the filtered sessions
         setLoading(false);
       } catch (err) {
-        setError("Nie udało się pobrać danych sesji pracy.");
+        setError("Failed to retrieve work session data.");
         setLoading(false);
       }
     };
@@ -85,7 +85,7 @@ const EmployeeDetailsByDay: React.FC = () => {
               as="h6"
               className="d-flex justify-content-between align-items-center"
             >
-              Zestawienie dzienne <FaDownload style={{ color: "grey" }} />
+              Daily summary <FaDownload style={{ color: "grey" }} />
             </Card.Header>
             <Card.Body>
               <Card.Text className="small text-muted">
@@ -124,20 +124,20 @@ const EmployeeDetailsByDay: React.FC = () => {
                     className="font-weight-bold"
                     style={{ fontSize: "15px" }}
                   >
-                    {new Date(date).toLocaleDateString("sv-SE", {
+                    {new Date(date).toLocaleDateString("en-EN", {
                       day: "numeric", // numer dnia
                       month: "long", // nazwa miesiąca
                       year: "numeric", // rok
                     })}
                   </div>
                   <small className="text-muted">
-                    {new Date(date).toLocaleDateString("sv-SE", {
+                    {new Date(date).toLocaleDateString("en-EN", {
                       weekday: "long", // nazwa dnia tygodnia
                     })}
                   </small>
                 </>
               ) : (
-                <span>Data nie jest dostępna</span>
+                <span>Date not available</span>
               )}
             </Col>
 
@@ -153,7 +153,7 @@ const EmployeeDetailsByDay: React.FC = () => {
       {loading ? (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
-            <Alert variant="info">Ładowanie danych...</Alert>
+            <Alert variant="info">Loading data...</Alert>
           </Col>
         </Row>
       ) : error ? (
@@ -192,7 +192,7 @@ const EmployeeDetailsByDay: React.FC = () => {
           ) : (
             <Row className="justify-content-center my-3">
               <Col md={6} className="text-center">
-                <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
+                <Alert variant="warning">There are no work sessions for this day.</Alert>
               </Col>
             </Row>
           )}

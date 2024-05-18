@@ -108,7 +108,7 @@ const EmployeeDetails: React.FC = () => {
             ))
           ) : (
             <Col xs={12} className="text-center p-2">
-              <small>Brak pracy</small>
+              <small>No worksession</small>
             </Col>
           )}
         </Row>
@@ -169,7 +169,7 @@ const EmployeeDetails: React.FC = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!employee) return <div>Brak znalezionego pracownika</div>;
+  if (!employee) return <div>No employee found</div>;
 
   return (
     <Container className="my-5">
@@ -190,7 +190,7 @@ const EmployeeDetails: React.FC = () => {
               as="h6"
               className="d-flex justify-content-between align-items-center"
             >
-              Zestawienie miesięczne <FaDownload style={{ color: "grey" }} />
+              Monthly summary <FaDownload style={{ color: "grey" }} />
             </Card.Header>
             <Card.Body>
               <Card.Text className="small text-muted">

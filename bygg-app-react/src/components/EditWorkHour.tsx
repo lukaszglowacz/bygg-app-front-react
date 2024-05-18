@@ -54,7 +54,7 @@ const EditWorkHour: React.FC = () => {
         setWorkSession(sessionRes.data);
         setWorkplaces(workplacesRes.data);
       } catch (error) {
-        setError("Nie udało się załadować danych.");
+        setError("Failed to load data.");
       } finally {
         setLoading(false);
       }
@@ -130,7 +130,7 @@ const EditWorkHour: React.FC = () => {
     <Container className="container-sm">
       <Row>
         <Col className="text-center">
-          <h1>Edycja sesji pracy</h1>
+          <h1>Edit your work session</h1>
         </Col>
       </Row>
       <Row>
@@ -187,7 +187,7 @@ const EditWorkHour: React.FC = () => {
                   type="submit"
                   className="w-100 w-md-auto"
                 >
-                  Zapisz
+                  Save
                 </Button>
               </Col>
             </Row>
@@ -200,7 +200,7 @@ const EditWorkHour: React.FC = () => {
                   }
                   className="w-100 w-md-auto"
                 >
-                  Usuń
+                  Delete
                 </Button>
               </Col>
             </Row>
@@ -211,7 +211,7 @@ const EditWorkHour: React.FC = () => {
                   onClick={goBack}
                   className="w-100 w-md-auto"
                 >
-                  Cofnij
+                  Back
                 </Button>
               </Col>
             </Row>

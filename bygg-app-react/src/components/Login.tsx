@@ -61,7 +61,7 @@ const LoginComponent: React.FC = () => {
       if (axiosError.response && axiosError.response.data) {
         setErrors(axiosError.response.data);
       } else {
-        setErrors({ general: ["Nie udało się zalogować. Sprawdź swoje dane logowania."] });
+        setErrors({ general: ["Failed to log in. Please check your login details."] });
       }
     }
   };
@@ -70,12 +70,12 @@ const LoginComponent: React.FC = () => {
     <Container>
       <Row className="justify-content-center">
         <Col xs={12} md={6}>
-          <h2 className="text-center mb-4">Logowanie</h2>
+          <h2 className="text-center mb-4">Log in</h2>
           <Form onSubmit={handleLogin}>
             <Form.Group controlId="email" className="mb-2">
               <Form.Control
                 type="email"
-                placeholder="Adres email"
+                placeholder="E-mail"
                 name="email"
                 value={email}
                 onChange={handleChange}
@@ -89,7 +89,7 @@ const LoginComponent: React.FC = () => {
             <Form.Group controlId="password">
               <Form.Control
                 type="password"
-                placeholder="Hasło"
+                placeholder="Password"
                 name="password"
                 value={password}
                 onChange={handleChange}
@@ -107,8 +107,8 @@ const LoginComponent: React.FC = () => {
             )}
 
             <div className="d-flex justify-content-between align-items-center mt-4">
-              <Button variant="primary" type="submit">Zaloguj</Button>
-              <Link to="/register" className="ml-auto">Zarejestruj się</Link>
+              <Button variant="primary" type="submit">Log in</Button>
+              <Link to="/register" className="ml-auto">Sign up</Link>
             </div>
           </Form>
         </Col>

@@ -15,10 +15,20 @@ const AddWorkPlace: React.FC = () => {
 
   const validate = () => {
     let newErrors = {};
-    if (!workplace.street) newErrors = { ...newErrors, street: "Ulica jest wymagana." };
-    if (!workplace.street_number.match(/^\d+$/)) newErrors = { ...newErrors, street_number: "Numer ulicy musi być liczbą." };
-    if (!workplace.postal_code.match(/^\d{3}\s\d{2}$/)) newErrors = { ...newErrors, postal_code: "Kod pocztowy musi być w formacie 'XXX XX'." };
-    if (!workplace.city) newErrors = { ...newErrors, city: "Miasto jest wymagane." };
+    if (!workplace.street)
+      newErrors = { ...newErrors, street: "Street is required." };
+    if (!workplace.street_number.match(/^\d+$/))
+      newErrors = {
+        ...newErrors,
+        street_number: "The street number must be a number.",
+      };
+    if (!workplace.postal_code.match(/^\d{3}\s\d{2}$/))
+      newErrors = {
+        ...newErrors,
+        postal_code: "Zip code must be in the format 'XXX XX'.",
+      };
+    if (!workplace.city)
+      newErrors = { ...newErrors, city: "City is required." };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -35,10 +45,10 @@ const AddWorkPlace: React.FC = () => {
 
     try {
       await api.post("/workplace/", workplace);
-      alert("Miejsce pracy zostało dodane.");
+      alert("Workplace has been added.");
       navigate("/work-places");
     } catch (error) {
-      console.error("Wystąpił błąd podczas dodawania miejsca pracy: ", error);
+      console.error("An error occurred while adding a workplace: ", error);
     }
   };
 
@@ -51,11 +61,13 @@ const AddWorkPlace: React.FC = () => {
               <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
-                    <span className="input-group-text"><i className="bi bi-signpost-2"></i></span>
+                    <span className="input-group-text">
+                      <i className="bi bi-signpost-2"></i>
+                    </span>
                   </div>
                   <Form.Control
                     type="text"
-                    placeholder="Ulica"
+                    placeholder="Street"
                     name="street"
                     value={workplace.street}
                     onChange={handleChange}
@@ -73,11 +85,13 @@ const AddWorkPlace: React.FC = () => {
               <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
-                    <span className="input-group-text"><i className="bi bi-hash"></i></span>
+                    <span className="input-group-text">
+                      <i className="bi bi-hash"></i>
+                    </span>
                   </div>
                   <Form.Control
                     type="text"
-                    placeholder="Numer"
+                    placeholder="Street number"
                     name="street_number"
                     value={workplace.street_number}
                     onChange={handleChange}
@@ -95,11 +109,13 @@ const AddWorkPlace: React.FC = () => {
               <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
-                    <span className="input-group-text"><i className="bi bi-envelope"></i></span>
+                    <span className="input-group-text">
+                      <i className="bi bi-envelope"></i>
+                    </span>
                   </div>
                   <Form.Control
                     type="text"
-                    placeholder="Kod pocztowy"
+                    placeholder="Postal code"
                     name="postal_code"
                     value={workplace.postal_code}
                     onChange={handleChange}
@@ -117,11 +133,13 @@ const AddWorkPlace: React.FC = () => {
               <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
-                    <span className="input-group-text"><i className="bi bi-building"></i></span>
+                    <span className="input-group-text">
+                      <i className="bi bi-building"></i>
+                    </span>
                   </div>
                   <Form.Control
                     type="text"
-                    placeholder="Miasto"
+                    placeholder="City"
                     name="city"
                     value={workplace.city}
                     onChange={handleChange}
@@ -137,15 +155,25 @@ const AddWorkPlace: React.FC = () => {
 
             <Row className="mb-3 mt-5">
               <Col md={6} className="mx-auto">
-                <Button variant="success" type="submit" className="w-100" size="sm">
-                  Dodaj
+                <Button
+                  variant="success"
+                  type="submit"
+                  className="w-100"
+                  size="sm"
+                >
+                  Add
                 </Button>
               </Col>
             </Row>
             <Row className="mb-3">
               <Col md={6} className="mx-auto">
-                <Button variant="outline-secondary" onClick={() => navigate("/work-places")} className="w-100" size="sm">
-                  Powrot
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => navigate("/work-places")}
+                  className="w-100"
+                  size="sm"
+                >
+                  Back
                 </Button>
               </Col>
             </Row>

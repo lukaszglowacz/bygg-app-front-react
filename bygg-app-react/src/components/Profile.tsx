@@ -59,11 +59,11 @@ const ProfileComponent = () => {
       await api.patch(`/profile/${profileId}/`, payload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Profil został zaktualizowany.");
+      alert("The profile has been updated.");
       loadProfile();
     } catch (error) {
-      console.error("Wystąpił błąd przy aktualizacji profilu:", error);
-      alert("Nie udało się zaktualizować profilu.");
+      console.error("An error occurred while updating the profile:", error);
+      alert("Failed to update profile.");
     }
   };
 
@@ -77,7 +77,7 @@ const ProfileComponent = () => {
                 <Image src={previewUrls.get(profile.id) || profile.image} roundedCircle fluid style={{ width: "100px", height: "100px", objectFit: "cover", margin: "0 auto"}} />
                 <OverlayTrigger
                   placement="right"
-                  overlay={<Tooltip>Edytuj zdjęcie</Tooltip>}
+                  overlay={<Tooltip>Edit</Tooltip>}
                 >
                   <label className="btn btn-secondary">
                     <PencilSquare /> <input type="file" hidden onChange={(e) => handleFileChange(profile.id, e)} />
@@ -88,7 +88,7 @@ const ProfileComponent = () => {
               <Card.Body>
                 <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Imię</Form.Label>
+                    <Form.Label>First name</Form.Label>
                     <Form.Control
                       type="text"
                       value={formData.get(profile.id)?.firstName || ""}
@@ -96,7 +96,7 @@ const ProfileComponent = () => {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>Nazwisko</Form.Label>
+                    <Form.Label>Last name</Form.Label>
                     <Form.Control
                       type="text"
                       value={formData.get(profile.id)?.lastName || ""}

@@ -46,7 +46,7 @@ const AddWorkHour: React.FC = () => {
         const response = await api.get("/workplace/");
         setWorkplaces(response.data);
       } catch (error) {
-        setError("Nie udało się załadować danych.");
+        setError("Failed to load data.");
       } finally {
         setLoading(false);
       }
@@ -57,7 +57,7 @@ const AddWorkHour: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isAuthenticated || !profileId || !newSession.workplaceId) {
-      setError("Musisz być zalogowany i wybrać miejsce pracy.");
+      setError("You must be logged in and select your workplace.");
       return;
     }
     try {
@@ -70,9 +70,9 @@ const AddWorkHour: React.FC = () => {
       navigate("/work-hours");
     } catch (error) {
       if (error instanceof Error) {
-        setError("Nie udało się dodać sesji pracy. Błąd: " + error.message);
+        setError("Failed to add a work session. Error: " + error.message);
       } else {
-        setError("Nie udało się dodać sesji pracy z nieznanego powodu.");
+        setError("Failed to add a work session for an unknown reason.");
       }
     }
   };
@@ -97,7 +97,7 @@ const AddWorkHour: React.FC = () => {
     <Container>
       <Row>
         <Col className="text-center">
-          <h1>Dodaj czas pracy</h1>
+          <h1>Add working time</h1>
         </Col>
       </Row>
       <Row>
@@ -118,7 +118,7 @@ const AddWorkHour: React.FC = () => {
                     onChange={handleChange}
                     required
                   >
-                    <option value="">Wybierz miejsce pracy</option>
+                    <option value="">Choose your workplace</option>
                     {workplaces.map((workplace) => (
                       <option key={workplace.id} value={workplace.id}>
                         {workplace.street} {workplace.street_number},{" "}
@@ -175,7 +175,7 @@ const AddWorkHour: React.FC = () => {
                   type="submit"
                   className="w-100 w-md-auto"
                 >
-                  Dodaj
+                  Add
                 </Button>
               </Col>
             </Row>
@@ -186,7 +186,7 @@ const AddWorkHour: React.FC = () => {
                   onClick={goBack}
                   className="w-100 w-md-auto"
                 >
-                  Cofnij
+                  Back
                 </Button>
               </Col>
             </Row>

@@ -57,7 +57,7 @@ const WorkHourByDay: React.FC = () => {
         setTotalTime(sumTotalTimeForProfile(daySessions));
         setLoading(false);
       } catch (error: any) {
-        setError("Nie udało się pobrać sesji pracy dla tego dnia.");
+        setError("Failed to retrieve the work session for this day.");
         setLoading(false);
       }
     };
@@ -80,7 +80,7 @@ const WorkHourByDay: React.FC = () => {
     navigate(`/work-hours/day/${newDate}`);
   };
 
-  if (loading) return <Alert variant="info">Ładowanie danych...</Alert>;
+  if (loading) return <Alert variant="info">Loading data...</Alert>;
   if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
@@ -93,7 +93,7 @@ const WorkHourByDay: React.FC = () => {
                 as="h6"
                 className="d-flex justify-content-between align-items-center"
               >
-                Zestawienie dzienne
+                Daily statement
               </Card.Header>
               <Card.Body>
                 <Card.Text className="small text-muted">
@@ -162,7 +162,7 @@ const WorkHourByDay: React.FC = () => {
       {loading ? (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
-            <Alert variant="info">Ładowanie danych...</Alert>
+            <Alert variant="info">Loading data...</Alert>
           </Col>
         </Row>
       ) : error ? (
@@ -174,7 +174,7 @@ const WorkHourByDay: React.FC = () => {
       ) : !sessions.length ? (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
-            <Alert variant="warning">Brak sesji pracy dla tego dnia.</Alert>
+            <Alert variant="warning">There are no work sessions for this day.</Alert>
           </Col>
         </Row>
       ) : (

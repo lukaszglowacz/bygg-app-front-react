@@ -106,7 +106,7 @@ const WorkHour: React.FC = () => {
             ))
           ) : (
             <Col xs={12} className="text-center p-2">
-              <small>Brak pracy</small>
+              <small>No work session</small>
             </Col>
           )}
         </Row>
@@ -162,7 +162,7 @@ const WorkHour: React.FC = () => {
                 as="h6"
                 className="d-flex justify-content-between align-items-center"
               >
-                Zestawienie miesięczne
+                Monthly statement
               </Card.Header>
               <Card.Body>
                 <Card.Text className="small text-muted">

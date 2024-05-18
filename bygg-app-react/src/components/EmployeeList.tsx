@@ -58,7 +58,7 @@ const EmployeeList: React.FC = () => {
                       className="me-2"
                       style={{ color: "blue" }}
                     />
-                    <strong>Aktualnie pracuje: </strong>
+                    <strong>Currently working: </strong>
                     {employee.current_session_status === "Trwa" ? (
                       <i className="bi bi-check-circle-fill text-success"></i>
                     ) : (
@@ -69,17 +69,17 @@ const EmployeeList: React.FC = () => {
                     <>
                       <div>
                         <GeoAlt className="me-2" />
-                        <strong>Miejsce pracy: </strong>
+                        <strong>Workplace: </strong>
                         {employee.current_workplace}
                       </div>
                       <div>
                         <i className="bi bi-clock-fill me-2"></i>
-                        <strong>Rozpoczecie: </strong>
+                        <strong>Start: </strong>
                         {employee.current_session_start_time}
                       </div>
                       <div>
                         <HourglassSplit className="me-2" />
-                        <strong>Uplynelo: </strong>
+                        <strong>Expired: </strong>
                         <TimeElapsed
                           startTime={employee.current_session_start_time}
                         />
@@ -93,8 +93,8 @@ const EmployeeList: React.FC = () => {
                       className="btn-sm mt-3"
                       onClick={() => handleEmployee(employee.id)}
                     >
-                      <i className="bi bi-person-exclamation me-1"></i> Pokaz
-                      wiecej
+                      <i className="bi bi-person-exclamation me-1"></i> Show
+                      more
                     </Button>
                   </div>
                 </Accordion.Body>

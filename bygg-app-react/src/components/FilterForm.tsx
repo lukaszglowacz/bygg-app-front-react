@@ -50,7 +50,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                 aria-label="Profile"
                 aria-describedby="basic-addon1"
               >
-                <option value="">Wszyscy</option>
+                <option value="">All</option>
                 {profiles.map((profile) => (
                   <option key={profile.id} value={profile.id}>
                     {profile.full_name}
@@ -77,10 +77,11 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                 aria-label="Workplace"
                 aria-describedby="basic-addon2"
               >
-                <option value="">Wybierz miejsce pracy</option>
+                <option value="">Choose workplace</option>
                 {workplaces.map((workplace) => (
                   <option key={workplace.id} value={workplace.id}>
-                    {workplace.street} {workplace.street_number}, {workplace.postal_code} {workplace.city}
+                    {workplace.street} {workplace.street_number},{" "}
+                    {workplace.postal_code} {workplace.city}
                   </option>
                 ))}
               </Form.Control>
@@ -137,7 +138,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
             variant="outline-success"
             className="mb-4 mt-2"
           >
-            Filtruj
+            Filter
           </Button>
         </Col>
       </Row>

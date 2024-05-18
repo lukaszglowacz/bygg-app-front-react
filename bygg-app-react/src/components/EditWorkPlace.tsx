@@ -24,7 +24,7 @@ const EditWorkPlace: React.FC = () => {
         const response = await api.get<IWorkPlacesData>(`/workplace/${id}/`);
         setWorkplace(response.data);
       } catch (error) {
-        console.log("Nie udało się pobrać danych miejsca pracy.", error);
+        console.log("Failed to retrieve workplace data.", error);
       }
     };
 
@@ -37,16 +37,16 @@ const EditWorkPlace: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!workplace.street) {
-      newErrors.street = "Ulica jest wymagana.";
+      newErrors.street = "Street is required.";
     }
     if (!workplace.street_number.match(/^\d+$/)) {
-      newErrors.street_number = "Numer ulicy musi być liczbą.";
+      newErrors.street_number = "The street number must be a number.";
     }
     if (!workplace.postal_code.match(/^\d{3}\s\d{2}$/)) {
-      newErrors.postal_code = "Kod pocztowy musi być w formacie 'XXX XX'.";
+      newErrors.postal_code = "Postal code must be in the format 'XXX XX'.";
     }
     if (!workplace.city) {
-      newErrors.city = "Miasto jest wymagane.";
+      newErrors.city = "City is required.";
     }
 
     setErrors(newErrors);
@@ -54,15 +54,15 @@ const EditWorkPlace: React.FC = () => {
   };
 
   const handleDeleteClick = async (id: number) => {
-    if (window.confirm("Czy na pewno chcesz usunąć to miejsce pracy?")) {
+    if (window.confirm("Are you sure you want to delete this workplace?")) {
       try {
         // Przykładowe wywołanie metody delete przy użyciu Axios
         await api.delete(`/workplace/${id}/`);
-        alert("Miejsce pracy zostało usunięte.");
+        alert("Workplace has been removed.");
         navigate("/work-places");
       } catch (error) {
-        console.error("Wystąpił błąd podczas usuwania miejsca pracy: ", error);
-        alert("Nie udało się usunąć miejsca pracy.");
+        console.error("An error occurred while deleting the workplace: ", error);
+        alert("Workplace could not be removed.");
       }
     }
   };
@@ -79,10 +79,10 @@ const EditWorkPlace: React.FC = () => {
 
     try {
       await api.put(`/workplace/${id}/`, workplace);
-      alert("Miejsce pracy zostało zaktualizowane.");
+      alert("The workplace has been updated.");
       navigate("/work-places");
     } catch (error) {
-      console.error("Wystąpił błąd podczas aktualizacji miejsca pracy: ", error);
+      console.error("An error occurred while updating the workplace: ", error);
     }
   };
 
@@ -170,21 +170,21 @@ const EditWorkPlace: React.FC = () => {
             <Row className="justify-content-center mb-3 mt-5">
               <Col md={6} className="d-flex justify-content-center">
                 <Button variant="success" type="submit" size="sm" className="w-100">
-                  Edytuj
+                  Edit
                 </Button>
               </Col>
             </Row>
             <Row className="justify-content-center my-3">
               <Col md={6} className="d-flex justify-content-center">
                 <Button variant="outline-secondary" onClick={() => navigate("/work-places")} size="sm" className="w-100">
-                  Powrót
+                  Back
                 </Button>
               </Col>
             </Row>
             <Row className="justify-content-center my-3">
               <Col md={6} className="d-flex justify-content-center">
                 <Button variant="outline-danger" onClick={() => handleDeleteClick(workplace.id)} size="sm" className="w-100">
-                  Usuń
+                  Delete
                 </Button>
               </Col>
             </Row>

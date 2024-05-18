@@ -12,7 +12,7 @@ export const useWorkPlaceData = (): IWorkPlacesData[] => {
         setWorkPlaces(response.data);
       } catch (error) {
         console.error(
-          "Wystąpił błąd podczas pobierania danych o miejscach pracy",
+          "An error occurred while retrieving job data.",
           error
         );
       }

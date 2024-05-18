@@ -50,23 +50,23 @@ const RegisterUser: React.FC = () => {
       if (response.status === 201) {
         navigate('/login');
       } else {
-        throw new Error('Nieudana próba rejestracji');
+        throw new Error('Unsuccessful registration attempt');
       }
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
         setErrors(error.response.data);
       } else {
-        setErrors({ general: ["Rejestracja nie powiodła się. Sprawdź dane i spróbuj ponownie."] });
+        setErrors({ general: ["Registration failed. Please check your details and try again."] });
       }
     }
   };
 
   const placeholders = {
-    email: "Adres email",
-    password: "Hasło",
-    first_name: "Imię",
-    last_name: "Nazwisko",
-    personnummer: "Numer PESEL (XXXXXX-XXXX)"
+    email: "Email",
+    password: "Password",
+    first_name: "First name",
+    last_name: "Last name",
+    personnummer: "Personnummer (XXXXXX-XXXX)"
   };
 
   return (

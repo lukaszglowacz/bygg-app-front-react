@@ -18,10 +18,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({ show, onHide, onConfirm, ti
       <Modal.Body>{children}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
-          Nie
+          No
         </Button>
         <Button variant="primary" onClick={onConfirm}>
-          Tak
+          Yes
         </Button>
       </Modal.Footer>
     </Modal>

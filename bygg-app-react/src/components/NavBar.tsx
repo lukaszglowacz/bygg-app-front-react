@@ -16,14 +16,21 @@ const NavbarComponent: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && !profile) {
-      loadProfile();  // Ładuj profil, gdy jesteśmy uwierzytelnieni, ale profil nie jest jeszcze załadowany
+      loadProfile(); // Ładuj profil, gdy jesteśmy uwierzytelnieni, ale profil nie jest jeszcze załadowany
     }
     console.log("Profile:", profile);
     console.log("Authenticated:", isAuthenticated);
     if (!isLoading && !isAuthenticated && location.pathname !== "/register") {
       navigate("/login");
     }
-  }, [isAuthenticated, isLoading, navigate, location.pathname, profile, loadProfile]);
+  }, [
+    isAuthenticated,
+    isLoading,
+    navigate,
+    location.pathname,
+    profile,
+    loadProfile,
+  ]);
 
   const handleLogoutConfirm = () => {
     logout();
@@ -42,7 +49,7 @@ const NavbarComponent: React.FC = () => {
   return (
     <>
       <Navbar bg="light" fixed="top">
-        <Container >
+        <Container>
           {isAuthenticated && profile && (
             <Navbar.Brand onClick={() => navigateTo("/")}>
               <img
@@ -67,28 +74,28 @@ const NavbarComponent: React.FC = () => {
                 align="end"
               >
                 <NavDropdown.Item onClick={() => navigateTo("/")}>
-                  Panel nawigacyjny
+                  Navigation panel
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/profile")}>
-                  Profil
+                  Profile
                 </NavDropdown.Item>
                 <NavDropdown.Item
                   onClick={() => navigateTo("/active-sessions")}
                 >
-                  Aktualna praca
+                  Current worksession
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
-                  Godziny pracy
+                  Workhour
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
-                  Miejsca pracy
+                  Workplace
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/employees")}>
-                  Dane Pracodawcy
+                  Employer
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogoutClick}>
-                  Wyloguj się
+                  Log out
                 </NavDropdown.Item>
               </NavDropdown>
             )}
@@ -100,7 +107,7 @@ const NavbarComponent: React.FC = () => {
         onHide={() => setShowModal(false)}
         onConfirm={handleLogoutConfirm}
         title="Potwierdzenie wylogowania"
-        children={<p>Czy na pewno chcesz się wylogować?</p>}
+        children={<p>Are you sure you want to log out?</p>}
       />
     </>
   );
