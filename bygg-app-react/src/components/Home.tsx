@@ -4,7 +4,6 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import ClockUpdate from "./ClockUpdate";
 import WorkplaceSelector from "./WorkplaceSelector";
-import { FaLess } from "react-icons/fa";
 
 interface Profile {
   id: number;
@@ -64,18 +63,18 @@ const Home: React.FC = () => {
           setActiveSession(userActiveSession);
           setIsActiveSession(true);
           setSelectedWorkplaceId(userActiveSession.workplace.id);
-          setAlertInfo("Praca wre :) Kliknij Koniec jak skonczyles");
+          setAlertInfo("The work is in progress :) Click End when you're done");
         } else {
           setActiveSession(null);
           setIsActiveSession(false);
           setSelectedWorkplaceId(0);
-          setAlertInfo("Brak aktywnej sesji dla tego użytkownika");
+          setAlertInfo("No active session for this user");
         }
       } else {
         setActiveSession(null);
         setIsActiveSession(false);
         setSelectedWorkplaceId(0);
-        setAlertInfo("Kliknij Start pracy aby zaczac prace");
+        setAlertInfo("Click Start to get started");
       }
     };
 
@@ -84,7 +83,7 @@ const Home: React.FC = () => {
 
   const handleStartSession = async () => {
     if (!profileId || selectedWorkplaceId <= 0 || activeSession) {
-      setAlertInfo("Fajnie, ale gdzie dzisiaj pracujesz?");
+      setAlertInfo("Cool, but where are you working today?");
       return;
     }
     try {
@@ -94,17 +93,17 @@ const Home: React.FC = () => {
       });
       setActiveSession(response.data);
       setIsActiveSession(true);
-      setAlertInfo("Praca rozpoczęta.");
+      setAlertInfo("Work has begun. Click End to finish.");
     } catch (error) {
       console.error("Error starting session", error);
-      setAlertInfo("Nie udało się rozpocząć sesji. Sprobuj ponownie.");
+      setAlertInfo("The session failed to start. Please try again.");
     }
   };
 
   const handleEndSession = async () => {
     if (!activeSession || !activeSession.id) {
       // Upewnienie się, że 'id' istnieje
-      setAlertInfo("Teraz nie pracujesz. Kliknij Start aby zaczac.");
+      setAlertInfo("You are not working now. Click Start to get started.");
       return;
     }
     try {
@@ -112,18 +111,18 @@ const Home: React.FC = () => {
       setActiveSession(null); // Resetowanie stanu aktywnej sesji
       setIsActiveSession(false);
       setSelectedWorkplaceId(0);
-      setAlertInfo("Gratulacje! To byl dobry dzien pracy.");
+      setAlertInfo("Congratulations! It was a good day's work.");
     } catch (error) {
       console.error("Error ending session", error);
-      setAlertInfo("Nie udało się zakończyć sesji. Sprobuj ponownie.");
+      setAlertInfo("The session could not be ended. Please try again.");
     }
   };
 
   const formatDate = (date: Date) => {
-    const weekday = new Date(date).toLocaleDateString("sv-SE", {
+    const weekday = new Date(date).toLocaleDateString("en-EN", {
       weekday: "long", // nazwa dnia tygodnia
     });
-    const restOfDate = new Date(date).toLocaleDateString("sv-SE", {
+    const restOfDate = new Date(date).toLocaleDateString("en-EN", {
       day: "numeric", // numer dnia
       month: "long", // nazwa miesiąca
       year: "numeric", // rok
@@ -174,7 +173,7 @@ const Home: React.FC = () => {
               className="btn-lg"
               style={{ padding: "15px 25px", fontSize: "1rem" }}
             >
-              Start pracy
+              Start
             </Button>
           )}
           {activeSession && (
@@ -185,7 +184,7 @@ const Home: React.FC = () => {
               className="btn-lg"
               style={{ padding: "15px 25px", fontSize: "1rem" }}
             >
-              Koniec pracy
+              End
             </Button>
           )}
         </Col>
