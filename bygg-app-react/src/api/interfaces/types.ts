@@ -57,6 +57,7 @@ export interface Profile {
     created_at: string;
     updated_at: string;
     image: string;
+    is_employer: boolean; 
   }
   
   export interface Workplace {

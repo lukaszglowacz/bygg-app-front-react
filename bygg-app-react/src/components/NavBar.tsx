@@ -19,6 +19,7 @@ const NavbarComponent: React.FC = () => {
       loadProfile(); // Ładuj profil, gdy jesteśmy uwierzytelnieni, ale profil nie jest jeszcze załadowany
     }
     console.log("Profile:", profile);
+    console.log("isEmployer:", profile?.is_employer);
     console.log("Authenticated:", isAuthenticated);
     if (!isLoading && !isAuthenticated && location.pathname !== "/register") {
       navigate("/login");
@@ -90,9 +91,12 @@ const NavbarComponent: React.FC = () => {
                 <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
                   Workplace
                 </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigateTo("/employees")}>
-                  Employer
-                </NavDropdown.Item>
+                {/* Renderowanie elementu Employer tylko dla użytkowników z uprawnieniami IsEmployer */}
+                {profile?.is_employer && (
+                  <NavDropdown.Item onClick={() => navigateTo("/employees")}>
+                    Employer
+                  </NavDropdown.Item>
+                )}
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogoutClick}>
                   Log out
