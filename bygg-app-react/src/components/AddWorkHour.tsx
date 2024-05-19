@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
   Form,
@@ -29,6 +29,9 @@ interface WorkSession {
 
 const AddWorkHour: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const date = queryParams.get('date');
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
   const { profileId, isAuthenticated } = useAuth();
   const [newSession, setNewSession] = useState<WorkSession>({
@@ -67,7 +70,7 @@ const AddWorkHour: React.FC = () => {
         start_time: newSession.start_time,
         end_time: newSession.end_time,
       });
-      navigate("/work-hours");
+      navigate(`/employee/${profileId}/day/${date}`);
     } catch (error) {
       if (error instanceof Error) {
         setError("Failed to add a work session. Error: " + error.message);
@@ -95,11 +98,6 @@ const AddWorkHour: React.FC = () => {
 
   return (
     <Container>
-      <Row>
-        <Col className="text-center">
-          <h1>Add working time</h1>
-        </Col>
-      </Row>
       <Row>
         <Col>
           <Form onSubmit={handleSubmit}>
@@ -141,7 +139,7 @@ const AddWorkHour: React.FC = () => {
                   <Form.Control
                     type="datetime-local"
                     name="start_time"
-                    value={newSession.start_time}
+                    value={newSession.start_time || date + 'T00:00'}
                     onChange={handleChange}
                     required
                   />
@@ -149,7 +147,7 @@ const AddWorkHour: React.FC = () => {
               </Col>
             </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="endDateTime">
+            <Form.Group as={Row} className="mb-5" controlId="endDateTime">
               <Col md={6} className="mx-auto">
                 <div className="input-group">
                   <div className="input-group-prepend">
@@ -160,7 +158,7 @@ const AddWorkHour: React.FC = () => {
                   <Form.Control
                     type="datetime-local"
                     name="end_time"
-                    value={newSession.end_time}
+                    value={newSession.end_time || date + 'T00:00'}
                     onChange={handleChange}
                     required
                   />
@@ -172,6 +170,7 @@ const AddWorkHour: React.FC = () => {
               <Col md={6} className="mx-auto">
                 <Button
                   variant="success"
+                  size="sm"
                   type="submit"
                   className="w-100 w-md-auto"
                 >
@@ -183,6 +182,7 @@ const AddWorkHour: React.FC = () => {
               <Col md={6} className="mx-auto">
                 <Button
                   variant="outline-secondary"
+                  size="sm"
                   onClick={goBack}
                   className="w-100 w-md-auto"
                 >

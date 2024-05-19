@@ -168,12 +168,15 @@ const EmployeeDetailsByDay: React.FC = () => {
         </Col>
       </Row>
       <Row className="justify-content-center my-3">
-        <Col md={6} className="d-flex justify-content-between">
+        <Col md={6} className="d-flex justify-content-end">
           <Button
-            onClick={() => navigate(`/employee/${id}/add-session`)}
-            variant="primary"
+            onClick={() =>
+              navigate(`/add-work-hour?date=${date}&employeeId=${id}`)
+            }
+            variant="outline-secondary"
+            size="sm"
           >
-            Add New Session
+            Add
           </Button>
         </Col>
       </Row>
@@ -217,13 +220,15 @@ const EmployeeDetailsByDay: React.FC = () => {
                       <Col xs={12} className="d-flex justify-content-end">
                         <Button
                           onClick={() => handleEditSession(session.id)}
-                          variant="outline-secondary"
+                          variant="outline-success"
+                          size="sm"
                         >
                           Edit
                         </Button>
                         <Button
                           onClick={() => handleDeleteSession(session.id)}
                           variant="outline-danger"
+                          size="sm"
                           className="ms-2"
                         >
                           Delete

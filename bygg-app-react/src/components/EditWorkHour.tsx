@@ -133,11 +133,6 @@ const EditWorkHour: React.FC = () => {
   return (
     <Container className="container-sm">
       <Row>
-        <Col className="text-center">
-          <h1>Edit your work session</h1>
-        </Col>
-      </Row>
-      <Row>
         <Col md={6} className="mx-auto">
           <Form onSubmit={handleSubmit}>
             <InputGroup className="mb-3">
@@ -171,7 +166,7 @@ const EditWorkHour: React.FC = () => {
               />
             </InputGroup>
 
-            <InputGroup className="mb-3">
+            <InputGroup className="mb-5">
               <InputGroup.Text>
                 <BiTimeFive />
               </InputGroup.Text>
@@ -188,6 +183,7 @@ const EditWorkHour: React.FC = () => {
               <Col>
                 <Button
                   variant="success"
+                  size="sm"
                   type="submit"
                   className="w-100 w-md-auto"
                 >
@@ -198,7 +194,20 @@ const EditWorkHour: React.FC = () => {
             <Row className="mb-3">
               <Col>
                 <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  onClick={goBack}
+                  className="w-100 w-md-auto"
+                >
+                  Back
+                </Button>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col>
+                <Button
                   variant="outline-danger"
+                  size="sm"
                   onClick={() =>
                     workSession && handleDeleteClick(workSession.id)
                   }
@@ -208,17 +217,7 @@ const EditWorkHour: React.FC = () => {
                 </Button>
               </Col>
             </Row>
-            <Row className="mb-3">
-              <Col>
-                <Button
-                  variant="outline-secondary"
-                  onClick={goBack}
-                  className="w-100 w-md-auto"
-                >
-                  Back
-                </Button>
-              </Col>
-            </Row>
+            
           </Form>
         </Col>
       </Row>

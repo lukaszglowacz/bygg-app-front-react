@@ -9,7 +9,7 @@ const formatDate = (date: Date): string => {
 };
 
 const MonthYearDisplay: React.FC<{ currentDate: Date }> = ({ currentDate }) => {
-  const monthYear = currentDate.toLocaleString("sv-SE", {
+  const monthYear = currentDate.toLocaleString("en-EN", {
     month: "long",
     year: "numeric",
   });
