@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useWorkPlaceData } from "../hooks/useWorkplaceData";
 import { Container, Col, Row, Button, Accordion } from "react-bootstrap";
 import { IWorkPlacesData } from "../api/interfaces/types";
 import { useNavigate } from "react-router-dom";
+import { useUserProfile } from "../context/UserProfileContext";
 
 const WorkPlaceContainer: React.FC = () => {
   const workplaces = useWorkPlaceData();
   const navigate = useNavigate();
+  const { profile, loadProfile } = useUserProfile();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (!profile) {
+      loadProfile();
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [profile, loadProfile]);
 
   const handleAddClick = () => {
     navigate("/add-work-place"); // Przekierowanie do AddWorkPlace
@@ -22,17 +33,19 @@ const WorkPlaceContainer: React.FC = () => {
 
   return (
     <Container>
-      <Row className="justify-content-center my-3">
-        <Col md={6} className="d-flex justify-content-end">
-          <Button
-            variant="outline-secondary"
-            onClick={handleAddClick}
-            size="sm"
-          >
-            Add
-          </Button>
-        </Col>
-      </Row>
+      {isAuthenticated && profile?.is_employer && (
+        <Row className="justify-content-center my-3">
+          <Col md={6} className="d-flex justify-content-end">
+            <Button
+              variant="outline-secondary"
+              onClick={handleAddClick}
+              size="sm"
+            >
+              Add
+            </Button>
+          </Col>
+        </Row>
+      )}
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Accordion defaultActiveKey="0" className="text-center">
@@ -44,15 +57,18 @@ const WorkPlaceContainer: React.FC = () => {
                     <span>{` ${workplace.postal_code} ${workplace.city}`}</span>
                   </div>
                 </Accordion.Header>
-                <Accordion.Body>
-                  <Button
-                    variant="outline-success"
-                    size="sm"
-                    onClick={() => handleEditClick(workplace.id)}
-                  >
-                    Edit
-                  </Button>
-                </Accordion.Body>
+
+                {isAuthenticated && profile?.is_employer && (
+                  <Accordion.Body>
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      onClick={() => handleEditClick(workplace.id)}
+                    >
+                      Edit
+                    </Button>
+                  </Accordion.Body>
+                )}
               </Accordion.Item>
             ))}
           </Accordion>
