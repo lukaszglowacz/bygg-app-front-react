@@ -15,6 +15,7 @@ import {
 import { sumTotalTime } from "../api/helper/timeUtils";
 import { FaDownload } from "react-icons/fa";
 import MonthYearDisplay from "./MonthYearDisplay";
+import BackButton from "./NavigateButton";
 
 const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -173,6 +174,7 @@ const EmployeeDetails: React.FC = () => {
 
   return (
     <Container className="my-5">
+      <BackButton backPath="/employees" />
       <Row className="justify-content-center">
         <Col md={6} className="text-center">
           <Image

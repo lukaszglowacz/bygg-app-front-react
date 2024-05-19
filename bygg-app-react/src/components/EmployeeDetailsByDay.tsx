@@ -28,6 +28,7 @@ import { sumTotalTime } from "../api/helper/timeUtils";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import BackButton from "./NavigateButton";
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
@@ -96,6 +97,7 @@ const EmployeeDetailsByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
+      <BackButton backPath={`/employees/${id}`} />
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">

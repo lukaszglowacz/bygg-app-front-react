@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
 import MonthYearDisplay from "./MonthYearDisplay";
+import BackButton from "./NavigateButton";
 
 const WorkHour: React.FC = () => {
   const [sessionsByDay, setSessionsByDay] = useState<
@@ -77,7 +78,11 @@ const WorkHour: React.FC = () => {
             className="d-flex justify-content-between align-items-center bg-light p-2"
           >
             <div>{day}</div>
-            <Button onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-secondary" size="sm">
+            <Button
+              onClick={() => navigate(`/work-hours/day/${day}`)}
+              variant="outline-secondary"
+              size="sm"
+            >
               <ChevronRight />
             </Button>
           </Col>
@@ -154,6 +159,7 @@ const WorkHour: React.FC = () => {
 
   return (
     <Container className="my-5">
+      <BackButton backPath="/" />
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>
@@ -186,7 +192,7 @@ const WorkHour: React.FC = () => {
           </Col>
         </Row>
       )}
-      
+
       <Row className="justify-content-center mt-3 align-items-center">
         <Col md={6}>
           <Row className="align-items-center">

@@ -12,6 +12,7 @@ import {
   InfoCircleFill,
 } from "react-bootstrap-icons";
 import TimeElapsed from "./TimeElapsed";
+import BackButton from "./NavigateButton";
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -44,6 +45,7 @@ const EmployeeList: React.FC = () => {
 
   return (
     <Container>
+      <BackButton backPath="/" />
       <Row className="justify-content-center my-3">
         <Col md={6}>
           <Accordion defaultActiveKey="0">

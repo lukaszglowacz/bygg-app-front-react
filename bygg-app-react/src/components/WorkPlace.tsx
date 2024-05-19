@@ -4,6 +4,7 @@ import { Container, Col, Row, Button, Accordion } from "react-bootstrap";
 import { IWorkPlacesData } from "../api/interfaces/types";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../context/UserProfileContext";
+import BackButton from "./NavigateButton";
 
 const WorkPlaceContainer: React.FC = () => {
   const workplaces = useWorkPlaceData();
@@ -33,6 +34,7 @@ const WorkPlaceContainer: React.FC = () => {
 
   return (
     <Container>
+      <BackButton backPath="/" />
       {isAuthenticated && profile?.is_employer && (
         <Row className="justify-content-center my-3">
           <Col md={6} className="d-flex justify-content-end">

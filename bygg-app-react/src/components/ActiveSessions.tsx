@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TimeElapsed from "./TimeElapsed";
 import { Session } from "../api/interfaces/types";
 import { HourglassSplit, InfoCircleFill } from "react-bootstrap-icons";
+import BackButton from "./NavigateButton";
 
 const ActiveSessions: React.FC = () => {
   const sessions: Session[] = useAllLiveSessions();
@@ -14,6 +15,7 @@ const ActiveSessions: React.FC = () => {
   if (sessions.length === 0) {
     return (
       <Container>
+        <BackButton backPath="/" />
         <Row className="justify-content-center my-3">
           <Col md={6}>
             <Alert className="text-center" variant="warning">
@@ -27,6 +29,7 @@ const ActiveSessions: React.FC = () => {
 
   return (
     <Container>
+      <BackButton backPath="/" />
       <Row className="justify-content-center my-3">
         <Col md={6}>
           <Accordion defaultActiveKey="0">

@@ -24,6 +24,7 @@ import {
   ChevronRight,
 } from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
+import BackButton from "./NavigateButton";
 
 interface Params {
   date: string;
@@ -38,6 +39,7 @@ const WorkHourByDay: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const goBack = useGoBack();
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
+  const [currentDate, setCurrentDate] = useState<string>(new Date().toISOString().slice(0, 10));
 
   useEffect(() => {
     const fetchSessionsByDay = async () => {
@@ -85,6 +87,7 @@ const WorkHourByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
+      <BackButton backPath="/work-hours" />
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>
@@ -174,7 +177,9 @@ const WorkHourByDay: React.FC = () => {
       ) : !sessions.length ? (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
-            <Alert variant="warning">There are no work sessions for this day.</Alert>
+            <Alert variant="warning">
+              There are no work sessions for this day.
+            </Alert>
           </Col>
         </Row>
       ) : (
