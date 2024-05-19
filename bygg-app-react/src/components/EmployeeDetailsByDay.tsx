@@ -76,6 +76,24 @@ const EmployeeDetailsByDay: React.FC = () => {
     navigate(`/employee/${id}/day/${newDate}`);
   };
 
+  const handleEditSession = (sessionId: number) => {
+    navigate(`/edit-session/${sessionId}`);
+  };
+
+  const handleDeleteSession = async (sessionId: number) => {
+    try {
+      await api.delete(`/worksession/${sessionId}`);
+      const updatedSessions = sessions.filter(
+        (session) => session.id !== sessionId
+      );
+      setSessions(updatedSessions);
+      setTotalTime(sumTotalTime(updatedSessions));
+    } catch (error) {
+      console.error("Failed to delete the session", error);
+      setError("Failed to delete the session.");
+    }
+  };
+
   return (
     <Container className="mt-4">
       <Row className="justify-content-center mt-3">
@@ -149,6 +167,16 @@ const EmployeeDetailsByDay: React.FC = () => {
           </Row>
         </Col>
       </Row>
+      <Row className="justify-content-center my-3">
+        <Col md={6} className="d-flex justify-content-between">
+          <Button
+            onClick={() => navigate(`/employee/${id}/add-session`)}
+            variant="primary"
+          >
+            Add New Session
+          </Button>
+        </Col>
+      </Row>
 
       {loading ? (
         <Row className="justify-content-center my-3">
@@ -185,6 +213,23 @@ const EmployeeDetailsByDay: React.FC = () => {
                         <HourglassSplit className="me-2" /> {session.total_time}
                       </Col>
                     </Row>
+                    <Row>
+                      <Col xs={12} className="d-flex justify-content-end">
+                        <Button
+                          onClick={() => handleEditSession(session.id)}
+                          variant="outline-secondary"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteSession(session.id)}
+                          variant="outline-danger"
+                          className="ms-2"
+                        >
+                          Delete
+                        </Button>
+                      </Col>
+                    </Row>
                   </ListGroup.Item>
                 </Col>
               </Row>
@@ -192,7 +237,9 @@ const EmployeeDetailsByDay: React.FC = () => {
           ) : (
             <Row className="justify-content-center my-3">
               <Col md={6} className="text-center">
-                <Alert variant="warning">There are no work sessions for this day.</Alert>
+                <Alert variant="warning">
+                  There are no work sessions for this day.
+                </Alert>
               </Col>
             </Row>
           )}
