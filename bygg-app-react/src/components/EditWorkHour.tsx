@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
   Form,
@@ -39,6 +39,10 @@ interface WorkSession {
 
 const EditWorkHour: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const date = queryParams.get('date');
+
   const navigate = useNavigate();
   const [workSession, setWorkSession] = useState<WorkSession | null>(null);
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
@@ -75,7 +79,7 @@ const EditWorkHour: React.FC = () => {
           end_time,
         };
         await api.put(`/worksession/${id}`, updatedSession);
-        navigate("/work-hours");
+        navigate(`/employee/${profile.id}/day/${date}`);
       } catch (err) {
         const error = err as AxiosError; // Asercja typu
         setError(
@@ -113,7 +117,7 @@ const EditWorkHour: React.FC = () => {
   const handleDeleteClick = async (sessionId: number) => {
     try {
       await api.delete(`/worksession/${sessionId}`);
-      navigate("/work-hours"); // Redirects to the work hours page after deletion
+      navigate(`/employee/${workSession?.profile.id}/day/${date}`); // Redirects to the work hours page after deletion
     } catch (err) {
       const error = err as AxiosError;
       setError(

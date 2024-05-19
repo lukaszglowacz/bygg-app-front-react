@@ -77,7 +77,7 @@ const EmployeeDetailsByDay: React.FC = () => {
   };
 
   const handleEditSession = (sessionId: number) => {
-    navigate(`/edit-session/${sessionId}`);
+    navigate(`/edit-work-hour/${sessionId}?date=${date}`); // Zakładając, że 'date' jest dostępne w tym zakresie
   };
 
   const handleDeleteSession = async (sessionId: number) => {
