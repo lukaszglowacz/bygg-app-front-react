@@ -18,7 +18,6 @@ interface ErrorResponse {
   general?: string[];
 }
 
-
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -27,12 +26,11 @@ const LoginComponent: React.FC = () => {
   const navigate = useNavigate();
   const { setProfile } = useUserProfile();
 
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setErrors(prev => ({ ...prev, [name]: undefined }));
-    if (name === 'email') setEmail(value);
-    if (name === 'password') setPassword(value);
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+    if (name === "email") setEmail(value);
+    if (name === "password") setPassword(value);
   };
 
   const loadUserProfile = async (profileId: string) => {
@@ -52,7 +50,13 @@ const LoginComponent: React.FC = () => {
       const response = await api.post("/api/token/", { email, password });
       const { access, refresh, user_id, profile_id } = response.data;
       if (access && refresh && user_id && profile_id) {
-        login(access, refresh, user_id, profile_id, new Date().getTime() + 86400000);
+        login(
+          access,
+          refresh,
+          user_id,
+          profile_id,
+          new Date().getTime() + 86400000
+        );
         await loadUserProfile(profile_id); // Ładowanie profilu
         navigate("/");
       }
@@ -61,7 +65,9 @@ const LoginComponent: React.FC = () => {
       if (axiosError.response && axiosError.response.data) {
         setErrors(axiosError.response.data);
       } else {
-        setErrors({ general: ["Failed to log in. Please check your login details."] });
+        setErrors({
+          general: ["Failed to log in. Please check your login details."],
+        });
       }
     }
   };
@@ -81,12 +87,14 @@ const LoginComponent: React.FC = () => {
                 onChange={handleChange}
                 isInvalid={!!errors.email}
               />
-              <Form.Control.Feedback type="invalid">
-                {errors.email?.join(", ")}
-              </Form.Control.Feedback>
+              {errors.email && (
+                <Alert variant="warning" className="mt-2">
+                  {errors.email.join(", ")}
+                </Alert>
+              )}
             </Form.Group>
 
-            <Form.Group controlId="password">
+            <Form.Group controlId="password" className="mb-2">
               <Form.Control
                 type="password"
                 placeholder="Password"
@@ -95,20 +103,23 @@ const LoginComponent: React.FC = () => {
                 onChange={handleChange}
                 isInvalid={!!errors.password}
               />
-              <Form.Control.Feedback type="invalid">
-                {errors.password?.join(", ")}
-              </Form.Control.Feedback>
+              {errors.password && (
+                <Alert variant="warning" className="mt-2">
+                  {errors.password.join(", ")}
+                </Alert>
+              )}
             </Form.Group>
-
             {errors.general && (
-              <Alert variant="danger">
-                {errors.general.join(", ")}
-              </Alert>
+              <Alert variant="danger">{errors.general.join(", ")}</Alert>
             )}
 
             <div className="d-flex justify-content-between align-items-center mt-4">
-              <Button variant="primary" type="submit">Log in</Button>
-              <Link to="/register" className="ml-auto">Sign up</Link>
+              <Button variant="primary" type="submit">
+                Log in
+              </Button>
+              <Link to="/register" className="ml-auto">
+                Sign up
+              </Link>
             </div>
           </Form>
         </Col>
