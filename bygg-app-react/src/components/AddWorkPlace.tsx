@@ -1,20 +1,31 @@
 import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import api from "../api/api";
+import ToastNotification from './ToastNotification';
+
+interface Workplace {
+  street: string;
+  street_number: string;
+  postal_code: string;
+  city: string;
+}
 
 const AddWorkPlace: React.FC = () => {
-  const [workplace, setWorkplace] = useState({
+  const [workplace, setWorkplace] = useState<Workplace>({
     street: "",
     street_number: "",
     postal_code: "",
     city: "",
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState<'success' | 'danger' | 'warning' | 'info' | 'dark'>('dark');
   const navigate = useNavigate();
 
-  const validate = () => {
-    let newErrors = {};
+  const validate = (): boolean => {
+    let newErrors: { [key: string]: string } = {};
     if (!workplace.street)
       newErrors = { ...newErrors, street: "Street is required." };
     if (!workplace.street_number.match(/^\d+$/))
@@ -45,10 +56,15 @@ const AddWorkPlace: React.FC = () => {
 
     try {
       await api.post("/workplace/", workplace);
-      alert("Workplace has been added.");
-      navigate("/work-places");
+      setToastMessage("Workplace has been added.");
+      setToastVariant("dark");
+      setShowToast(true);
+      setTimeout(() => {
+        navigate("/work-places");
+      }, 3000);
     } catch (error) {
       console.error("An error occurred while adding a workplace: ", error);
+      setErrors({ general: "An error occurred while adding a workplace." });
     }
   };
 
@@ -74,10 +90,12 @@ const AddWorkPlace: React.FC = () => {
                     required
                     isInvalid={!!errors.street}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.street}
-                  </Form.Control.Feedback>
                 </div>
+                {errors.street && (
+                  <Alert variant="info" className="mt-2">
+                    {errors.street}
+                  </Alert>
+                )}
               </Col>
             </Form.Group>
 
@@ -98,10 +116,12 @@ const AddWorkPlace: React.FC = () => {
                     required
                     isInvalid={!!errors.street_number}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.street_number}
-                  </Form.Control.Feedback>
                 </div>
+                {errors.street_number && (
+                  <Alert variant="info" className="mt-2">
+                    {errors.street_number}
+                  </Alert>
+                )}
               </Col>
             </Form.Group>
 
@@ -122,10 +142,12 @@ const AddWorkPlace: React.FC = () => {
                     required
                     isInvalid={!!errors.postal_code}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.postal_code}
-                  </Form.Control.Feedback>
                 </div>
+                {errors.postal_code && (
+                  <Alert variant="info" className="mt-2">
+                    {errors.postal_code}
+                  </Alert>
+                )}
               </Col>
             </Form.Group>
 
@@ -146,10 +168,12 @@ const AddWorkPlace: React.FC = () => {
                     required
                     isInvalid={!!errors.city}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.city}
-                  </Form.Control.Feedback>
                 </div>
+                {errors.city && (
+                  <Alert variant="info" className="mt-2">
+                    {errors.city}
+                  </Alert>
+                )}
               </Col>
             </Form.Group>
 
@@ -180,6 +204,7 @@ const AddWorkPlace: React.FC = () => {
           </Form>
         </Col>
       </Row>
+      <ToastNotification show={showToast} onClose={() => setShowToast(false)} message={toastMessage} variant={toastVariant} />
     </Container>
   );
 };
