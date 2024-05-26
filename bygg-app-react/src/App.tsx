@@ -17,6 +17,7 @@ import AddWorkPlace from "./components/AddWorkPlace";
 import EmployeeList from "./components/EmployeeList";
 import EmployeeDetails from "./components/EmployeeDetails";
 import EmployeeDetailsByDay from "./components/EmployeeDetailsByDay";
+import ResetPasswordComponent from "./components/ResetPasswordComponent";
 import { UserProfileProvider } from "./context/UserProfileContext";
 
 const App: React.FC = () => {
@@ -43,6 +44,7 @@ const App: React.FC = () => {
                 <Route path="/employees" element={<EmployeeList />} />
                 <Route path="/employees/:id" element={<EmployeeDetails />} />
                 <Route path="/employee/:id/day/:date" element={<EmployeeDetailsByDay />} />
+                <Route path="/reset-password" element={<ResetPasswordComponent />} />
               </Routes>
             </Col>
           </Row>

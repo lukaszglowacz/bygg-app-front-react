@@ -136,6 +136,12 @@ const LoginComponent: React.FC = () => {
                   Sign Up here
                 </Link>
               </p>
+              <p style={{ fontSize: "0.9em" }}>
+                Forgot your password?{" "}
+                <Link to="/reset-password" style={{ textDecoration: "underline" }}>
+                  Reset it here
+                </Link>
+              </p>
             </div>
           </Form>
         </Col>
