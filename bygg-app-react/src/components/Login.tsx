@@ -1,10 +1,12 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
-import { Container, Col, Row, Button, Form, Alert } from "react-bootstrap";
+import React, { useState, FormEvent, ChangeEvent } from "react";
+import { Container, Col, Row, Button, Form, Alert, InputGroup } from "react-bootstrap";
+import { EnvelopeFill, LockFill } from "react-bootstrap-icons";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { AxiosError } from "axios";
 import { useUserProfile } from "../context/UserProfileContext";
+import ToastNotification from "./ToastNotification";
 
 interface FieldErrors {
   email?: string[];
@@ -22,6 +24,8 @@ const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
   const { setProfile } = useUserProfile();
@@ -58,7 +62,11 @@ const LoginComponent: React.FC = () => {
           new Date().getTime() + 86400000
         );
         await loadUserProfile(profile_id); // Ładowanie profilu
-        navigate("/");
+        setToastMessage("Login successful.");
+        setShowToast(true);
+        setTimeout(() => {
+          navigate("/");
+        }, 3000); // Opóźnienie 3 sekundy przed przekierowaniem
       }
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -73,57 +81,71 @@ const LoginComponent: React.FC = () => {
   };
 
   return (
-    <Container>
+    <Container className="my-4">
       <Row className="justify-content-center">
-        <Col xs={12} md={6}>
-          <h2 className="text-center mb-4">Log in</h2>
-          <Form onSubmit={handleLogin}>
-            <Form.Group controlId="email" className="mb-2">
-              <Form.Control
-                type="email"
-                placeholder="E-mail"
-                name="email"
-                value={email}
-                onChange={handleChange}
-                isInvalid={!!errors.email}
-              />
-              {errors.email && (
-                <Alert variant="warning" className="mt-2">
-                  {errors.email.join(", ")}
-                </Alert>
-              )}
+        <Col md={6} className="mx-auto">
+          <h2 className="text-center mb-4">Log In</h2>
+          {errors.general && errors.general.map((error, index) => (
+            <Alert key={index} variant="danger">{error}</Alert>
+          ))}
+          <Form onSubmit={handleLogin} className="mt-3">
+            <Form.Group controlId="email" className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <EnvelopeFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="email"
+                  placeholder="E-mail"
+                  name="email"
+                  value={email}
+                  onChange={handleChange}
+                  isInvalid={!!errors.email}
+                />
+                {errors.email && errors.email.map((err, index) => (
+                  <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                ))}
+              </InputGroup>
             </Form.Group>
 
-            <Form.Group controlId="password" className="mb-2">
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                name="password"
-                value={password}
-                onChange={handleChange}
-                isInvalid={!!errors.password}
-              />
-              {errors.password && (
-                <Alert variant="warning" className="mt-2">
-                  {errors.password.join(", ")}
-                </Alert>
-              )}
+            <Form.Group controlId="password" className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <LockFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                  isInvalid={!!errors.password}
+                />
+                {errors.password && errors.password.map((err, index) => (
+                  <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                ))}
+              </InputGroup>
             </Form.Group>
-            {errors.general && (
-              <Alert variant="danger">{errors.general.join(", ")}</Alert>
-            )}
-
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <Button variant="primary" type="submit">
-                Log in
-              </Button>
-              <Link to="/register" className="ml-auto">
-                Sign up
-              </Link>
+            <Button variant="primary" type="submit" className="w-100 mb-2">
+              Log In
+            </Button>
+            <div className="text-center mt-2">
+              <p style={{ fontSize: "0.9em" }}>
+                Don't have an account?{" "}
+                <Link to="/register" style={{ textDecoration: "underline" }}>
+                  Sign Up here
+                </Link>
+              </p>
             </div>
           </Form>
         </Col>
       </Row>
+      <ToastNotification
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        message={toastMessage}
+        variant="dark"
+      />
     </Container>
   );
 };

@@ -10,10 +10,15 @@ import {
   Spinner,
   InputGroup,
 } from "react-bootstrap";
+import {
+  GeoAltFill,
+  CalendarEventFill,
+  Calendar2CheckFill,
+} from "react-bootstrap-icons";
 import api from "../api/api";
-import { BiBuildings, BiTimeFive, BiCalendar } from "react-icons/bi";
 import { AxiosError } from "axios";
 import useGoBack from "../hooks/useGoBack";
+import ToastNotification from "./ToastNotification";
 
 interface Profile {
   id: number;
@@ -41,13 +46,15 @@ const EditWorkHour: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const date = queryParams.get('date');
+  const date = queryParams.get("date");
 
   const navigate = useNavigate();
   const [workSession, setWorkSession] = useState<WorkSession | null>(null);
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const goBack = useGoBack();
 
   useEffect(() => {
@@ -68,7 +75,14 @@ const EditWorkHour: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
+
     if (workSession) {
+      if (new Date(workSession.end_time) < new Date(workSession.start_time)) {
+        setError("End time cannot be earlier than start time.");
+        return;
+      }
+
       try {
         const { id, profile, workplace, start_time, end_time } = workSession;
         const updatedSession = {
@@ -79,9 +93,13 @@ const EditWorkHour: React.FC = () => {
           end_time,
         };
         await api.put(`/worksession/${id}`, updatedSession);
-        navigate(`/employee/${profile.id}/day/${date}`);
+        setToastMessage("Work session updated successfully.");
+        setShowToast(true);
+        setTimeout(() => {
+          navigate(`/employee/${profile.id}/day/${date}`);
+        }, 3000);
       } catch (err) {
-        const error = err as AxiosError; // Asercja typu
+        const error = err as AxiosError;
         setError(
           `Failed to update session. ${error.response?.data || error.message}`
         );
@@ -117,7 +135,7 @@ const EditWorkHour: React.FC = () => {
   const handleDeleteClick = async (sessionId: number) => {
     try {
       await api.delete(`/worksession/${sessionId}`);
-      navigate(`/employee/${workSession?.profile.id}/day/${date}`); // Redirects to the work hours page after deletion
+      navigate(`/employee/${workSession?.profile.id}/day/${date}`);
     } catch (err) {
       const error = err as AxiosError;
       setError(
@@ -128,7 +146,6 @@ const EditWorkHour: React.FC = () => {
   };
 
   if (loading) return <Spinner animation="border" />;
-  if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
     <Container className="container-sm">
@@ -137,7 +154,7 @@ const EditWorkHour: React.FC = () => {
           <Form onSubmit={handleSubmit}>
             <InputGroup className="mb-3">
               <InputGroup.Text>
-                <BiBuildings />
+                <GeoAltFill />
               </InputGroup.Text>
               <Form.Select
                 name="workplace"
@@ -145,6 +162,7 @@ const EditWorkHour: React.FC = () => {
                 onChange={handleChange}
                 required
               >
+                <option value="">Choose your workplace</option>
                 {workplaces.map((workplace) => (
                   <option key={workplace.id} value={workplace.id}>
                     {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}
@@ -155,7 +173,7 @@ const EditWorkHour: React.FC = () => {
 
             <InputGroup className="mb-3">
               <InputGroup.Text>
-                <BiCalendar />
+                <CalendarEventFill />
               </InputGroup.Text>
               <Form.Control
                 type="datetime-local"
@@ -168,7 +186,7 @@ const EditWorkHour: React.FC = () => {
 
             <InputGroup className="mb-5">
               <InputGroup.Text>
-                <BiTimeFive />
+                <Calendar2CheckFill />
               </InputGroup.Text>
               <Form.Control
                 type="datetime-local"
@@ -178,6 +196,11 @@ const EditWorkHour: React.FC = () => {
                 required
               />
             </InputGroup>
+            {error && (
+              <Alert variant="danger" className="mt-3">
+                {error}
+              </Alert>
+            )}
 
             <Row className="mb-3">
               <Col>
@@ -217,10 +240,15 @@ const EditWorkHour: React.FC = () => {
                 </Button>
               </Col>
             </Row>
-            
           </Form>
         </Col>
       </Row>
+      <ToastNotification
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        message={toastMessage}
+        variant="dark"
+      />
     </Container>
   );
 };

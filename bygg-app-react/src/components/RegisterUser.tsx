@@ -1,8 +1,10 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Container, Form, Button, Row, Col, Alert, FormGroup } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, Alert, InputGroup } from "react-bootstrap";
+import { EnvelopeFill, LockFill, PersonFill, CalendarFill } from "react-bootstrap-icons";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api"; // Zakładam, że ten plik istnieje i jest skonfigurowany
-import { useNavigate } from "react-router-dom";
 import useGoBack from "../hooks/useGoBack";
+import ToastNotification from "./ToastNotification";
 
 interface RegistrationFormData {
   email: string;
@@ -30,6 +32,8 @@ const RegisterUser: React.FC = () => {
     personnummer: "",
   });
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
   const goBack = useGoBack();
 
@@ -41,14 +45,52 @@ const RegisterUser: React.FC = () => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: FieldErrors = {};
+    if (!formData.email) {
+      newErrors.email = ["Email is required."];
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = ["Invalid email address."];
+    }
+
+    if (!formData.password) {
+      newErrors.password = ["Password is required."];
+    }
+
+    if (!formData.first_name) {
+      newErrors.first_name = ["First name is required."];
+    }
+
+    if (!formData.last_name) {
+      newErrors.last_name = ["Last name is required."];
+    }
+
+    if (!formData.personnummer) {
+      newErrors.personnummer = ["Personnummer is required."];
+    } else if (!/^\d{6}-\d{4}$/.test(formData.personnummer)) {
+      newErrors.personnummer = ["Personnummer must be in format XXXXXX-XXXX."];
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
 
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       const response = await api.post("/register/", formData);
       if (response.status === 201) {
-        navigate('/login');
+        setToastMessage("Registration successful.");
+        setShowToast(true);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000); // Opóźnienie 3 sekundy przed przekierowaniem
       } else {
         throw new Error('Unsuccessful registration attempt');
       }
@@ -61,46 +103,133 @@ const RegisterUser: React.FC = () => {
     }
   };
 
-  const placeholders = {
-    email: "Email",
-    password: "Password",
-    first_name: "First name",
-    last_name: "Last name",
-    personnummer: "Personnummer (XXXXXX-XXXX)"
-  };
-
   return (
     <Container className="my-4">
       <Row>
         <Col md={{ span: 6, offset: 3 }}>
-          <h2 className="mb-3 text-center">Rejestracja</h2>
+          <h2 className="mb-3 text-center">Sign Up</h2>
           {errors.general && errors.general.map((error, index) => (
             <Alert key={index} variant="danger">{error}</Alert>
           ))}
           <Form onSubmit={handleSubmit} className="mt-3">
-            {Object.keys(formData).map((key) => (
-              <FormGroup key={key} controlId={`form${key.charAt(0).toUpperCase() + key.slice(1)}`} className="mb-3">
+            <Form.Group className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <EnvelopeFill />
+                </InputGroup.Text>
                 <Form.Control
-                  type={key === "password" ? "password" : "text"}
-                  placeholder={key.replace('_', ' ').charAt(0).toUpperCase() + key.replace('_', ' ').slice(1)}
-                  name={key}
-                  value={(formData as any)[key]}
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
-                  isInvalid={!!errors[key as keyof FieldErrors]}
-                  required
+                  isInvalid={!!errors.email}
                 />
-                <Form.Control.Feedback type="invalid">
-                  {errors[key as keyof FieldErrors]?.join(', ')}
-                </Form.Control.Feedback>
-              </FormGroup>
-            ))}
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <Button variant="primary" type="submit">Zarejestruj się</Button>
-              <Button variant="secondary" onClick={goBack} className="ml-auto">Powrót</Button>
+              </InputGroup>
+              {errors.email?.map((err, index) => (
+                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+              ))}
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <LockFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  isInvalid={!!errors.password}
+                />
+              </InputGroup>
+              {errors.password?.map((err, index) => (
+                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+              ))}
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <PersonFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="text"
+                  placeholder="First name"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  isInvalid={!!errors.first_name}
+                />
+              </InputGroup>
+              {errors.first_name?.map((err, index) => (
+                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+              ))}
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <PersonFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="text"
+                  placeholder="Last name"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  isInvalid={!!errors.last_name}
+                />
+              </InputGroup>
+              {errors.last_name?.map((err, index) => (
+                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+              ))}
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <CalendarFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="text"
+                  placeholder="Personnummer (XXXXXX-XXXX)"
+                  name="personnummer"
+                  value={formData.personnummer}
+                  onChange={handleChange}
+                  isInvalid={!!errors.personnummer}
+                />
+              </InputGroup>
+              {errors.personnummer?.map((err, index) => (
+                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+              ))}
+            </Form.Group>
+
+            <Button variant="primary" type="submit" className="w-100 mb-2">
+              Sign Up
+            </Button>
+            <Button variant="secondary" onClick={goBack} className="w-100 mb-2">
+              Back
+            </Button>
+            <div className="text-center mt-2">
+              <p style={{ fontSize: "0.9em" }}>
+                Already have an account?{" "}
+                <Link to="/login" style={{ textDecoration: "underline" }}>
+                  Log In here
+                </Link>
+              </p>
             </div>
           </Form>
         </Col>
       </Row>
+      <ToastNotification
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        message={toastMessage}
+        variant="dark"
+      />
     </Container>
   );
 };

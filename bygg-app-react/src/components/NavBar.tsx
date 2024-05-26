@@ -91,7 +91,6 @@ const NavbarComponent: React.FC = () => {
                 <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
                   Workplace
                 </NavDropdown.Item>
-                {/* Renderowanie elementu Employer tylko dla użytkowników z uprawnieniami IsEmployer */}
                 {profile?.is_employer && (
                   <NavDropdown.Item onClick={() => navigateTo("/employees")}>
                     Employer

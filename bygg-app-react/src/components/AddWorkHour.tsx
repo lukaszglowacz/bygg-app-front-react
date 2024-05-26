@@ -8,10 +8,17 @@ import {
   Spinner,
   Row,
   Col,
+  InputGroup,
 } from "react-bootstrap";
+import {
+  GeoAltFill,
+  CalendarEventFill,
+  Calendar2CheckFill,
+} from "react-bootstrap-icons";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import useGoBack from "../hooks/useGoBack";
+import ToastNotification from "./ToastNotification";
 
 interface Workplace {
   id: number;
@@ -31,7 +38,7 @@ const AddWorkHour: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const date = queryParams.get('date');
+  const date = queryParams.get("date");
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
   const { profileId, isAuthenticated } = useAuth();
   const [newSession, setNewSession] = useState<WorkSession>({
@@ -40,7 +47,9 @@ const AddWorkHour: React.FC = () => {
     end_time: "",
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const goBack = useGoBack();
 
   useEffect(() => {
@@ -59,18 +68,35 @@ const AddWorkHour: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
+
     if (!isAuthenticated || !profileId || !newSession.workplaceId) {
       setError("You must be logged in and select your workplace.");
       return;
     }
+
+    if (!newSession.start_time || !newSession.end_time) {
+      setError("All fields are required.");
+      return;
+    }
+
+    if (new Date(newSession.end_time) < new Date(newSession.start_time)) {
+      setError("End time cannot be earlier than start time.");
+      return;
+    }
+
     try {
-      const response = await api.post("/worksession/", {
+      await api.post("/worksession/", {
         workplace: newSession.workplaceId,
         profile: profileId,
         start_time: newSession.start_time,
         end_time: newSession.end_time,
       });
-      navigate(`/employee/${profileId}/day/${date}`);
+      setToastMessage("Work session added successfully.");
+      setShowToast(true);
+      setTimeout(() => {
+        navigate(`/employee/${profileId}/day/${date}`);
+      }, 3000);
     } catch (error) {
       if (error instanceof Error) {
         setError("Failed to add a work session. Error: " + error.message);
@@ -84,8 +110,7 @@ const AddWorkHour: React.FC = () => {
     const target = event.target as HTMLInputElement | HTMLSelectElement;
     const name = target.name;
     const value = target.value;
-    const updatedValue =
-      name === "profile" || name === "workplace" ? parseInt(value, 10) : value;
+    const updatedValue = name === "workplaceId" ? parseInt(value, 10) : value;
 
     setNewSession((prev) => ({
       ...prev,
@@ -94,7 +119,6 @@ const AddWorkHour: React.FC = () => {
   };
 
   if (loading) return <Spinner animation="border" />;
-  if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
     <Container>
@@ -103,12 +127,10 @@ const AddWorkHour: React.FC = () => {
           <Form onSubmit={handleSubmit}>
             <Form.Group as={Row} className="mb-3" controlId="workplaceSelect">
               <Col md={6} className="mx-auto">
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">
-                      <i className="bi bi-geo-alt-fill"></i>
-                    </span>
-                  </div>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <GeoAltFill />
+                  </InputGroup.Text>
                   <Form.Control
                     as="select"
                     name="workplaceId"
@@ -124,47 +146,51 @@ const AddWorkHour: React.FC = () => {
                       </option>
                     ))}
                   </Form.Control>
-                </div>
+                </InputGroup>
               </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="startDateTime">
               <Col md={6} className="mx-auto">
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">
-                      <i className="bi bi-calendar-event"></i>
-                    </span>
-                  </div>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <CalendarEventFill />
+                  </InputGroup.Text>
                   <Form.Control
                     type="datetime-local"
                     name="start_time"
-                    value={newSession.start_time || date + 'T00:00'}
+                    value={newSession.start_time || date + "T00:00"}
                     onChange={handleChange}
                     required
                   />
-                </div>
+                </InputGroup>
               </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-5" controlId="endDateTime">
               <Col md={6} className="mx-auto">
-                <div className="input-group">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text">
-                      <i className="bi bi-calendar2-check"></i>
-                    </span>
-                  </div>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <Calendar2CheckFill />
+                  </InputGroup.Text>
                   <Form.Control
                     type="datetime-local"
                     name="end_time"
-                    value={newSession.end_time || date + 'T00:00'}
+                    value={newSession.end_time || date + "T00:00"}
                     onChange={handleChange}
                     required
                   />
-                </div>
+                </InputGroup>
               </Col>
             </Form.Group>
+
+            {error && (
+              <Row className="mb-3">
+                <Col md={6} className="mx-auto">
+                  <Alert variant="danger">{error}</Alert>
+                </Col>
+              </Row>
+            )}
 
             <Row className="mb-3">
               <Col md={6} className="mx-auto">
@@ -172,7 +198,7 @@ const AddWorkHour: React.FC = () => {
                   variant="success"
                   size="sm"
                   type="submit"
-                  className="w-100 w-md-auto"
+                  className="w-100"
                 >
                   Add
                 </Button>
@@ -184,7 +210,7 @@ const AddWorkHour: React.FC = () => {
                   variant="outline-secondary"
                   size="sm"
                   onClick={goBack}
-                  className="w-100 w-md-auto"
+                  className="w-100"
                 >
                   Back
                 </Button>
@@ -193,6 +219,12 @@ const AddWorkHour: React.FC = () => {
           </Form>
         </Col>
       </Row>
+      <ToastNotification
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        message={toastMessage}
+        variant="dark"
+      />
     </Container>
   );
 };
