@@ -19,6 +19,7 @@ import EmployeeDetails from "./components/EmployeeDetails";
 import EmployeeDetailsByDay from "./components/EmployeeDetailsByDay";
 import ResetPasswordComponent from "./components/ResetPasswordComponent";
 import { UserProfileProvider } from "./context/UserProfileContext";
+import ConfirmPassword from "./components/ConfirmPassword";
 
 const App: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ const App: React.FC = () => {
                 <Route path="/employees/:id" element={<EmployeeDetails />} />
                 <Route path="/employee/:id/day/:date" element={<EmployeeDetailsByDay />} />
                 <Route path="/reset-password" element={<ResetPasswordComponent />} />
+                <Route path="/reset-password/:uidb64/:token" element={<ConfirmPassword />} />
               </Routes>
             </Col>
           </Row>
