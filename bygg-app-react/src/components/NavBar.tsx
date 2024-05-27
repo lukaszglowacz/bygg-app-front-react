@@ -21,7 +21,11 @@ const NavbarComponent: React.FC = () => {
     console.log("Profile:", profile);
     console.log("isEmployer:", profile?.is_employer);
     console.log("Authenticated:", isAuthenticated);
-    if (!isLoading && !isAuthenticated && location.pathname !== "/register") {
+
+    const publicPaths = ["/register", "/reset-password", "/login"];
+    const isPublicPath = publicPaths.some(path => location.pathname.startsWith(path));
+
+    if (!isLoading && !isAuthenticated && !isPublicPath) {
       navigate("/login");
     }
   }, [
