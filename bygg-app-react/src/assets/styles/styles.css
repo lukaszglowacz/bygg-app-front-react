@@ -1,0 +1,36 @@
+/* styles.css */
+body {
+    font-family: 'Arial, sans-serif';
+    background-color: #f8f9fa;
+    color: #343a40;
+  }
+  
+  .container {
+    margin-top: 20px;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .card-header {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .card-body {
+    background-color: #ffffff;
+  }
+  
+  .button-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+  }
+  
+  .button-primary:hover {
+    background-color: #0056b3;
+  }
+  
