@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Form, Button, Alert, InputGroup } from 'react-bootstrap';
-import api from '../api/api';  // Zakładam, że ten plik istnieje i jest skonfigurowany
+import { Container, Form, Button, Alert, InputGroup, Row, Col } from 'react-bootstrap';
+import api from '../api/api';
 import ToastNotification from './ToastNotification';
 import { AxiosError } from 'axios';
 import { LockFill } from "react-bootstrap-icons";
@@ -84,52 +84,57 @@ const ConfirmPassword: React.FC = () => {
 
   return (
     <Container className="my-4">
-      <Form onSubmit={handleReset} className="mt-3">
-        <Form.Group controlId="password" className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>
-              <LockFill />
-            </InputGroup.Text>
-            <Form.Control
-              type="password"
-              placeholder="New Password"
-              name="password"
-              value={password}
-              onChange={handleChange}
-              isInvalid={!!errors.password}
-            />
-          </InputGroup>
-          {errors.password?.map((err, index) => (
-            <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
-          ))}
-        </Form.Group>
+      <Row className="justify-content-center">
+        <Col md={6} className="mx-auto">
+          <h2 className="text-center mb-4">Reset Password</h2>
+          <Form onSubmit={handleReset} className="mt-3">
+            <Form.Group controlId="password" className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <LockFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="password"
+                  placeholder="New Password"
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                  isInvalid={!!errors.password}
+                />
+              </InputGroup>
+              {errors.password?.map((err, index) => (
+                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+              ))}
+            </Form.Group>
 
-        <Form.Group controlId="confirm_password" className="mb-3">
-          <InputGroup>
-            <InputGroup.Text>
-              <LockFill />
-            </InputGroup.Text>
-            <Form.Control
-              type="password"
-              placeholder="Confirm New Password"
-              name="confirm_password"
-              value={confirm_password}
-              onChange={handleChange}
-              isInvalid={!!errors.confirm_password}
-            />
-          </InputGroup>
-          {errors.confirm_password?.map((err, index) => (
-            <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
-          ))}
-        </Form.Group>
+            <Form.Group controlId="confirm_password" className="mb-3">
+              <InputGroup>
+                <InputGroup.Text>
+                  <LockFill />
+                </InputGroup.Text>
+                <Form.Control
+                  type="password"
+                  placeholder="Confirm New Password"
+                  name="confirm_password"
+                  value={confirm_password}
+                  onChange={handleChange}
+                  isInvalid={!!errors.confirm_password}
+                />
+              </InputGroup>
+              {errors.confirm_password?.map((err, index) => (
+                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+              ))}
+            </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100 mb-2">
-          Reset Password
-        </Button>
-      </Form>
-      {errors.general && errors.general.map((error, index) => (
-        <Alert key={index} variant="danger">{error}</Alert>
-      ))}
+            <Button variant="primary" type="submit" className="w-100 mb-2">
+              Reset Password
+            </Button>
+          </Form>
+          {errors.general && errors.general.map((error, index) => (
+            <Alert key={index} variant="danger">{error}</Alert>
+          ))}
+        </Col>
+      </Row>
       <ToastNotification
         show={showToast}
         onClose={() => setShowToast(false)}
