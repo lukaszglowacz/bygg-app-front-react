@@ -21,12 +21,19 @@ import ResetPasswordComponent from "./components/ResetPasswordComponent";
 import { UserProfileProvider } from "./context/UserProfileContext";
 import ConfirmPassword from "./components/ConfirmPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useAuth } from "./context/AuthContext";
 
 const App: React.FC = () => {
+  const { isLoading, isAuthenticated } = useAuth();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <UserProfileProvider>
       <Router>
-        <NavbarComponent />
+        {isAuthenticated && <NavbarComponent />}
         <Container style={{ marginTop: "100px" }}>
           <Row>
             <Col>

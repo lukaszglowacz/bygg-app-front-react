@@ -3,7 +3,7 @@ import { Container, Col, Row, Button, Form, Alert, InputGroup } from "react-boot
 import { EnvelopeFill } from "react-bootstrap-icons";
 import api from "../api/api";
 import ToastNotification from "./ToastNotification";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from 'axios';
 
 interface FieldErrors {
@@ -21,6 +21,7 @@ const ResetPasswordComponent: React.FC = () => {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,10 +37,16 @@ const ResetPasswordComponent: React.FC = () => {
       await api.post("/password-reset/", { email });
       setToastMessage("Password reset email sent.");
       setShowToast(true);
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000); // Przekierowanie po 3 sekundach
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
       if (axiosError.response && axiosError.response.data) {
         setErrors(axiosError.response.data);
+        if (axiosError.response.data.email) {
+          setEmail(""); // Resetowanie pola email po błędnym adresie
+        }
       } else {
         setErrors({
           general: ["Failed to send password reset email. Please try again later."],

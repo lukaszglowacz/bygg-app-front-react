@@ -8,7 +8,7 @@ import { useUserProfile } from "../context/UserProfileContext";
 
 const NavbarComponent: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
-  const { profile, loadProfile } = useUserProfile(); // Użyj profilu z kontekstu oraz funkcji do ładowania
+  const { profile, loadProfile } = useUserProfile();
   const navigate = useNavigate();
   const location = useLocation();
   const logout = useLogout();
@@ -16,26 +16,9 @@ const NavbarComponent: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && !profile) {
-      loadProfile(); // Ładuj profil, gdy jesteśmy uwierzytelnieni, ale profil nie jest jeszcze załadowany
+      loadProfile();
     }
-    console.log("Profile:", profile);
-    console.log("isEmployer:", profile?.is_employer);
-    console.log("Authenticated:", isAuthenticated);
-
-    const publicPaths = ["/register", "/reset-password", "/login"];
-    const isPublicPath = publicPaths.some(path => location.pathname.startsWith(path));
-
-    if (!isLoading && !isAuthenticated && !isPublicPath) {
-      navigate("/login");
-    }
-  }, [
-    isAuthenticated,
-    isLoading,
-    navigate,
-    location.pathname,
-    profile,
-    loadProfile,
-  ]);
+  }, [isAuthenticated, profile, loadProfile]);
 
   const handleLogoutConfirm = () => {
     logout();
@@ -50,6 +33,10 @@ const NavbarComponent: React.FC = () => {
   const navigateTo = (path: string) => {
     navigate(path);
   };
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <>
