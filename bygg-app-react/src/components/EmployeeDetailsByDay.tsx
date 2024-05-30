@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { WorkSession, Employee } from "../api/interfaces/types";
 import {
@@ -25,10 +25,8 @@ import {
 import useGoBack from "../hooks/useGoBack";
 import { FaDownload } from "react-icons/fa";
 import { sumTotalTime } from "../api/helper/timeUtils";
-import { useNavigate } from "react-router-dom";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import BackButton from "./NavigateButton";
+import moment from "moment-timezone";
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
@@ -46,12 +44,10 @@ const EmployeeDetailsByDay: React.FC = () => {
         setLoading(true);
         const response = await api.get<Employee>(`/employee/${id}`);
         setEmployee(response.data);
-        const daySessions = response.data.work_session.filter(
-          (session) =>
-            new Date(session.start_time).toISOString().split("T")[0] === date
-        );
+        const allSessions = response.data.work_session;
+        const daySessions = getSessionsForDate(allSessions, date);
         setSessions(daySessions);
-        setTotalTime(sumTotalTime(daySessions)); // Calculate the total time of the filtered sessions
+        setTotalTime(sumTotalTime(daySessions));
         setLoading(false);
       } catch (err) {
         setError("Failed to retrieve work session data.");
@@ -62,8 +58,56 @@ const EmployeeDetailsByDay: React.FC = () => {
     fetchEmployeeAndSessions();
   }, [id, date]);
 
+  const getSessionsForDate = (sessions: WorkSession[], date?: string) => {
+    if (!date) return [];
+    const targetDate = moment.tz(date, "Europe/Stockholm");
+    const sessionsForDate: WorkSession[] = [];
+
+    sessions.forEach((session) => {
+      const start = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const end = moment.utc(session.end_time).tz("Europe/Stockholm");
+
+      let currentStart = start.clone();
+
+      while (currentStart.isBefore(end)) {
+        const sessionEndOfDay = currentStart.clone().endOf('day');
+        const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
+
+        if (currentStart.isSame(targetDate, 'day')) {
+          sessionsForDate.push({
+            ...session,
+            start_time: currentStart.toISOString(),
+            end_time: sessionEnd.toISOString(),
+            total_time: calculateTotalTime(currentStart, sessionEnd),
+          });
+        } else if (currentStart.isBefore(targetDate) && sessionEnd.isAfter(targetDate)) {
+          const fullDaySessionStart = targetDate.clone().startOf('day');
+          const fullDaySessionEnd = targetDate.clone().endOf('day');
+
+          sessionsForDate.push({
+            ...session,
+            start_time: fullDaySessionStart.toISOString(),
+            end_time: fullDaySessionEnd.toISOString(),
+            total_time: calculateTotalTime(fullDaySessionStart, fullDaySessionEnd),
+          });
+        }
+
+        currentStart = sessionEnd.clone().add(1, 'second');
+      }
+    });
+
+    return sessionsForDate;
+  };
+
+  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+    const duration = moment.duration(end.diff(start));
+    const hours = Math.floor(duration.asHours());
+    const minutes = Math.floor(duration.minutes());
+    return `${hours} h, ${minutes} min`;
+  };
+
   const formatTime = (dateTime: string) => {
-    return dateTime.split(" ")[1].slice(0, 5); // Only displaying HH:MM
+    return moment.utc(dateTime).tz("Europe/Stockholm").format("HH:mm");
   };
 
   const changeDay = (offset: number): void => {
@@ -71,14 +115,12 @@ const EmployeeDetailsByDay: React.FC = () => {
       console.error("Date is undefined");
       return;
     }
-    const currentDate = new Date(date);
-    currentDate.setDate(currentDate.getDate() + offset);
-    const newDate = currentDate.toISOString().split("T")[0];
-    navigate(`/employee/${id}/day/${newDate}`);
+    const currentDate = moment.tz(date, "Europe/Stockholm").add(offset, 'days');
+    navigate(`/employee/${id}/day/${currentDate.format("YYYY-MM-DD")}`);
   };
 
   const handleEditSession = (sessionId: number) => {
-    navigate(`/edit-work-hour/${sessionId}?date=${date}`); // Zakładając, że 'date' jest dostępne w tym zakresie
+    navigate(`/edit-work-hour/${sessionId}?date=${date}`);
   };
 
   const handleDeleteSession = async (sessionId: number) => {
@@ -140,20 +182,11 @@ const EmployeeDetailsByDay: React.FC = () => {
             <Col className="text-center">
               {date ? (
                 <>
-                  <div
-                    className="font-weight-bold"
-                    style={{ fontSize: "15px" }}
-                  >
-                    {new Date(date).toLocaleDateString("en-EN", {
-                      day: "numeric", // numer dnia
-                      month: "long", // nazwa miesiąca
-                      year: "numeric", // rok
-                    })}
+                  <div className="font-weight-bold" style={{ fontSize: "15px" }}>
+                    {moment.tz(date, "Europe/Stockholm").format("D MMMM YYYY")}
                   </div>
                   <small className="text-muted">
-                    {new Date(date).toLocaleDateString("en-EN", {
-                      weekday: "long", // nazwa dnia tygodnia
-                    })}
+                    {moment.tz(date, "Europe/Stockholm").format("dddd")}
                   </small>
                 </>
               ) : (
@@ -199,9 +232,9 @@ const EmployeeDetailsByDay: React.FC = () => {
         <ListGroup className="mb-4">
           {sessions.length > 0 ? (
             sessions.map((session) => (
-              <Row className="justify-content-center">
+              <Row key={session.id} className="justify-content-center">
                 <Col md={6}>
-                  <ListGroup.Item key={session.id} className="mb-2 small">
+                  <ListGroup.Item className="mb-2 small">
                     <Row className="align-items-center">
                       <Col xs={12}>
                         <House className="me-2" /> {session.workplace}

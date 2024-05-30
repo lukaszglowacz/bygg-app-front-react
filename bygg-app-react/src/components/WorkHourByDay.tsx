@@ -25,10 +25,7 @@ import {
 } from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
 import BackButton from "./NavigateButton";
-
-interface Params {
-  date: string;
-}
+import moment from "moment-timezone";
 
 const WorkHourByDay: React.FC = () => {
   const { date } = useParams<{ date: string }>();
@@ -39,21 +36,16 @@ const WorkHourByDay: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const goBack = useGoBack();
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
-  const [currentDate, setCurrentDate] = useState<string>(new Date().toISOString().slice(0, 10));
 
   useEffect(() => {
     const fetchSessionsByDay = async () => {
       try {
         setLoading(true);
-        const response = await api.get<ProfileWorksession[]>(
-          "/profile/worksessions"
-        );
-        const daySessions = response.data.filter(
-          (session) =>
-            new Date(session.start_time).toISOString().split("T")[0] === date
-        );
+        const response = await api.get<ProfileWorksession[]>("/profile/worksessions");
+        console.log("Raw sessions data:", response.data); // Logowanie surowych danych
+        const daySessions = getSessionsForDate(response.data, date);
         if (daySessions.length > 0) {
-          setProfile(daySessions[0].profile); // Set profile data from the first session
+          setProfile(daySessions[0].profile);
         }
         setSessions(daySessions);
         setTotalTime(sumTotalTimeForProfile(daySessions));
@@ -67,8 +59,56 @@ const WorkHourByDay: React.FC = () => {
     fetchSessionsByDay();
   }, [date]);
 
+  const getSessionsForDate = (sessions: ProfileWorksession[], date?: string) => {
+    if (!date) return [];
+    const targetDate = moment.tz(date, "Europe/Stockholm");
+    const sessionsForDate: ProfileWorksession[] = [];
+
+    sessions.forEach((session) => {
+      const start = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const end = moment.utc(session.end_time).tz("Europe/Stockholm");
+
+      let currentStart = start.clone();
+
+      while (currentStart.isBefore(end)) {
+        const sessionEndOfDay = currentStart.clone().endOf('day');
+        const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
+
+        if (currentStart.isSame(targetDate, 'day')) {
+          sessionsForDate.push({
+            ...session,
+            start_time: currentStart.toISOString(),
+            end_time: sessionEnd.toISOString(),
+            total_time: calculateTotalTime(currentStart, sessionEnd),
+          });
+        } else if (currentStart.isBefore(targetDate) && sessionEnd.isAfter(targetDate)) {
+          const fullDaySessionStart = targetDate.clone().startOf('day');
+          const fullDaySessionEnd = targetDate.clone().endOf('day');
+
+          sessionsForDate.push({
+            ...session,
+            start_time: fullDaySessionStart.toISOString(),
+            end_time: fullDaySessionEnd.toISOString(),
+            total_time: calculateTotalTime(fullDaySessionStart, fullDaySessionEnd),
+          });
+        }
+
+        currentStart = sessionEnd.clone().add(1, 'second');
+      }
+    });
+
+    return sessionsForDate;
+  };
+
+  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+    const duration = moment.duration(end.diff(start));
+    const hours = Math.floor(duration.asHours());
+    const minutes = Math.floor(duration.minutes());
+    return `${hours} h, ${minutes} min`;
+  };
+
   const formatTime = (dateTime: string) => {
-    return dateTime.split(" ")[1].slice(0, 5); // Display only HH:MM
+    return moment.utc(dateTime).tz("Europe/Stockholm").format("HH:mm");
   };
 
   const changeDay = (offset: number): void => {
@@ -76,10 +116,8 @@ const WorkHourByDay: React.FC = () => {
       console.error("Date is undefined");
       return;
     }
-    const currentDate = new Date(date);
-    currentDate.setDate(currentDate.getDate() + offset);
-    const newDate = currentDate.toISOString().split("T")[0];
-    navigate(`/work-hours/day/${newDate}`);
+    const currentDate = moment.tz(date, "Europe/Stockholm").add(offset, 'days');
+    navigate(`/work-hours/day/${currentDate.format("YYYY-MM-DD")}`);
   };
 
   if (loading) return <Alert variant="info">Loading data...</Alert>;
@@ -132,20 +170,11 @@ const WorkHourByDay: React.FC = () => {
             <Col className="text-center">
               {date ? (
                 <>
-                  <div
-                    className="font-weight-bold"
-                    style={{ fontSize: "15px" }}
-                  >
-                    {new Date(date).toLocaleDateString("sv-SE", {
-                      day: "numeric", // numer dnia
-                      month: "long", // nazwa miesiąca
-                      year: "numeric", // rok
-                    })}
+                  <div className="font-weight-bold" style={{ fontSize: "15px" }}>
+                    {moment.tz(date, "Europe/Stockholm").format("D MMMM YYYY")}
                   </div>
                   <small className="text-muted">
-                    {new Date(date).toLocaleDateString("sv-SE", {
-                      weekday: "long", // nazwa dnia tygodnia
-                    })}
+                    {moment.tz(date, "Europe/Stockholm").format("dddd")}
                   </small>
                 </>
               ) : (
@@ -192,7 +221,7 @@ const WorkHourByDay: React.FC = () => {
                     <Row className="align-items-center">
                       <Col xs={12}>
                         <House className="me-2" /> {session.workplace.street}{" "}
-                        {session.workplace.street_number}
+                        {session.workplace.street_number}, {session.workplace.postal_code}{" "}{session.workplace.city}
                       </Col>
                       <Col xs={12}>
                         <ClockFill className="me-2" />{" "}
