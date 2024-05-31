@@ -63,10 +63,7 @@ const LoginComponent: React.FC = () => {
         );
         await loadUserProfile(profile_id); // Ładowanie profilu
         setToastMessage("Login successful.");
-        setShowToast(true);
-        setTimeout(() => {
-          navigate("/");
-        }, 3000); // Opóźnienie 3 sekundy przed przekierowaniem
+        navigate("/", { state: { showToast: true, toastMessage: "Login successful." } });
       }
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;

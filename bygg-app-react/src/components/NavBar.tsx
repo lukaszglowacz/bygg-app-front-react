@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import useLogout from "../hooks/useLogOut";
 import ConfirmModal from "./ConfirmModal";
 import { useUserProfile } from "../context/UserProfileContext";
+import ToastNotification from "./ToastNotification";
 
 const NavbarComponent: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -13,12 +14,20 @@ const NavbarComponent: React.FC = () => {
   const location = useLocation();
   const logout = useLogout();
   const [showModal, setShowModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     if (isAuthenticated && !profile) {
       loadProfile();
     }
-  }, [isAuthenticated, profile, loadProfile]);
+
+    if (location.state && location.state.showToast) {
+      setShowToast(true);
+      setToastMessage(location.state.toastMessage);
+      window.history.replaceState({}, document.title);
+    }
+  }, [isAuthenticated, profile, loadProfile, location.state]);
 
   const handleLogoutConfirm = () => {
     logout();
@@ -102,6 +111,12 @@ const NavbarComponent: React.FC = () => {
         onConfirm={handleLogoutConfirm}
         title="Potwierdzenie wylogowania"
         children={<p>Are you sure you want to log out?</p>}
+      />
+      <ToastNotification
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        message={toastMessage}
+        variant="dark"
       />
     </>
   );
