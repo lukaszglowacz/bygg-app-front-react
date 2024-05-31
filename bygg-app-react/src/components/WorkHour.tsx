@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
 import useGoBack from "../hooks/useGoBack";
@@ -15,11 +15,14 @@ import {
 import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
+import moment from "moment-timezone";
+import { extendMoment } from "moment-range";
+import { DateRange } from "moment-range";
+
+const Moment = extendMoment(moment);
 
 const WorkHour: React.FC = () => {
-  const [sessionsByDay, setSessionsByDay] = useState<
-    Map<string, ProfileWorksession[]>
-  >(new Map());
+  const [sessionsByDay, setSessionsByDay] = useState<Map<string, ProfileWorksession[]>>(new Map());
   const [profile, setProfile] = useState<Profile | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
@@ -34,18 +37,16 @@ const WorkHour: React.FC = () => {
 
   const fetchWorkSessions = async () => {
     try {
-      const response = await api.get<ProfileWorksession[]>(
-        "/profile/worksessions"
-      );
-      const filteredSessions = filterSessionsByMonth(response.data);
-      const sessionsMap = groupSessionsByDay(filteredSessions);
+      const response = await api.get<ProfileWorksession[]>("/profile/worksessions");
       const sessions = response.data;
+      const splitSessions = splitSessionsByDay(sessions);
+      const sessionsMap = groupSessionsByDay(splitSessions);
       if (sessions.length > 0) {
         setProfile(sessions[0].profile); // Set profile data from the first session
       }
 
       setSessionsByDay(sessionsMap);
-      const totalTimeCalculated = sumTotalTimeForProfile(filteredSessions);
+      const totalTimeCalculated = sumTotalTimeForProfile(splitSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
     } catch (error: any) {
@@ -54,7 +55,41 @@ const WorkHour: React.FC = () => {
     }
   };
 
-  const daysInMonth = () => {
+  const splitSessionsByDay = (sessions: ProfileWorksession[]): ProfileWorksession[] => {
+    const splitSessions: ProfileWorksession[] = [];
+
+    sessions.forEach((session) => {
+      const start = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const end = moment.utc(session.end_time).tz("Europe/Stockholm");
+
+      let currentStart = start.clone();
+
+      while (currentStart.isBefore(end)) {
+        const sessionEndOfDay = currentStart.clone().endOf('day');
+        const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
+
+        splitSessions.push({
+          ...session,
+          start_time: currentStart.toISOString(),
+          end_time: sessionEnd.toISOString(),
+          total_time: calculateTotalTime(currentStart, sessionEnd),
+        });
+
+        currentStart = sessionEnd.clone().add(1, 'second');
+      }
+    });
+
+    return splitSessions;
+  };
+
+  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+    const duration = moment.duration(end.diff(start));
+    const hours = Math.floor(duration.asHours());
+    const minutes = Math.floor(duration.minutes());
+    return `${hours} h, ${minutes} min`;
+  };
+
+  const daysInMonth = (): string[] => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1; // JavaScript miesiące są od 0, więc +1
     return new Array(new Date(year, month, 0).getDate())
@@ -67,7 +102,7 @@ const WorkHour: React.FC = () => {
       );
   };
 
-  const displayDaysWithSessions = () => {
+  const displayDaysWithSessions = (): JSX.Element[] => {
     const days = daysInMonth();
     return days.map((day) => {
       const daySessions = sessionsByDay.get(day) || [];
@@ -119,28 +154,54 @@ const WorkHour: React.FC = () => {
     });
   };
 
-  const filterSessionsByMonth = (
-    sessions: ProfileWorksession[]
-  ): ProfileWorksession[] => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth(); // JavaScript month is 0-indexed
-    return sessions.filter((session) => {
-      const sessionDate = new Date(session.start_time); // Directly use the ISO-like format
-      return (
-        sessionDate.getFullYear() === year && sessionDate.getMonth() === month
-      );
-    });
-  };
-
   const groupSessionsByDay = (
     sessions: ProfileWorksession[]
   ): Map<string, ProfileWorksession[]> => {
     const map = new Map<string, ProfileWorksession[]>();
     sessions.forEach((session) => {
-      const day = session.start_time.split(" ")[0]; // Split and take the date part directly
-      const existing = map.get(day) || [];
-      existing.push(session);
-      map.set(day, existing);
+      const startDay = moment.utc(session.start_time).tz("Europe/Stockholm").format("YYYY-MM-DD");
+      const endDay = moment.utc(session.end_time).tz("Europe/Stockholm").format("YYYY-MM-DD");
+
+      if (startDay !== endDay) {
+        const range = Moment.range(
+          moment(startDay).add(1, 'day'),
+          moment(endDay).subtract(1, 'day')
+        );
+
+        for (let day of Array.from(range.by('day'))) {
+          const middleSession = {
+            ...session,
+            start_time: day.startOf('day').toISOString(),
+            end_time: day.endOf('day').toISOString(),
+            total_time: calculateTotalTime(day.startOf('day'), day.endOf('day')),
+          };
+          const existing = map.get(day.format("YYYY-MM-DD")) || [];
+          existing.push(middleSession);
+          map.set(day.format("YYYY-MM-DD"), existing);
+        }
+
+        const startSession = {
+          ...session,
+          end_time: moment(startDay).endOf('day').toISOString(),
+          total_time: calculateTotalTime(moment(startDay).startOf('day'), moment(startDay).endOf('day')),
+        };
+        const existingStart = map.get(startDay) || [];
+        existingStart.push(startSession);
+        map.set(startDay, existingStart);
+
+        const endSession = {
+          ...session,
+          start_time: moment(endDay).startOf('day').toISOString(),
+          total_time: calculateTotalTime(moment(endDay).startOf('day'), moment(endDay).endOf('day')),
+        };
+        const existingEnd = map.get(endDay) || [];
+        existingEnd.push(endSession);
+        map.set(endDay, existingEnd);
+      } else {
+        const existing = map.get(startDay) || [];
+        existing.push(session);
+        map.set(startDay, existing);
+      }
     });
     return map;
   };
