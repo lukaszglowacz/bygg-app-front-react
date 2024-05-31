@@ -17,6 +17,8 @@ import {
   PersonFill,
   PersonLinesFill,
   CalendarFill,
+  LockFill,
+  Lock
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
@@ -24,15 +26,56 @@ import { useUserProfile } from "../context/UserProfileContext";
 import { useNavigate } from "react-router-dom";
 import BackButton from "./NavigateButton";
 import ToastNotification from "./ToastNotification";
+import { AxiosError } from 'axios';
 
-const ProfileComponent = () => {
-  const profiles = useProfileData();
+interface PasswordData {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface ProfileData {
+  id: number;
+  first_name: string;
+  last_name: string;
+  personnummer: string;
+  user_email: string;
+  image: string;
+}
+
+interface ErrorResponse {
+  detail?: string;
+  old_password?: string[];
+  new_password?: string[];
+}
+
+const validatePassword = (password: string): string[] => {
+  const errors: string[] = [];
+  const regex_password = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  if (password.length < 8) {
+    errors.push("The password must contain at least 8 characters.");
+  }
+  if (!regex_password.test(password)) {
+    errors.push("The password must contain at least one uppercase letter, one number, and one special character.");
+  }
+
+  return errors;
+};
+
+const ProfileComponent: React.FC = () => {
+  const profiles: ProfileData[] = useProfileData();
   const { loadProfile, setProfile } = useUserProfile();
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<Map<number, File>>(new Map());
   const [previewUrls, setPreviewUrls] = useState<Map<number, string>>(new Map());
   const [formData, setFormData] = useState<Map<number, { firstName: string; lastName: string; personnummer: string }>>(new Map());
-  const [errors, setErrors] = useState<Map<number, { [key: string]: string }>>(new Map());
+  const [passwordData, setPasswordData] = useState<PasswordData>({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -72,6 +115,29 @@ const ProfileComponent = () => {
     };
     const updated = { ...existing, [field]: value };
     setFormData(new Map(formData.set(profileId, updated)));
+
+    if (errors[field]) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
+
+  const handlePasswordChange = (
+    field: string,
+    value: string
+  ) => {
+    setPasswordData((prevData) => ({ ...prevData, [field]: value }));
+
+    if (errors.password) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors.password;
+        return newErrors;
+      });
+    }
   };
 
   const validatePersonnummer = (personnummer: string) => {
@@ -93,15 +159,10 @@ const ProfileComponent = () => {
       payload.append("first_name", data.firstName);
       payload.append("last_name", data.lastName);
       if (!validatePersonnummer(data.personnummer)) {
-        setErrors(
-          new Map(
-            errors.set(profileId, {
-              ...errors.get(profileId),
-              personnummer:
-                "Invalid personnummer format. Expected format: YYMMDD-XXXX.",
-            })
-          )
-        );
+        setErrors({
+          ...errors,
+          personnummer: ["Invalid personnummer format. Expected format: YYMMDD-XXXX."],
+        });
         return;
       }
       payload.append("personnummer", data.personnummer);
@@ -116,15 +177,64 @@ const ProfileComponent = () => {
       setToastMessage("The profile has been updated.");
       setShowToast(true);
 
-      // Opóźnij nawigację, aby wyświetlić toast
       setTimeout(() => {
-        navigate("/");
-      }, 3000); // Opóźnienie 3 sekundy przed przekierowaniem
+        setShowToast(false);
+      }, 3000);
     } catch (error) {
       console.error("An error occurred while updating the profile:", error);
-      setErrors(
-        new Map(errors.set(profileId, { general: "Failed to update profile." }))
-      );
+      setErrors({
+        ...errors,
+        general: ["Failed to update profile."],
+      });
+    }
+  };
+
+  const handlePasswordSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    const { newPassword, confirmPassword, oldPassword } = passwordData;
+
+    if (newPassword !== confirmPassword) {
+      setErrors({
+        ...errors,
+        password: ["New password and confirm password do not match."],
+      });
+      return;
+    }
+
+    const passwordValidationErrors = validatePassword(newPassword);
+    if (passwordValidationErrors.length > 0) {
+      setErrors({
+        ...errors,
+        password: passwordValidationErrors,
+      });
+      return;
+    }
+
+    try {
+      await api.post("/password-reset/change/", {
+        old_password: oldPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      });
+      setToastMessage("Password has been changed successfully.");
+      setShowToast(true);
+
+      setTimeout(() => {
+        setShowToast(false);
+        navigate('/'); // Redirect to the homepage
+      }, 3000);
+    } catch (error) {
+      console.error("An error occurred while changing the password:", error);
+      const axiosError = error as AxiosError<ErrorResponse>;
+      const errorResponse = axiosError.response?.data;
+      const errorMessage = errorResponse?.detail || "Failed to change password.";
+
+      setErrors({
+        ...errors,
+        password: errorResponse?.old_password || [errorMessage],
+      });
     }
   };
 
@@ -185,12 +295,12 @@ const ProfileComponent = () => {
                             e.target.value
                           )
                         }
-                        isInvalid={!!errors.get(profile.id)?.firstName}
+                        isInvalid={!!errors.firstName}
                       />
                       <Form.Control.Feedback type="invalid">
-                        {errors.get(profile.id)?.firstName && (
+                        {errors.firstName && (
                           <Alert variant="warning" className="mt-2 w-100">
-                            {errors.get(profile.id)?.firstName}
+                            {errors.firstName}
                           </Alert>
                         )}
                       </Form.Control.Feedback>
@@ -212,12 +322,12 @@ const ProfileComponent = () => {
                             e.target.value
                           )
                         }
-                        isInvalid={!!errors.get(profile.id)?.lastName}
+                        isInvalid={!!errors.lastName}
                       />
                       <Form.Control.Feedback type="invalid">
-                        {errors.get(profile.id)?.lastName && (
+                        {errors.lastName && (
                           <Alert variant="warning" className="mt-2 w-100">
-                            {errors.get(profile.id)?.lastName}
+                            {errors.lastName}
                           </Alert>
                         )}
                       </Form.Control.Feedback>
@@ -239,20 +349,20 @@ const ProfileComponent = () => {
                             e.target.value
                           )
                         }
-                        isInvalid={!!errors.get(profile.id)?.personnummer}
+                        isInvalid={!!errors.personnummer}
                       />
                       <Form.Control.Feedback type="invalid">
-                        {errors.get(profile.id)?.personnummer && (
+                        {errors.personnummer && (
                           <Alert variant="warning" className="mt-2 w-100">
-                            {errors.get(profile.id)?.personnummer}
+                            {errors.personnummer}
                           </Alert>
                         )}
                       </Form.Control.Feedback>
                     </InputGroup>
                   </Form.Group>
-                  {errors.get(profile.id)?.general && (
+                  {errors.general && (
                     <Alert variant="warning">
-                      {errors.get(profile.id)?.general}
+                      {errors.general}
                     </Alert>
                   )}
                   <Button
@@ -261,9 +371,97 @@ const ProfileComponent = () => {
                     className="w-100"
                     size="sm"
                   >
-                    Update
+                    Update Profile
                   </Button>
                 </Form>
+                <hr />
+                <div className="d-flex justify-content-center">
+                  <Form onSubmit={handlePasswordSubmit} style={{ width: "100%" }}>
+                    <h5 className="text-center">Change Password</h5>
+                    <Form.Group className="mb-3">
+                      <InputGroup>
+                        <InputGroup.Text>
+                          <Lock />
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="password"
+                          placeholder="Old password"
+                          value={passwordData.oldPassword}
+                          onChange={(e) =>
+                            handlePasswordChange("oldPassword", e.target.value)
+                          }
+                          isInvalid={!!errors.oldPassword}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.oldPassword && (
+                            <Alert variant="warning" className="mt-2 w-100">
+                              {errors.oldPassword}
+                            </Alert>
+                          )}
+                        </Form.Control.Feedback>
+                      </InputGroup>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <InputGroup>
+                        <InputGroup.Text>
+                          <LockFill />
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="password"
+                          placeholder="New password"
+                          value={passwordData.newPassword}
+                          onChange={(e) =>
+                            handlePasswordChange("newPassword", e.target.value)
+                          }
+                          isInvalid={!!errors.newPassword}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.newPassword && (
+                            <Alert variant="warning" className="mt-2 w-100">
+                              {errors.newPassword}
+                            </Alert>
+                          )}
+                        </Form.Control.Feedback>
+                      </InputGroup>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <InputGroup>
+                        <InputGroup.Text>
+                          <LockFill />
+                        </InputGroup.Text>
+                        <Form.Control
+                          type="password"
+                          placeholder="Confirm new password"
+                          value={passwordData.confirmPassword}
+                          onChange={(e) =>
+                            handlePasswordChange("confirmPassword", e.target.value)
+                          }
+                          isInvalid={!!errors.confirmPassword}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.confirmPassword && (
+                            <Alert variant="warning" className="mt-2 w-100">
+                              {errors.confirmPassword}
+                            </Alert>
+                          )}
+                        </Form.Control.Feedback>
+                      </InputGroup>
+                    </Form.Group>
+                    {errors.password && (
+                      <Alert variant="warning">
+                        {errors.password}
+                      </Alert>
+                    )}
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      className="w-100"
+                      size="sm"
+                    >
+                      Change Password
+                    </Button>
+                  </Form>
+                </div>
               </Card.Body>
             </Card>
           </Col>
