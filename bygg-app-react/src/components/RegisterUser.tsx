@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Container, Form, Button, Row, Col, Alert, InputGroup } from "react-bootstrap";
 import { EnvelopeFill, LockFill, PersonFill, CalendarFill } from "react-bootstrap-icons";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../api/api"; // Zakładam, że ten plik istnieje i jest skonfigurowany
+import api from "../api/api";
 import useGoBack from "../hooks/useGoBack";
 import ToastNotification from "./ToastNotification";
 
