@@ -1,6 +1,7 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 import { Container, Col, Row, Button, Form, Alert, InputGroup } from "react-bootstrap";
 import { EnvelopeFill, LockFill } from "react-bootstrap-icons";
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; // Dodajemy ikony oka
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -23,6 +24,7 @@ interface ErrorResponse {
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false); // Stan do zarządzania widocznością hasła
   const [errors, setErrors] = useState<FieldErrors>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -77,6 +79,10 @@ const LoginComponent: React.FC = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <Container className="my-4">
       <Row className="justify-content-center">
@@ -111,13 +117,16 @@ const LoginComponent: React.FC = () => {
                   <LockFill />
                 </InputGroup.Text>
                 <Form.Control
-                  type="password"
+                  type={passwordVisible ? "text" : "password"} // Przełączamy typ pola
                   placeholder="Password"
                   name="password"
                   value={password}
                   onChange={handleChange}
                   isInvalid={!!errors.password}
                 />
+                <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
+                  {passwordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                </InputGroup.Text>
                 {errors.password && errors.password.map((err, index) => (
                   <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
                 ))}

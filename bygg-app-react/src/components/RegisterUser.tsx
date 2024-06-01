@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Container, Form, Button, Row, Col, Alert, InputGroup } from "react-bootstrap";
 import { EnvelopeFill, LockFill, PersonFill, CalendarFill } from "react-bootstrap-icons";
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; // Dodajemy ikony oka
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import useGoBack from "../hooks/useGoBack";
@@ -31,6 +32,7 @@ const RegisterUser: React.FC = () => {
     last_name: "",
     personnummer: "",
   });
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false); // Stan do zarządzania widocznością hasła
   const [errors, setErrors] = useState<FieldErrors>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -103,6 +105,10 @@ const RegisterUser: React.FC = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <Container className="my-4">
       <Row>
@@ -137,13 +143,16 @@ const RegisterUser: React.FC = () => {
                   <LockFill />
                 </InputGroup.Text>
                 <Form.Control
-                  type="password"
+                  type={passwordVisible ? "text" : "password"} // Przełączamy typ pola
                   placeholder="Password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   isInvalid={!!errors.password}
                 />
+                <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
+                  {passwordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                </InputGroup.Text>
               </InputGroup>
               {errors.password?.map((err, index) => (
                 <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>

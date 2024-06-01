@@ -18,7 +18,9 @@ import {
   PersonLinesFill,
   CalendarFill,
   LockFill,
-  Lock
+  Lock,
+  EyeFill,
+  EyeSlashFill
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
@@ -74,6 +76,11 @@ const ProfileComponent: React.FC = () => {
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
+  });
+  const [passwordVisible, setPasswordVisible] = useState<{ [key: string]: boolean }>({
+    oldPassword: false,
+    newPassword: false,
+    confirmPassword: false
   });
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [showToast, setShowToast] = useState(false);
@@ -138,6 +145,13 @@ const ProfileComponent: React.FC = () => {
         return newErrors;
       });
     }
+  };
+
+  const togglePasswordVisibility = (field: string) => {
+    setPasswordVisible((prevState) => ({
+      ...prevState,
+      [field]: !prevState[field]
+    }));
   };
 
   const validatePersonnummer = (personnummer: string) => {
@@ -384,7 +398,7 @@ const ProfileComponent: React.FC = () => {
                           <Lock />
                         </InputGroup.Text>
                         <Form.Control
-                          type="password"
+                          type={passwordVisible.oldPassword ? "text" : "password"}
                           placeholder="Old password"
                           value={passwordData.oldPassword}
                           onChange={(e) =>
@@ -392,6 +406,9 @@ const ProfileComponent: React.FC = () => {
                           }
                           isInvalid={!!errors.oldPassword}
                         />
+                        <InputGroup.Text onClick={() => togglePasswordVisibility("oldPassword")} style={{ cursor: "pointer" }}>
+                          {passwordVisible.oldPassword ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                        </InputGroup.Text>
                         <Form.Control.Feedback type="invalid">
                           {errors.oldPassword && (
                             <Alert variant="warning" className="mt-2 w-100">
@@ -407,7 +424,7 @@ const ProfileComponent: React.FC = () => {
                           <LockFill />
                         </InputGroup.Text>
                         <Form.Control
-                          type="password"
+                          type={passwordVisible.newPassword ? "text" : "password"}
                           placeholder="New password"
                           value={passwordData.newPassword}
                           onChange={(e) =>
@@ -415,6 +432,9 @@ const ProfileComponent: React.FC = () => {
                           }
                           isInvalid={!!errors.newPassword}
                         />
+                        <InputGroup.Text onClick={() => togglePasswordVisibility("newPassword")} style={{ cursor: "pointer" }}>
+                          {passwordVisible.newPassword ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                        </InputGroup.Text>
                         <Form.Control.Feedback type="invalid">
                           {errors.newPassword && (
                             <Alert variant="warning" className="mt-2 w-100">
@@ -430,7 +450,7 @@ const ProfileComponent: React.FC = () => {
                           <LockFill />
                         </InputGroup.Text>
                         <Form.Control
-                          type="password"
+                          type={passwordVisible.confirmPassword ? "text" : "password"}
                           placeholder="Confirm new password"
                           value={passwordData.confirmPassword}
                           onChange={(e) =>
@@ -438,6 +458,9 @@ const ProfileComponent: React.FC = () => {
                           }
                           isInvalid={!!errors.confirmPassword}
                         />
+                        <InputGroup.Text onClick={() => togglePasswordVisibility("confirmPassword")} style={{ cursor: "pointer" }}>
+                          {passwordVisible.confirmPassword ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                        </InputGroup.Text>
                         <Form.Control.Feedback type="invalid">
                           {errors.confirmPassword && (
                             <Alert variant="warning" className="mt-2 w-100">
