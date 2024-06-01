@@ -206,8 +206,20 @@ const EmployeeDetails: React.FC = () => {
           month: currentDate.getMonth() + 1,
         },
       });
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      saveAs(blob, `monthly_summary_${currentDate.getFullYear()}_${currentDate.getMonth() + 1}.pdf`);
+
+      // Extract profile data to generate the file name
+      if (employee) {
+        const year = currentDate.getFullYear();
+        const monthName = moment.months()[currentDate.getMonth()];
+        const personnummer = employee.personnummer;
+        const fullName = employee.full_name.replace(" ", "_");
+        const fileName = `${monthName}_${year}_${personnummer}_${fullName}.pdf`;
+
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        saveAs(blob, fileName);
+      } else {
+        console.error("Employee data not available.");
+      }
     } catch (err: any) {
       console.error("Error downloading PDF:", err);
     }
