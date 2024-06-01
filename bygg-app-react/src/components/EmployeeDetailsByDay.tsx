@@ -137,6 +137,10 @@ const EmployeeDetailsByDay: React.FC = () => {
     }
   };
 
+  const handleAddSession = () => {
+    navigate(`/add-work-hour?date=${date}&employeeId=${id}`);
+  };
+
   return (
     <Container className="mt-4">
       <BackButton backPath={`/employees/${id}`} />
@@ -147,7 +151,7 @@ const EmployeeDetailsByDay: React.FC = () => {
               as="h6"
               className="d-flex justify-content-between align-items-center"
             >
-              Daily summary <FaDownload style={{ color: "grey" }} />
+              Daily summary
             </Card.Header>
             <Card.Body>
               <Card.Text className="small text-muted">
@@ -205,9 +209,7 @@ const EmployeeDetailsByDay: React.FC = () => {
       <Row className="justify-content-center my-3">
         <Col md={6} className="d-flex justify-content-end">
           <Button
-            onClick={() =>
-              navigate(`/add-work-hour?date=${date}&employeeId=${id}`)
-            }
+            onClick={handleAddSession}
             variant="outline-secondary"
             size="sm"
           >

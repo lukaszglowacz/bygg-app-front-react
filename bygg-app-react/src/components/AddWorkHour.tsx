@@ -19,6 +19,7 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import useGoBack from "../hooks/useGoBack";
 import ToastNotification from "./ToastNotification";
+import { Employee } from "../api/interfaces/types";
 
 interface Workplace {
   id: number;
@@ -39,8 +40,10 @@ const AddWorkHour: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const date = queryParams.get("date");
+  const employeeId = queryParams.get("employeeId");
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
-  const { profileId, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const [employee, setEmployee] = useState<Employee | null>(null);
   const [newSession, setNewSession] = useState<WorkSession>({
     workplaceId: null,
     start_time: "",
@@ -53,25 +56,29 @@ const AddWorkHour: React.FC = () => {
   const goBack = useGoBack();
 
   useEffect(() => {
-    const fetchWorkplaces = async () => {
+    const fetchWorkplacesAndEmployee = async () => {
       try {
-        const response = await api.get("/workplace/");
-        setWorkplaces(response.data);
+        const responseWorkplaces = await api.get("/workplace/");
+        setWorkplaces(responseWorkplaces.data);
+        if (employeeId) {
+          const responseEmployee = await api.get<Employee>(`/employee/${employeeId}`);
+          setEmployee(responseEmployee.data);
+        }
       } catch (error) {
         setError("Failed to load data.");
       } finally {
         setLoading(false);
       }
     };
-    fetchWorkplaces();
-  }, []);
+    fetchWorkplacesAndEmployee();
+  }, [employeeId]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
 
-    if (!isAuthenticated || !profileId || !newSession.workplaceId) {
-      setError("You must be logged in and select your workplace.");
+    if (!isAuthenticated || !employeeId || !newSession.workplaceId) {
+      setError("You must be logged in and select a workplace.");
       return;
     }
 
@@ -88,14 +95,14 @@ const AddWorkHour: React.FC = () => {
     try {
       await api.post("/worksession/", {
         workplace: newSession.workplaceId,
-        profile: profileId,
+        profile: employeeId, // Zaktualizowane, aby używać ID użytkownika przeglądanego widoku
         start_time: newSession.start_time,
         end_time: newSession.end_time,
       });
       setToastMessage("Work session added successfully.");
       setShowToast(true);
       setTimeout(() => {
-        navigate(`/employee/${profileId}/day/${date}`);
+        navigate(`/employee/${employeeId}/day/${date}`);
       }, 3000);
     } catch (error) {
       if (error instanceof Error) {
@@ -124,6 +131,12 @@ const AddWorkHour: React.FC = () => {
     <Container>
       <Row>
         <Col>
+          {employee && (
+            <Alert variant="info" className="text-center">
+              Adding work session for: <strong>{employee.full_name}</strong>
+            </Alert>
+          )}
+
           <Form onSubmit={handleSubmit}>
             <Form.Group as={Row} className="mb-3" controlId="workplaceSelect">
               <Col md={6} className="mx-auto">
@@ -159,7 +172,7 @@ const AddWorkHour: React.FC = () => {
                   <Form.Control
                     type="datetime-local"
                     name="start_time"
-                    value={newSession.start_time || date + "T00:00"}
+                    value={newSession.start_time || `${date}T00:00`}
                     onChange={handleChange}
                     required
                   />
@@ -176,7 +189,7 @@ const AddWorkHour: React.FC = () => {
                   <Form.Control
                     type="datetime-local"
                     name="end_time"
-                    value={newSession.end_time || date + "T00:00"}
+                    value={newSession.end_time || `${date}T00:00`}
                     onChange={handleChange}
                     required
                   />
@@ -187,7 +200,9 @@ const AddWorkHour: React.FC = () => {
             {error && (
               <Row className="mb-3">
                 <Col md={6} className="mx-auto">
-                  <Alert variant="danger">{error}</Alert>
+                  <Alert variant="danger" className="text-center">
+                    {error}
+                  </Alert>
                 </Col>
               </Row>
             )}
