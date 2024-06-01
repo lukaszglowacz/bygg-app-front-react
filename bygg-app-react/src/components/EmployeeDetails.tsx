@@ -17,6 +17,7 @@ import { FaDownload } from "react-icons/fa";
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
+import { saveAs } from 'file-saver';
 
 const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -196,6 +197,22 @@ const EmployeeDetails: React.FC = () => {
     });
   };
 
+  const handleDownloadPDF = async () => {
+    try {
+      const response = await api.get(`/employee/${id}/monthly-summary-pdf/`, {
+        responseType: 'blob',
+        params: {
+          year: currentDate.getFullYear(),
+          month: currentDate.getMonth() + 1,
+        },
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      saveAs(blob, `monthly_summary_${currentDate.getFullYear()}_${currentDate.getMonth() + 1}.pdf`);
+    } catch (err: any) {
+      console.error("Error downloading PDF:", err);
+    }
+  };
+
   useEffect(() => {
     if (employee) {
       const filteredSessions = filterSessionsByMonth(employee.work_session);
@@ -230,7 +247,10 @@ const EmployeeDetails: React.FC = () => {
               as="h6"
               className="d-flex justify-content-between align-items-center"
             >
-              Monthly summary <FaDownload style={{ color: "grey" }} />
+              Monthly summary
+              <Button onClick={handleDownloadPDF} variant="link">
+                <FaDownload style={{ color: "grey" }} />
+              </Button>
             </Card.Header>
             <Card.Body>
               <Card.Text className="small text-muted">
