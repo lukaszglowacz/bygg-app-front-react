@@ -39,6 +39,17 @@ const ActiveSessions: React.FC = () => {
                   <Container>
                     <Row>
                       <Col md={12}>
+                        <span className="time-span">
+                          {session.status === "Trwa" && (
+                            <i
+                              className="bi bi-check-circle-fill text-success"
+                              style={{ marginRight: "8px" }}
+                            ></i>
+                          )}
+                          Working now
+                        </span>
+                      </Col>
+                      <Col md={12}>
                         <span className="name-span">
                           <i
                             className="bi bi-person-fill"
@@ -65,7 +76,7 @@ const ActiveSessions: React.FC = () => {
                           {session.start_time.split(" ")[0]}
                         </span>
                       </Col>
-                      <Col md={6}>
+                      <Col md={12}>
                         <span className="time-span">
                           <i
                             className="bi bi-clock-fill"
@@ -74,27 +85,11 @@ const ActiveSessions: React.FC = () => {
                           {session.start_time.split(" ")[1]}
                         </span>
                       </Col>
+                      
                     </Row>
                   </Container>
                 </Accordion.Header>
-                <Accordion.Body>
-                  <div>
-                    <InfoCircleFill
-                      className="me-2"
-                      style={{ color: "blue" }}
-                    />
-
-                    <strong>Currently working: </strong>
-                    {session.status === "Trwa" && (
-                      <i className="bi bi-check-circle-fill text-success"></i>
-                    )}
-                  </div>
-                  <div>
-                    <HourglassSplit className="me-2" />
-                    <strong>Expired:</strong>{" "}
-                    <TimeElapsed startTime={session.start_time} />
-                  </div>
-                </Accordion.Body>
+                
               </Accordion.Item>
             ))}
           </Accordion>

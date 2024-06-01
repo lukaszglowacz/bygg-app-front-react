@@ -11,6 +11,7 @@ import {
   ClockHistory,
   InfoCircleFill,
 } from "react-bootstrap-icons";
+import moment from "moment-timezone"; // Importowanie moment i moment-timezone
 import TimeElapsed from "./TimeElapsed";
 import BackButton from "./NavigateButton";
 
@@ -38,6 +39,10 @@ const EmployeeList: React.FC = () => {
 
   const handleEmployee = (id: number) => {
     navigate(`/employees/${id}`); // Przekierowanie do formularza edycji z ID miejsca pracy
+  };
+
+  const formatTimeToStockholm = (time: string) => {
+    return moment.utc(time).tz('Europe/Stockholm').format('YYYY.MM.DD HH:mm');
   };
 
   if (loading) return <div>Loading...</div>;
@@ -77,7 +82,7 @@ const EmployeeList: React.FC = () => {
                       <div>
                         <i className="bi bi-clock-fill me-2"></i>
                         <strong>Start: </strong>
-                        {employee.current_session_start_time}
+                        {formatTimeToStockholm(employee.current_session_start_time)}
                       </div>
                       <div>
                         <HourglassSplit className="me-2" />
