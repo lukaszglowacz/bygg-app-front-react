@@ -7,13 +7,10 @@ import {
   Image,
   Form,
   Button,
-  OverlayTrigger,
-  Tooltip,
   Alert,
   InputGroup,
 } from "react-bootstrap";
 import {
-  PencilSquare,
   PersonFill,
   PersonLinesFill,
   CalendarFill,
@@ -29,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import BackButton from "./NavigateButton";
 import ToastNotification from "./ToastNotification";
 import { AxiosError } from "axios";
+import styles from "../assets/styles/ProfileComponent.module.css"
 
 interface PasswordData {
   oldPassword: string;
@@ -259,31 +257,21 @@ const ProfileComponent: React.FC = () => {
         {profiles.map((profile) => (
           <Col md={6} lg={4} key={profile.id} className="mb-3">
             <Card>
-              <Card.Header className="text-center">
-                <Image
-                  src={previewUrls.get(profile.id) || profile.image}
-                  roundedCircle
-                  fluid
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                    margin: "0 auto",
-                  }}
-                />
-                <OverlayTrigger
-                  placement="right"
-                  overlay={<Tooltip>Edit</Tooltip>}
-                >
-                  <label className="btn btn-secondary">
-                    <PencilSquare />{" "}
-                    <input
-                      type="file"
-                      hidden
-                      onChange={(e) => handleFileChange(profile.id, e)}
-                    />
-                  </label>
-                </OverlayTrigger>
+              <Card.Header className="text-center position-relative">
+                <div className={styles.profileImageContainer}>
+                  <Image
+                    src={previewUrls.get(profile.id) || profile.image}
+                    roundedCircle
+                    fluid
+                    className={styles.profileImage}
+                  />
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileChange(profile.id, e)}
+                    className={styles.profileImageInput}
+                  />
+                  <div className={styles.changeImageOverlay}>Change Image</div>
+                </div>
                 <p
                   className="mt-2 mb-0 text-muted"
                   style={{ fontSize: "16px", fontWeight: "bold" }}
@@ -292,7 +280,7 @@ const ProfileComponent: React.FC = () => {
                 </p>
               </Card.Header>
               <Card.Body>
-                <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem"}}>
+                <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem" }}>
                   Account Settings
                 </h5>
                 <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
@@ -373,7 +361,7 @@ const ProfileComponent: React.FC = () => {
                 <hr />
                 <div className="d-flex justify-content-center">
                   <Form onSubmit={handlePasswordSubmit} style={{ width: "100%" }}>
-                    <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem"}}>
+                    <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem" }}>
                       Change Password
                     </h5>
                     <Form.Group className="mb-3">
