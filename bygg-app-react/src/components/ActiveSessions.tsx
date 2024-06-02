@@ -1,9 +1,7 @@
-// Plik: components/ActiveSessions.tsx
 import React from "react";
 import { Container, Alert, Row, Col, Accordion } from "react-bootstrap";
-import useAllLiveSessions from "../hooks/useAllLiveSessions"; // Założenie, że hook znajduje się w odpowiednim katalogu
+import useAllLiveSessions from "../hooks/useAllLiveSessions";
 import { useNavigate } from "react-router-dom";
-import TimeElapsed from "./TimeElapsed";
 import { Session } from "../api/interfaces/types";
 import { HourglassSplit, InfoCircleFill } from "react-bootstrap-icons";
 import BackButton from "./NavigateButton";
@@ -32,11 +30,11 @@ const ActiveSessions: React.FC = () => {
       <BackButton backPath="/" />
       <Row className="justify-content-center my-3">
         <Col md={6}>
-          <Accordion defaultActiveKey="0">
+          <Accordion>
             {sessions.map((session, index) => (
               <Accordion.Item eventKey={String(index)} key={session.id}>
                 <Accordion.Header>
-                  <Container>
+                  <Container style={{ fontSize: "0.9rem" }}>
                     <Row>
                       <Col md={12}>
                         <span className="time-span">
@@ -85,11 +83,9 @@ const ActiveSessions: React.FC = () => {
                           {session.start_time.split(" ")[1]}
                         </span>
                       </Col>
-                      
                     </Row>
                   </Container>
                 </Accordion.Header>
-                
               </Accordion.Item>
             ))}
           </Accordion>

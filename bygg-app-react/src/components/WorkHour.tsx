@@ -225,9 +225,9 @@ const WorkHour: React.FC = () => {
         <Row className="justify-content-center mt-3">
           <Col md={6}>
             <Card className="mt-3 mb-3">
-              <Card.Header
+            <Card.Header
                 as="h6"
-                className="d-flex justify-content-between align-items-center"
+                className="d-flex justify-content-center align-items-center"
               >
                 Monthly statement
               </Card.Header>

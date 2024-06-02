@@ -7,9 +7,9 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import {
   HourglassSplit,
   Person,
+  PersonFill,
   GeoAlt,
   ClockHistory,
-  InfoCircleFill,
 } from "react-bootstrap-icons";
 import moment from "moment-timezone"; // Importowanie moment i moment-timezone
 import TimeElapsed from "./TimeElapsed";
@@ -53,55 +53,49 @@ const EmployeeList: React.FC = () => {
       <BackButton backPath="/" />
       <Row className="justify-content-center my-3">
         <Col md={6}>
-          <Accordion defaultActiveKey="0">
+          <Accordion>
             {employees.map((employee, index) => (
               <Accordion.Item eventKey={String(index)} key={employee.id}>
                 <Accordion.Header>
-                  <Person className="me-2" /> {employee.full_name}
+                  {employee.current_session_status === "Trwa" ? (
+                    <PersonFill className="me-2 text-success" />
+                  ) : (
+                    <Person className="me-2" />
+                  )}
+                  {employee.full_name}
                 </Accordion.Header>
-                <Accordion.Body>
-                  <div>
-                    <InfoCircleFill
-                      className="me-2"
-                      style={{ color: "blue" }}
-                    />
-                    <strong>Currently working: </strong>
+                <Accordion.Body style={{ fontSize: "0.9em", lineHeight: "1.6" }}>
+                  <div className="d-flex align-items-center mb-2">
                     {employee.current_session_status === "Trwa" ? (
-                      <i className="bi bi-check-circle-fill text-success"></i>
+                      <i className="bi bi-check-circle-fill text-success me-2"></i>
                     ) : (
-                      <i className="bi bi-x-circle-fill text-danger"></i>
+                      <i className="bi bi-x-circle-fill text-danger me-2"></i>
                     )}
+                    {employee.current_session_status === "Trwa" ? "Currently working" : "Not working"}
                   </div>
                   {employee.current_session_status === "Trwa" && (
                     <>
-                      <div>
+                      <div className="d-flex align-items-center mb-2">
                         <GeoAlt className="me-2" />
-                        <strong>Workplace: </strong>
                         {employee.current_workplace}
                       </div>
-                      <div>
+                      <div className="d-flex align-items-center mb-2">
                         <i className="bi bi-clock-fill me-2"></i>
-                        <strong>Start: </strong>
                         {formatTimeToStockholm(employee.current_session_start_time)}
                       </div>
-                      <div>
+                      <div className="d-flex align-items-center mb-2">
                         <HourglassSplit className="me-2" />
-                        <strong>Expired: </strong>
-                        <TimeElapsed
-                          startTime={employee.current_session_start_time}
-                        />
+                        <TimeElapsed startTime={employee.current_session_start_time} />
                       </div>
                     </>
                   )}
-
-                  <div>
+                  <div className="text-center">
                     <Button
                       variant="outline-success"
                       className="btn-sm mt-3"
                       onClick={() => handleEmployee(employee.id)}
                     >
-                      <i className="bi bi-person-exclamation me-1"></i> Show
-                      more
+                      <i className="bi bi-person-exclamation me-1"></i> Show more
                     </Button>
                   </div>
                 </Accordion.Body>

@@ -75,30 +75,30 @@ const NavbarComponent: React.FC = () => {
                 align="end"
               >
                 <NavDropdown.Item onClick={() => navigateTo("/")}>
-                  Navigation panel
+                  Dashboard
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/profile")}>
-                  Profile
+                  Account Settings
                 </NavDropdown.Item>
                 <NavDropdown.Item
                   onClick={() => navigateTo("/active-sessions")}
                 >
-                  Current worksession
+                  Active sessions
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
-                  Workhour
+                  Time Tracking
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
-                  Workplace
+                  Locations
                 </NavDropdown.Item>
+                <NavDropdown.Divider />
                 {profile?.is_employer && (
                   <NavDropdown.Item onClick={() => navigateTo("/employees")}>
-                    Employer
+                    Team Management
                   </NavDropdown.Item>
                 )}
-                <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogoutClick}>
-                  Log out
+                  Sign Out
                 </NavDropdown.Item>
               </NavDropdown>
             )}

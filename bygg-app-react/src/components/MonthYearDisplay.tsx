@@ -21,11 +21,12 @@ const MonthYearDisplay: React.FC<{ currentDate: Date }> = ({ currentDate }) => {
   const lastDayFormatted = formatDate(lastDayOfMonth);
 
   return (
-    <div>
-    <span >{monthYear}</span>
-    <div className="fs-6">{`${firstDayFormatted} - ${lastDayFormatted}`}</div>
-</div>
-
+    <div style={{ textAlign: "center" }}>
+      <span style={{ display: "block", marginBottom: "0rem" }}>{monthYear}</span>
+      <div style={{ fontSize: "0.9rem", marginTop: "0rem" }}>
+        {`${firstDayFormatted} - ${lastDayFormatted}`}
+      </div>
+    </div>
   );
 };
 

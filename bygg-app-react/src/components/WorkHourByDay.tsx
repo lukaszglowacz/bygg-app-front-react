@@ -46,6 +46,8 @@ const WorkHourByDay: React.FC = () => {
         const daySessions = getSessionsForDate(response.data, date);
         if (daySessions.length > 0) {
           setProfile(daySessions[0].profile);
+        } else if (response.data.length > 0) {
+          setProfile(response.data[0].profile); // Ustaw profil, jeśli nie ma sesji, ale mamy dane
         }
         setSessions(daySessions);
         setTotalTime(sumTotalTimeForProfile(daySessions));
@@ -120,9 +122,6 @@ const WorkHourByDay: React.FC = () => {
     navigate(`/work-hours/day/${currentDate.format("YYYY-MM-DD")}`);
   };
 
-  if (loading) return <Alert variant="info">Loading data...</Alert>;
-  if (error) return <Alert variant="danger">{error}</Alert>;
-
   return (
     <Container className="mt-4">
       <BackButton backPath="/work-hours" />
@@ -132,7 +131,7 @@ const WorkHourByDay: React.FC = () => {
             <Card className="mt-3 mb-3">
               <Card.Header
                 as="h6"
-                className="d-flex justify-content-between align-items-center"
+                className="d-flex justify-content-center align-items-center"
               >
                 Daily statement
               </Card.Header>
@@ -191,19 +190,7 @@ const WorkHourByDay: React.FC = () => {
         </Col>
       </Row>
 
-      {loading ? (
-        <Row className="justify-content-center my-3">
-          <Col md={6} className="text-center">
-            <Alert variant="info">Loading data...</Alert>
-          </Col>
-        </Row>
-      ) : error ? (
-        <Row className="justify-content-center my-3">
-          <Col md={6} className="text-center">
-            <Alert variant="danger">{error}</Alert>
-          </Col>
-        </Row>
-      ) : !sessions.length ? (
+      {!loading && !error && !sessions.length && (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
             <Alert variant="warning">
@@ -211,36 +198,49 @@ const WorkHourByDay: React.FC = () => {
             </Alert>
           </Col>
         </Row>
-      ) : (
-        <>
-          <ListGroup className="mb-4">
-            {sessions.map((session) => (
-              <Row className="justify-content-center" key={session.id}>
-                <Col md={6}>
-                  <ListGroup.Item className="mb-2 small">
-                    <Row className="align-items-center">
-                      <Col xs={12}>
-                        <House className="me-2" /> {session.workplace.street}{" "}
-                        {session.workplace.street_number}, {session.workplace.postal_code}{" "}{session.workplace.city}
-                      </Col>
-                      <Col xs={12}>
-                        <ClockFill className="me-2" />{" "}
-                        {formatTime(session.start_time)}
-                      </Col>
-                      <Col xs={12}>
-                        <ClockHistory className="me-2" />{" "}
-                        {formatTime(session.end_time)}
-                      </Col>
-                      <Col xs={12}>
-                        <HourglassSplit className="me-2" /> {session.total_time}
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                </Col>
-              </Row>
-            ))}
-          </ListGroup>
-        </>
+      )}
+      {!loading && !error && sessions.length > 0 && (
+        <ListGroup className="mb-4">
+          {sessions.map((session) => (
+            <Row className="justify-content-center" key={session.id}>
+              <Col md={6}>
+                <ListGroup.Item className="mb-2 small">
+                  <Row className="align-items-center">
+                    <Col xs={12}>
+                      <House className="me-2" /> {session.workplace.street}{" "}
+                      {session.workplace.street_number}, {session.workplace.postal_code}{" "}{session.workplace.city}
+                    </Col>
+                    <Col xs={12}>
+                      <ClockFill className="me-2" />{" "}
+                      {formatTime(session.start_time)}
+                    </Col>
+                    <Col xs={12}>
+                      <ClockHistory className="me-2" />{" "}
+                      {formatTime(session.end_time)}
+                    </Col>
+                    <Col xs={12}>
+                      <HourglassSplit className="me-2" /> {session.total_time}
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              </Col>
+            </Row>
+          ))}
+        </ListGroup>
+      )}
+      {loading && (
+        <Row className="justify-content-center my-3">
+          <Col md={6} className="text-center">
+            <Alert variant="info">Loading data...</Alert>
+          </Col>
+        </Row>
+      )}
+      {error && (
+        <Row className="justify-content-center my-3">
+          <Col md={6} className="text-center">
+            <Alert variant="danger">{error}</Alert>
+          </Col>
+        </Row>
       )}
     </Container>
   );
