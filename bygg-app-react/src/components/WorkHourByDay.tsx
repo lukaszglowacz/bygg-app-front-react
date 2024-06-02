@@ -169,7 +169,7 @@ const WorkHourByDay: React.FC = () => {
             <Col className="text-center">
               {date ? (
                 <>
-                  <div className="font-weight-bold" style={{ fontSize: "15px" }}>
+                  <div className="font-weight-bold" style={{ fontSize: "14px" }}>
                     {moment.tz(date, "Europe/Stockholm").format("D MMMM YYYY")}
                   </div>
                   <small className="text-muted">

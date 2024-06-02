@@ -50,7 +50,7 @@ const WorkPlaceContainer: React.FC = () => {
       )}
       <Row className="justify-content-center mt-3">
         <Col md={6}>
-          <Accordion defaultActiveKey="0" className="text-center">
+          <Accordion className="text-center">
             {workplaces.map((workplace, index) => (
               <Accordion.Item eventKey={String(index)} key={workplace.id}>
                 <Accordion.Header className="text-center">

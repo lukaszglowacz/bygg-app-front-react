@@ -4,6 +4,7 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import ClockUpdate from "./ClockUpdate";
 import WorkplaceSelector from "./WorkplaceSelector";
+import ConfirmModal from "./ConfirmModal";
 
 interface Profile {
   id: number;
@@ -41,10 +42,12 @@ const Home: React.FC = () => {
   const [alertInfo, setAlertInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [isActiveSession, setIsActiveSession] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalText, setModalText] = useState("");
+  const [modalAction, setModalAction] = useState<() => void>(() => {});
 
   const { profileId } = useAuth();
 
-  // Funkcja do aktualizacji wybranego miejsca pracy
   const handleSelectWorkplace = (id: number) => {
     setSelectedWorkplaceId(id);
   };
@@ -81,11 +84,18 @@ const Home: React.FC = () => {
     fetchWorkplacesAndSession();
   }, [profileId]);
 
-  const handleStartSession = async () => {
+  const handleStartSession = () => {
     if (!profileId || selectedWorkplaceId <= 0 || activeSession) {
       setAlertInfo("Cool, but where are you working today?");
       return;
     }
+    setModalText("Are you sure you want to start work at the selected location?");
+    setModalAction(() => startSession);
+    setShowModal(true);
+  };
+
+  const startSession = async () => {
+    setShowModal(false);
     try {
       const response = await api.post("/livesession/start/", {
         workplace: selectedWorkplaceId,
@@ -100,15 +110,22 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleEndSession = async () => {
+  const handleEndSession = () => {
     if (!activeSession || !activeSession.id) {
-      // Upewnienie się, że 'id' istnieje
       setAlertInfo("You are not working now. Click Start to get started.");
       return;
     }
+    setModalText("Are you sure you want to end your work?");
+    setModalAction(() => endSession);
+    setShowModal(true);
+  };
+
+  const endSession = async () => {
+    if (!activeSession) return; // Additional check to ensure activeSession is not null
+    setShowModal(false);
     try {
       await api.patch(`/livesession/end/${activeSession.id}/`);
-      setActiveSession(null); // Resetowanie stanu aktywnej sesji
+      setActiveSession(null);
       setIsActiveSession(false);
       setSelectedWorkplaceId(0);
       setAlertInfo("Congratulations! It was a good day's work.");
@@ -120,27 +137,24 @@ const Home: React.FC = () => {
 
   const formatDate = (date: Date) => {
     const weekday = new Date(date).toLocaleDateString("en-EN", {
-      weekday: "long", // nazwa dnia tygodnia
+      weekday: "long",
     });
     const restOfDate = new Date(date).toLocaleDateString("en-EN", {
-      day: "numeric", // numer dnia
-      month: "long", // nazwa miesiąca
-      year: "numeric", // rok
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
-  
     return `${weekday}, ${restOfDate}`;
   };
-  
 
-  // Użycie:
   const today = new Date();
-  const formattedDate = formatDate(today); // przykładowo, 'söndag, 7 maj 2024'
+  const formattedDate = formatDate(today);
 
   return (
     <Container>
       <Row className="justify-content-md-center mt-3">
         <Col md={6}>
-          <Row className="mb-0" >
+          <Row className="mb-0">
             <Col className="text-secondary text-center mb-0">
               <h2 style={{ fontSize: "20px" }}>{formattedDate}</h2>
             </Col>
@@ -190,8 +204,14 @@ const Home: React.FC = () => {
         </Col>
       </Row>
       <Row className="justify-content-md-center">
-        <Col md={4} className="text-center">{alertInfo && <Alert variant="info">{alertInfo}</Alert>}</Col>
+        <Col md={4} className="text-center">
+          {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
+        </Col>
       </Row>
+
+      <ConfirmModal show={showModal} onHide={() => setShowModal(false)} onConfirm={modalAction}>
+        {modalText}
+      </ConfirmModal>
     </Container>
   );
 };

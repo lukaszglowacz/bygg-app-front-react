@@ -20,7 +20,7 @@ import {
   LockFill,
   Lock,
   EyeFill,
-  EyeSlashFill
+  EyeSlashFill,
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
@@ -28,7 +28,7 @@ import { useUserProfile } from "../context/UserProfileContext";
 import { useNavigate } from "react-router-dom";
 import BackButton from "./NavigateButton";
 import ToastNotification from "./ToastNotification";
-import { AxiosError } from 'axios';
+import { AxiosError } from "axios";
 
 interface PasswordData {
   oldPassword: string;
@@ -80,7 +80,7 @@ const ProfileComponent: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<{ [key: string]: boolean }>({
     oldPassword: false,
     newPassword: false,
-    confirmPassword: false
+    confirmPassword: false,
   });
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [showToast, setShowToast] = useState(false);
@@ -150,7 +150,7 @@ const ProfileComponent: React.FC = () => {
   const togglePasswordVisibility = (field: string) => {
     setPasswordVisible((prevState) => ({
       ...prevState,
-      [field]: !prevState[field]
+      [field]: !prevState[field],
     }));
   };
 
@@ -237,7 +237,7 @@ const ProfileComponent: React.FC = () => {
 
       setTimeout(() => {
         setShowToast(false);
-        navigate('/'); // Redirect to the homepage
+        navigate("/"); // Redirect to the homepage
       }, 3000);
     } catch (error) {
       console.error("An error occurred while changing the password:", error);
@@ -292,6 +292,9 @@ const ProfileComponent: React.FC = () => {
                 </p>
               </Card.Header>
               <Card.Body>
+                <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem"}}>
+                  Account Settings
+                </h5>
                 <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
                   <Form.Group className="mb-3">
                     <InputGroup>
@@ -303,11 +306,7 @@ const ProfileComponent: React.FC = () => {
                         placeholder="First name"
                         value={formData.get(profile.id)?.firstName || ""}
                         onChange={(e) =>
-                          handleInputChange(
-                            profile.id,
-                            "firstName",
-                            e.target.value
-                          )
+                          handleInputChange(profile.id, "firstName", e.target.value)
                         }
                         isInvalid={!!errors.firstName}
                       />
@@ -330,11 +329,7 @@ const ProfileComponent: React.FC = () => {
                         placeholder="Last name"
                         value={formData.get(profile.id)?.lastName || ""}
                         onChange={(e) =>
-                          handleInputChange(
-                            profile.id,
-                            "lastName",
-                            e.target.value
-                          )
+                          handleInputChange(profile.id, "lastName", e.target.value)
                         }
                         isInvalid={!!errors.lastName}
                       />
@@ -357,11 +352,7 @@ const ProfileComponent: React.FC = () => {
                         placeholder="Personnummer"
                         value={formData.get(profile.id)?.personnummer || ""}
                         onChange={(e) =>
-                          handleInputChange(
-                            profile.id,
-                            "personnummer",
-                            e.target.value
-                          )
+                          handleInputChange(profile.id, "personnummer", e.target.value)
                         }
                         isInvalid={!!errors.personnummer}
                       />
@@ -374,24 +365,17 @@ const ProfileComponent: React.FC = () => {
                       </Form.Control.Feedback>
                     </InputGroup>
                   </Form.Group>
-                  {errors.general && (
-                    <Alert variant="warning">
-                      {errors.general}
-                    </Alert>
-                  )}
-                  <Button
-                    variant="success"
-                    type="submit"
-                    className="w-100"
-                    size="sm"
-                  >
+                  {errors.general && <Alert variant="warning">{errors.general}</Alert>}
+                  <Button variant="success" type="submit" className="w-100" size="sm">
                     Update Profile
                   </Button>
                 </Form>
                 <hr />
                 <div className="d-flex justify-content-center">
                   <Form onSubmit={handlePasswordSubmit} style={{ width: "100%" }}>
-                    <h5 className="text-center">Change Password</h5>
+                    <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem"}}>
+                      Change Password
+                    </h5>
                     <Form.Group className="mb-3">
                       <InputGroup>
                         <InputGroup.Text>
@@ -401,13 +385,18 @@ const ProfileComponent: React.FC = () => {
                           type={passwordVisible.oldPassword ? "text" : "password"}
                           placeholder="Old password"
                           value={passwordData.oldPassword}
-                          onChange={(e) =>
-                            handlePasswordChange("oldPassword", e.target.value)
-                          }
+                          onChange={(e) => handlePasswordChange("oldPassword", e.target.value)}
                           isInvalid={!!errors.oldPassword}
                         />
-                        <InputGroup.Text onClick={() => togglePasswordVisibility("oldPassword")} style={{ cursor: "pointer" }}>
-                          {passwordVisible.oldPassword ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                        <InputGroup.Text
+                          onClick={() => togglePasswordVisibility("oldPassword")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {passwordVisible.oldPassword ? (
+                            <EyeSlashFill size={20} />
+                          ) : (
+                            <EyeFill size={20} />
+                          )}
                         </InputGroup.Text>
                         <Form.Control.Feedback type="invalid">
                           {errors.oldPassword && (
@@ -427,13 +416,18 @@ const ProfileComponent: React.FC = () => {
                           type={passwordVisible.newPassword ? "text" : "password"}
                           placeholder="New password"
                           value={passwordData.newPassword}
-                          onChange={(e) =>
-                            handlePasswordChange("newPassword", e.target.value)
-                          }
+                          onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
                           isInvalid={!!errors.newPassword}
                         />
-                        <InputGroup.Text onClick={() => togglePasswordVisibility("newPassword")} style={{ cursor: "pointer" }}>
-                          {passwordVisible.newPassword ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                        <InputGroup.Text
+                          onClick={() => togglePasswordVisibility("newPassword")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {passwordVisible.newPassword ? (
+                            <EyeSlashFill size={20} />
+                          ) : (
+                            <EyeFill size={20} />
+                          )}
                         </InputGroup.Text>
                         <Form.Control.Feedback type="invalid">
                           {errors.newPassword && (
@@ -458,8 +452,15 @@ const ProfileComponent: React.FC = () => {
                           }
                           isInvalid={!!errors.confirmPassword}
                         />
-                        <InputGroup.Text onClick={() => togglePasswordVisibility("confirmPassword")} style={{ cursor: "pointer" }}>
-                          {passwordVisible.confirmPassword ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                        <InputGroup.Text
+                          onClick={() => togglePasswordVisibility("confirmPassword")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {passwordVisible.confirmPassword ? (
+                            <EyeSlashFill size={20} />
+                          ) : (
+                            <EyeFill size={20} />
+                          )}
                         </InputGroup.Text>
                         <Form.Control.Feedback type="invalid">
                           {errors.confirmPassword && (
@@ -470,17 +471,8 @@ const ProfileComponent: React.FC = () => {
                         </Form.Control.Feedback>
                       </InputGroup>
                     </Form.Group>
-                    {errors.password && (
-                      <Alert variant="warning">
-                        {errors.password}
-                      </Alert>
-                    )}
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      className="w-100"
-                      size="sm"
-                    >
+                    {errors.password && <Alert variant="warning">{errors.password}</Alert>}
+                    <Button variant="primary" type="submit" className="w-100" size="sm">
                       Change Password
                     </Button>
                   </Form>

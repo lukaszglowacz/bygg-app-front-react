@@ -109,8 +109,7 @@ const NavbarComponent: React.FC = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         onConfirm={handleLogoutConfirm}
-        title="Potwierdzenie wylogowania"
-        children={<p>Are you sure you want to log out?</p>}
+        children={<p>Are you sure you want to sign out?</p>}
       />
       <ToastNotification
         show={showToast}
