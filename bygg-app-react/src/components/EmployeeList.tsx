@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
-import api from "../api/api"; // Upewnij się, że ścieżka do API jest poprawna
-import { Employee } from "../api/interfaces/types"; // Upewnij się, że ten typ danych jest poprawnie zdefiniowany
+import api from "../api/api"; 
+import { Employee } from "../api/interfaces/types"; 
 import { Button, Container, Row, Col } from "react-bootstrap";
 import {
   HourglassSplit,
@@ -11,7 +11,7 @@ import {
   GeoAlt,
   ClockHistory,
 } from "react-bootstrap-icons";
-import moment from "moment-timezone"; // Importowanie moment i moment-timezone
+import moment from "moment-timezone"; 
 import TimeElapsed from "./TimeElapsed";
 import BackButton from "./NavigateButton";
 
@@ -25,7 +25,7 @@ const EmployeeList: React.FC = () => {
     const fetchEmployees = async () => {
       try {
         const response = await api.get<Employee[]>("/employee");
-        setEmployees(response.data); // Zakładamy, że odpowiedź API to bezpośrednio lista pracowników
+        setEmployees(response.data); 
         setLoading(false);
       } catch (err: any) {
         console.error("Error fetching employees:", err);
@@ -38,7 +38,22 @@ const EmployeeList: React.FC = () => {
   }, []);
 
   const handleEmployee = (id: number) => {
-    navigate(`/employees/${id}`); // Przekierowanie do formularza edycji z ID miejsca pracy
+    navigate(`/employees/${id}`);
+  };
+
+  const handleEndSession = async (sessionId: number) => {
+    try {
+      await api.patch(`/livesession/end/${sessionId}/`);
+      const updatedEmployees = employees.map((employee) =>
+        employee.current_session_id === sessionId
+          ? { ...employee, current_session_status: "Zakończona" }
+          : employee
+      );
+      setEmployees(updatedEmployees);
+    } catch (error) {
+      console.error("Error ending session", error);
+      setError("Failed to end session");
+    }
   };
 
   const formatTimeToStockholm = (time: string) => {
@@ -86,6 +101,15 @@ const EmployeeList: React.FC = () => {
                       <div className="d-flex align-items-center mb-2">
                         <HourglassSplit className="me-2" />
                         <TimeElapsed startTime={employee.current_session_start_time} />
+                      </div>
+                      <div className="text-center">
+                        <Button
+                          variant="danger"
+                          className="btn-sm mt-3"
+                          onClick={() => handleEndSession(employee.current_session_id)}
+                        >
+                          End Session
+                        </Button>
                       </div>
                     </>
                   )}

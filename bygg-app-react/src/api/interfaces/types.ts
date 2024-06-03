@@ -79,6 +79,7 @@ export interface Profile {
   export interface Employee {
     id: number;
     full_name: string;  // Format daty zależny od backendu, tutaj przyjęto string
+    current_session_id: number;
     current_session_start_time: string;
     current_session_status: string;
     current_workplace: string;
