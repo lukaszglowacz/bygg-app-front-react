@@ -193,7 +193,11 @@ const EmployeeDetails: React.FC = () => {
     const month = currentDate.getMonth() + 1; // JavaScript miesiące są od 0, więc +1
     return sessions.filter((session) => {
       const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm").toDate();
-      return sessionStart.getFullYear() === year && sessionStart.getMonth() + 1 === month;
+      const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm").toDate();
+      return (
+        (sessionStart.getFullYear() === year && sessionStart.getMonth() + 1 === month) ||
+        (sessionEnd.getFullYear() === year && sessionEnd.getMonth() + 1 === month)
+      );
     });
   };
 
