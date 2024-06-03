@@ -237,7 +237,6 @@ const ProfileComponent: React.FC = () => {
 
       setTimeout(() => {
         setShowToast(false);
-        navigate("/"); // Redirect to the homepage
       }, 3000);
     } catch (error) {
       console.error("An error occurred while changing the password:", error);
