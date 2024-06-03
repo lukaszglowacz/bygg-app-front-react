@@ -56,24 +56,39 @@ const EmployeeDetails: React.FC = () => {
     const splitSessions: WorkSession[] = [];
 
     sessions.forEach((session) => {
-      const start = moment.utc(session.start_time).tz("Europe/Stockholm");
-      const end = moment.utc(session.end_time).tz("Europe/Stockholm");
+        const start = moment.utc(session.start_time).tz("Europe/Stockholm");
+        const end = moment.utc(session.end_time).tz("Europe/Stockholm");
 
-      let currentStart = start.clone();
+        let currentStart = start.clone();
 
-      while (currentStart.isBefore(end)) {
-        const sessionEndOfDay = currentStart.clone().endOf('day');
-        const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
+        while (currentStart.isBefore(end)) {
+            const nextHour = currentStart.clone().add(1, 'hour').startOf('hour');
+            const sessionEnd = end.isBefore(nextHour) ? end : nextHour;
 
-        splitSessions.push({
-          ...session,
-          start_time: currentStart.toISOString(),
-          end_time: sessionEnd.toISOString(),
-          total_time: calculateTotalTime(currentStart, sessionEnd),
-        });
+            const sessionStartDate = currentStart.clone().startOf('day');
+            const sessionEndDate = sessionEnd.clone().startOf('day');
 
-        currentStart = sessionEnd.clone().add(1, 'second');
-      }
+            if (sessionStartDate.isSame(sessionEndDate)) {
+                splitSessions.push({
+                    ...session,
+                    start_time: currentStart.toISOString(),
+                    end_time: sessionEnd.toISOString(),
+                    total_time: calculateTotalTime(currentStart, sessionEnd),
+                });
+            } else {
+                const endOfDay = currentStart.clone().endOf('day');
+                splitSessions.push({
+                    ...session,
+                    start_time: currentStart.toISOString(),
+                    end_time: endOfDay.toISOString(),
+                    total_time: calculateTotalTime(currentStart, endOfDay),
+                });
+                currentStart = endOfDay.clone().add(1, 'second');
+                continue;
+            }
+
+            currentStart = sessionEnd.clone();
+        }
     });
 
     return splitSessions;
@@ -88,15 +103,10 @@ const EmployeeDetails: React.FC = () => {
 
   const daysInMonth = (): string[] => {
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // JavaScript miesiące są od 0, więc +1
+    const month = currentDate.getMonth() + 1;
     return new Array(new Date(year, month, 0).getDate())
       .fill(null)
-      .map(
-        (_, i) =>
-          `${year}-${month.toString().padStart(2, "0")}-${(i + 1)
-            .toString()
-            .padStart(2, "0")}`
-      );
+      .map((_, i) => `${year}-${month.toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`);
   };
 
   const displayDaysWithSessions = (): JSX.Element[] => {
@@ -105,26 +115,15 @@ const EmployeeDetails: React.FC = () => {
       const daySessions = sessionsByDay.get(day) || [];
       return (
         <Row key={day} className="mb-3">
-          <Col
-            xs={12}
-            className="d-flex justify-content-between align-items-center bg-light p-2"
-          >
+          <Col xs={12} className="d-flex justify-content-between align-items-center bg-light p-2">
             <div>{day}</div>
-            <Button
-              onClick={() => navigate(`/employee/${id}/day/${day}`)}
-              variant="outline-success"
-              size="sm"
-            >
+            <Button onClick={() => navigate(`/employee/${id}/day/${day}`)} variant="outline-success" size="sm">
               <ChevronRight />
             </Button>
           </Col>
           {daySessions.length > 0 ? (
             daySessions.map((session) => (
-              <Col
-                xs={12}
-                className="d-flex justify-content-between align-items-center p-2"
-                key={session.id}
-              >
+              <Col xs={12} className="d-flex justify-content-between align-items-center p-2" key={session.id}>
                 <div>
                   <div>
                     <small>{session.workplace}</small>
@@ -222,11 +221,7 @@ const EmployeeDetails: React.FC = () => {
   };
 
   const handleMonthChange = (offset: number) => {
-    const newDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + offset,
-      1
-    );
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
     setCurrentDate(newDate);
     if (employee) {
       const newFilteredSessions = filterSessionsByMonth(employee.work_session, newDate);
@@ -257,7 +252,6 @@ const EmployeeDetails: React.FC = () => {
         },
       });
 
-      // Extract profile data to generate the file name
       if (employee) {
         const year = currentDate.getFullYear();
         const monthName = moment.months()[currentDate.getMonth()];
