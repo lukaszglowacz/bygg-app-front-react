@@ -3,7 +3,6 @@ import { Container, Alert, Row, Col, Accordion } from "react-bootstrap";
 import useAllLiveSessions from "../hooks/useAllLiveSessions";
 import { useNavigate } from "react-router-dom";
 import { Session } from "../api/interfaces/types";
-import { HourglassSplit, InfoCircleFill } from "react-bootstrap-icons";
 import BackButton from "./NavigateButton";
 
 const ActiveSessions: React.FC = () => {

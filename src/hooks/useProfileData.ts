@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import api from "../api/api";
 import { Profile } from "../api/interfaces/types";
 import { useAuth } from "../context/AuthContext"; // Importujemy nasz hook do korzystania z kontekstu

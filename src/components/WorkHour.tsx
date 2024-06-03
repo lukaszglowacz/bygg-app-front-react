@@ -16,7 +16,6 @@ import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
 import { extendMoment } from "moment-range";
-import { DateRange } from "moment-range";
 
 const Moment = extendMoment(moment);
 

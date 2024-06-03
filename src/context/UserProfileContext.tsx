@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, FunctionComponent, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, FunctionComponent } from 'react';
 import { Profile } from '../api/interfaces/types';
 import api from '../api/api'; 
 

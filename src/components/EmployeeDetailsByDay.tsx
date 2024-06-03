@@ -23,7 +23,6 @@ import {
   ChevronRight,
 } from "react-bootstrap-icons";
 import useGoBack from "../hooks/useGoBack";
-import { FaDownload } from "react-icons/fa";
 import { sumTotalTime } from "../api/helper/timeUtils";
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";

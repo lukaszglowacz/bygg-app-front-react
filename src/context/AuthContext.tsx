@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api from "../api/api";
-import { Profile } from '../api/interfaces/types';
 
 interface AuthContextType {
   isAuthenticated: boolean;
