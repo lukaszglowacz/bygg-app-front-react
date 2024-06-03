@@ -12,7 +12,6 @@ import {
   Envelope,
   HourglassSplit,
 } from "react-bootstrap-icons";
-import { sumTotalTime } from "../api/helper/timeUtils";
 import { FaDownload } from "react-icons/fa";
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
@@ -42,7 +41,8 @@ const EmployeeDetails: React.FC = () => {
       const splitSessions = splitSessionsByDay(sessions);
       const sessionsMap = groupSessionsByDay(splitSessions);
       setSessionsByDay(sessionsMap);
-      const totalTimeCalculated = sumTotalTime(splitSessions);
+      const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
+      const totalTimeCalculated = sumTotalTimeForMonth(filteredSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
     } catch (err: any) {
@@ -172,6 +172,55 @@ const EmployeeDetails: React.FC = () => {
     return map;
   };
 
+  const filterSessionsByMonth = (sessions: WorkSession[], date: Date): WorkSession[] => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const filteredSessions: WorkSession[] = [];
+
+    sessions.forEach((session) => {
+      const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm");
+
+      if (sessionStart.month() === month && sessionStart.year() === year) {
+        if (sessionEnd.month() !== month || sessionEnd.year() !== year) {
+          const endOfMonth = sessionStart.clone().endOf('month');
+          filteredSessions.push({
+            ...session,
+            end_time: endOfMonth.toISOString(),
+            total_time: calculateTotalTime(sessionStart, endOfMonth),
+          });
+        } else {
+          filteredSessions.push(session);
+        }
+      } else if (sessionEnd.month() === month && sessionEnd.year() === year) {
+        const startOfMonth = sessionEnd.clone().startOf('month');
+        filteredSessions.push({
+          ...session,
+          start_time: startOfMonth.toISOString(),
+          total_time: calculateTotalTime(startOfMonth, sessionEnd),
+        });
+      }
+    });
+
+    return filteredSessions;
+  };
+
+  const sumTotalTimeForMonth = (sessions: WorkSession[]): string => {
+    let totalMinutes = 0;
+
+    sessions.forEach((session) => {
+      const start = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const end = moment.utc(session.end_time).tz("Europe/Stockholm");
+      totalMinutes += moment.duration(end.diff(start)).asMinutes();
+    });
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+
+    return `${hours} h, ${minutes} min`;
+  };
+
   const handleMonthChange = (offset: number) => {
     const newDate = new Date(
       currentDate.getFullYear(),
@@ -180,26 +229,23 @@ const EmployeeDetails: React.FC = () => {
     );
     setCurrentDate(newDate);
     if (employee) {
-      const newFilteredSessions = filterSessionsByMonth(employee.work_session);
+      const newFilteredSessions = filterSessionsByMonth(employee.work_session, newDate);
       const newSessionsMap = groupSessionsByDay(newFilteredSessions);
       setSessionsByDay(newSessionsMap);
-      const newTotalTime = sumTotalTime(newFilteredSessions);
+      const newTotalTime = sumTotalTimeForMonth(newFilteredSessions);
       setTotalTime(newTotalTime);
     }
   };
 
-  const filterSessionsByMonth = (sessions: WorkSession[]): WorkSession[] => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // JavaScript miesiące są od 0, więc +1
-    return sessions.filter((session) => {
-      const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm").toDate();
-      const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm").toDate();
-      return (
-        (sessionStart.getFullYear() === year && sessionStart.getMonth() + 1 === month) ||
-        (sessionEnd.getFullYear() === year && sessionEnd.getMonth() + 1 === month)
-      );
-    });
-  };
+  useEffect(() => {
+    if (employee) {
+      const filteredSessions = filterSessionsByMonth(employee.work_session, currentDate);
+      const sessionsMap = groupSessionsByDay(filteredSessions);
+      setSessionsByDay(sessionsMap);
+      const newTotalTime = sumTotalTimeForMonth(filteredSessions);
+      setTotalTime(newTotalTime);
+    }
+  }, [currentDate, employee]);
 
   const handleDownloadPDF = async () => {
     try {
@@ -228,16 +274,6 @@ const EmployeeDetails: React.FC = () => {
       console.error("Error downloading PDF:", err);
     }
   };
-
-  useEffect(() => {
-    if (employee) {
-      const filteredSessions = filterSessionsByMonth(employee.work_session);
-      const sessionsMap = groupSessionsByDay(filteredSessions);
-      setSessionsByDay(sessionsMap);
-      const newTotalTime = sumTotalTime(filteredSessions);
-      setTotalTime(newTotalTime);
-    }
-  }, [currentDate, employee]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;

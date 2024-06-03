@@ -12,7 +12,6 @@ import {
   Envelope,
   HourglassSplit,
 } from "react-bootstrap-icons";
-import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
@@ -46,7 +45,8 @@ const WorkHour: React.FC = () => {
       }
 
       setSessionsByDay(sessionsMap);
-      const totalTimeCalculated = sumTotalTimeForProfile(splitSessions);
+      const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
+      const totalTimeCalculated = sumTotalTimeForMonth(filteredSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
     } catch (error: any) {
@@ -75,6 +75,7 @@ const WorkHour: React.FC = () => {
           total_time: calculateTotalTime(currentStart, sessionEnd),
         });
 
+        // Ustawienie currentStart na 00:00 następnego dnia
         currentStart = sessionEnd.clone().add(1, 'second');
       }
     });
@@ -185,6 +186,7 @@ const WorkHour: React.FC = () => {
           end_time: moment(startDay).endOf('day').toISOString(),
           total_time: calculateTotalTime(moment(startDay).startOf('day'), moment(startDay).endOf('day')),
         };
+        startSession.total_time = addMinutesToTotalTime(startSession.total_time, 1); // Dodaj minutę do czasu całkowitego
         const existingStart = map.get(startDay) || [];
         existingStart.push(startSession);
         map.set(startDay, existingStart);
@@ -194,6 +196,7 @@ const WorkHour: React.FC = () => {
           start_time: moment(endDay).startOf('day').toISOString(),
           total_time: calculateTotalTime(moment(endDay).startOf('day'), moment(endDay).endOf('day')),
         };
+        endSession.total_time = addMinutesToTotalTime(endSession.total_time, 1); // Dodaj minutę do czasu całkowitego
         const existingEnd = map.get(endDay) || [];
         existingEnd.push(endSession);
         map.set(endDay, existingEnd);
@@ -206,6 +209,42 @@ const WorkHour: React.FC = () => {
     return map;
   };
 
+  const addMinutesToTotalTime = (totalTime: string, minutesToAdd: number): string => {
+    const [hoursPart, minutesPart] = totalTime.split(", ").map(part => parseInt(part, 10));
+    const totalMinutes = hoursPart * 60 + minutesPart + minutesToAdd;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours} h, ${minutes} min`;
+  };
+
+  const filterSessionsByMonth = (sessions: ProfileWorksession[], date: Date): ProfileWorksession[] => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    return sessions.filter((session) => {
+      const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm").toDate();
+      const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm").toDate();
+      return (
+        (sessionStart.getFullYear() === year && sessionStart.getMonth() === month) ||
+        (sessionEnd.getFullYear() === year && sessionEnd.getMonth() === month)
+      );
+    });
+  };
+
+  const sumTotalTimeForMonth = (sessions: ProfileWorksession[]): string => {
+    let totalMinutes = 0;
+
+    sessions.forEach((session) => {
+      const start = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const end = moment.utc(session.end_time).tz("Europe/Stockholm");
+      totalMinutes += moment.duration(end.diff(start)).asMinutes();
+    });
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+
+    return `${hours} h, ${minutes} min`;
+  };
+
   const handleMonthChange = (offset: number) => {
     const newDate = new Date(
       currentDate.getFullYear(),
@@ -214,6 +253,14 @@ const WorkHour: React.FC = () => {
     );
     setCurrentDate(newDate);
   };
+
+  useEffect(() => {
+    if (profile) {
+      const filteredSessions = filterSessionsByMonth(Array.from(sessionsByDay.values()).flat(), currentDate);
+      const totalTimeCalculated = sumTotalTimeForMonth(filteredSessions);
+      setTotalTime(totalTimeCalculated);
+    }
+  }, [currentDate, profile, sessionsByDay]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
