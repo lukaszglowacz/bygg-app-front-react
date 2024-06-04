@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
-import useGoBack from "../hooks/useGoBack";
 import { Button, Container, Row, Col, Card } from "react-bootstrap";
 import {
   ChevronLeft,
@@ -29,7 +28,6 @@ const WorkHour: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const goBack = useGoBack();
 
   useEffect(() => {
     fetchWorkSessions();

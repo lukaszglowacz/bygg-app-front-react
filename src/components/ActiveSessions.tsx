@@ -1,13 +1,11 @@
 import React from "react";
 import { Container, Alert, Row, Col, Accordion } from "react-bootstrap";
 import useAllLiveSessions from "../hooks/useAllLiveSessions";
-import { useNavigate } from "react-router-dom";
 import { Session } from "../api/interfaces/types";
 import BackButton from "./NavigateButton";
 
 const ActiveSessions: React.FC = () => {
   const sessions: Session[] = useAllLiveSessions();
-  const navigate = useNavigate();
 
   if (sessions.length === 0) {
     return (

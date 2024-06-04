@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
-import useGoBack from "../hooks/useGoBack";
 import {
   Container,
   Row,
@@ -34,7 +33,6 @@ const WorkHourByDay: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const goBack = useGoBack();
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
 
   useEffect(() => {

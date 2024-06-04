@@ -40,7 +40,6 @@ const Home: React.FC = () => {
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<number>(0);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [alertInfo, setAlertInfo] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
   const [isActiveSession, setIsActiveSession] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("");

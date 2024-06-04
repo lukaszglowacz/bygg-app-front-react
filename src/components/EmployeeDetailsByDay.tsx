@@ -22,7 +22,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "react-bootstrap-icons";
-import useGoBack from "../hooks/useGoBack";
 import { sumTotalTime } from "../api/helper/timeUtils";
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
@@ -34,7 +33,6 @@ const EmployeeDetailsByDay: React.FC = () => {
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const goBack = useGoBack();
   const navigate = useNavigate();
 
   useEffect(() => {
