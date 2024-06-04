@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
-import { Button, Container, Row, Col, Card } from "react-bootstrap";
+import { Button, Container, Row, Col, Card, Spinner } from "react-bootstrap";
 import {
   ChevronLeft,
   ChevronRight,
@@ -309,7 +309,11 @@ const WorkHour: React.FC = () => {
     }
   }, [currentDate, profile, sessionsByDay]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Row className="justify-content-center mt-5 align-items-center">
+  <Col md={6}>
+    <Spinner animation="border" variant="info" />
+  </Col>
+</Row>;
   if (error) return <div>Error: {error}</div>;
 
   return (
