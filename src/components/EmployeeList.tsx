@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 import api from "../api/api";
 import { Employee } from "../api/interfaces/types";
-import { Button, Container, Row, Col, Spinner } from "react-bootstrap";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import {
   HourglassSplit,
   Person,
@@ -13,6 +13,7 @@ import {
 import moment from "moment-timezone";
 import TimeElapsed from "./TimeElapsed";
 import BackButton from "./NavigateButton";
+import Loader from "./Loader";
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -61,11 +62,7 @@ const EmployeeList: React.FC = () => {
 
   if (loading)
     return (
-      <Row className="justify-content-center mt-5 align-items-center">
-        <Col md={6}>
-          <Spinner animation="border" variant="info" />
-        </Col>
-      </Row>
+      <Loader />
     );
   if (error) return <div>Error: {error}</div>;
 

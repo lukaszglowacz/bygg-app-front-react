@@ -9,7 +9,6 @@ import {
   Row,
   Col,
   Card,
-  Spinner,
 } from "react-bootstrap";
 import {
   ChevronLeft,
@@ -24,6 +23,7 @@ import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
 import { saveAs } from "file-saver";
+import Loader from "./Loader";
 
 const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -318,11 +318,7 @@ const EmployeeDetails: React.FC = () => {
 
   if (loading)
     return (
-      <Row className="justify-content-center mt-5 align-items-center">
-        <Col md={6}>
-          <Spinner animation="border" variant="info" />
-        </Col>
-      </Row>
+      <Loader />
     );
   if (error) return <div>Error: {error}</div>;
   if (!employee) return <div>No employee found</div>;
