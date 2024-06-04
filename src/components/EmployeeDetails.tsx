@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
-import { Button, Image, Container, Row, Col, Card } from "react-bootstrap";
+import { Button, Image, Container, Row, Col, Card, Spinner } from "react-bootstrap";
 import {
   ChevronLeft,
   ChevronRight,
@@ -267,7 +267,7 @@ const EmployeeDetails: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Spinner animation="border" variant="info" />;
   if (error) return <div>Error: {error}</div>;
   if (!employee) return <div>No employee found</div>;
 
