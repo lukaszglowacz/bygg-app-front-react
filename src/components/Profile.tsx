@@ -25,7 +25,6 @@ import {
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
 import { useUserProfile } from "../context/UserProfileContext";
-import { useNavigate } from "react-router-dom";
 import BackButton from "./NavigateButton";
 import ToastNotification from "./ToastNotification";
 import { AxiosError } from "axios";

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
-import useGoBack from "../hooks/useGoBack";
 import { Button, Image, Container, Row, Col, Card } from "react-bootstrap";
 import {
   ChevronLeft,

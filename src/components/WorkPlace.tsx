@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useWorkPlaceData } from "../hooks/useWorkplaceData";
 import { Container, Col, Row, Button, Accordion } from "react-bootstrap";
-import { IWorkPlacesData } from "../api/interfaces/types";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../context/UserProfileContext";
 import BackButton from "./NavigateButton";
