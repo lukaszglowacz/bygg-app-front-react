@@ -24,10 +24,6 @@ const WorkPlaceContainer: React.FC = () => {
     navigate("/add-work-place"); // Przekierowanie do AddWorkPlace
   };
 
-  const formatAddress = (workplace: IWorkPlacesData) => {
-    return `${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`;
-  };
-
   const handleEditClick = (id: number) => {
     navigate(`/edit-work-place/${id}`); // Przekierowanie do formularza edycji z ID miejsca pracy
   };

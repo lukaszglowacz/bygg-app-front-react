@@ -27,7 +27,6 @@ const EmployeeDetails: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const goBack = useGoBack();
 
   useEffect(() => {
     fetchEmployeeDetails();

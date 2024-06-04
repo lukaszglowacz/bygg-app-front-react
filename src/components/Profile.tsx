@@ -68,7 +68,6 @@ const validatePassword = (password: string): string[] => {
 const ProfileComponent: React.FC = () => {
   const profiles: ProfileData[] = useProfileData();
   const { loadProfile, setProfile } = useUserProfile();
-  const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<Map<number, File>>(new Map());
   const [previewUrls, setPreviewUrls] = useState<Map<number, string>>(new Map());
   const [formData, setFormData] = useState<Map<number, { firstName: string; lastName: string; personnummer: string }>>(new Map());
