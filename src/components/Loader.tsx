@@ -4,8 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Loader: React.FC = () => {
   return (
-    <div className="d-flex vh-100 justify-content-center align-items-center mt-5">
-      <Spinner animation="border" variant="info"/>
+    <div className="d-flex vh-100 justify-content-center align-items-center">
+      <Spinner animation="grow" variant="success"/>
     </div>
   );
 };
