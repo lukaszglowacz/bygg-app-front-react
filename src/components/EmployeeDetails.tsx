@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
-import { Button, Image, Container, Row, Col, Card, Alert, ListGroup } from "react-bootstrap";
-import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, HourglassSplit, House, ClockFill, ClockHistory } from "react-bootstrap-icons";
+import { Button, Image, Container, Row, Col, Card } from "react-bootstrap";
+import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, HourglassSplit } from "react-bootstrap-icons";
 import { FaDownload } from "react-icons/fa";
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
 import { saveAs } from "file-saver";
 import Loader from "./Loader";
-import { formatDate, formatTime } from "../utils/dateUtils"; // Importowanie funkcji formatujących
+import { formatDate } from "../utils/dateUtils"; // Importowanie funkcji formatujących
 import { sumTotalTime } from "../utils/timeUtils"; // Importowanie funkcji obliczającej całkowity czas
 import moment from "moment-timezone";
 

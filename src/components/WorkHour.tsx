@@ -7,8 +7,8 @@ import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, Hourgla
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
 import Loader from "./Loader";
-import { sumTotalTime, sumTotalTimeForProfile } from "../utils/timeUtils"; // Importing timeUtils
-import { formatDate, formatTime } from "../utils/dateUtils"; // Importing dateUtils
+import { sumTotalTimeForProfile } from "../utils/timeUtils"; // Importing timeUtils
+import { formatDate } from "../utils/dateUtils"; // Importing dateUtils
 import moment from "moment-timezone";
 import { extendMoment } from "moment-range";
 

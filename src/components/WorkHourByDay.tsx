@@ -5,7 +5,7 @@ import { ProfileWorksession, Profile } from "../api/interfaces/types";
 import { Container, Row, Col, Card, Alert, Button, ListGroup } from "react-bootstrap";
 import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../utils/timeUtils";
-import { formatDate, formatTime } from "../utils/dateUtils"; // Importing dateUtils
+import { formatTime } from "../utils/dateUtils"; // Importing dateUtils
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
 
