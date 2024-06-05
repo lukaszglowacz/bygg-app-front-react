@@ -2,27 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { WorkSession, Employee } from "../api/interfaces/types";
-import {
-  Container,
-  Row,
-  Col,
-  Alert,
-  ListGroup,
-  Button,
-  Card,
-} from "react-bootstrap";
-import {
-  House,
-  ClockHistory,
-  ClockFill,
-  HourglassSplit,
-  PersonBadge,
-  Envelope,
-  PersonCircle,
-  ChevronLeft,
-  ChevronRight,
-} from "react-bootstrap-icons";
-import { sumTotalTime } from "../api/helper/timeUtils";
+import { Container, Row, Col, Alert, ListGroup, Button, Card } from "react-bootstrap";
+import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+import { sumTotalTime } from "../utils/timeUtils";
+import { formatDate, formatTime } from "../utils/dateUtils"; // Import dateUtils
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
 
@@ -99,12 +82,8 @@ const EmployeeDetailsByDay: React.FC = () => {
   const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
-    const minutes = Math.floor(duration.minutes());
+    const minutes = duration.minutes();
     return `${hours} h, ${minutes} min`;
-  };
-
-  const formatTime = (dateTime: string) => {
-    return moment.utc(dateTime).tz("Europe/Stockholm").format("HH:mm");
   };
 
   const changeDay = (offset: number): void => {
@@ -123,9 +102,7 @@ const EmployeeDetailsByDay: React.FC = () => {
   const handleDeleteSession = async (sessionId: number) => {
     try {
       await api.delete(`/worksession/${sessionId}`);
-      const updatedSessions = sessions.filter(
-        (session) => session.id !== sessionId
-      );
+      const updatedSessions = sessions.filter((session) => session.id !== sessionId);
       setSessions(updatedSessions);
       setTotalTime(sumTotalTime(updatedSessions));
     } catch (error) {
@@ -144,10 +121,7 @@ const EmployeeDetailsByDay: React.FC = () => {
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">
-            <Card.Header
-              as="h6"
-              className="d-flex justify-content-between align-items-center"
-            >
+            <Card.Header as="h6" className="d-flex justify-content-between align-items-center">
               Daily summary
             </Card.Header>
             <Card.Body>
@@ -205,11 +179,7 @@ const EmployeeDetailsByDay: React.FC = () => {
       </Row>
       <Row className="justify-content-center my-3">
         <Col md={6} className="d-flex justify-content-end">
-          <Button
-            onClick={handleAddSession}
-            variant="outline-secondary"
-            size="sm"
-          >
+          <Button onClick={handleAddSession} variant="outline-secondary" size="sm">
             Add
           </Button>
         </Col>
@@ -239,12 +209,10 @@ const EmployeeDetailsByDay: React.FC = () => {
                         <House className="me-2" /> {session.workplace}
                       </Col>
                       <Col xs={12}>
-                        <ClockFill className="me-2" />{" "}
-                        {formatTime(session.start_time)}
+                        <ClockFill className="me-2" /> {formatTime(session.start_time)}
                       </Col>
                       <Col xs={12}>
-                        <ClockHistory className="me-2" />{" "}
-                        {formatTime(session.end_time)}
+                        <ClockHistory className="me-2" /> {formatTime(session.end_time)}
                       </Col>
                       <Col xs={12}>
                         <HourglassSplit className="me-2" /> {session.total_time}
@@ -252,19 +220,10 @@ const EmployeeDetailsByDay: React.FC = () => {
                     </Row>
                     <Row>
                       <Col xs={12} className="d-flex justify-content-end">
-                        <Button
-                          onClick={() => handleEditSession(session.id)}
-                          variant="outline-success"
-                          size="sm"
-                        >
+                        <Button onClick={() => handleEditSession(session.id)} variant="outline-success" size="sm">
                           Edit
                         </Button>
-                        <Button
-                          onClick={() => handleDeleteSession(session.id)}
-                          variant="outline-danger"
-                          size="sm"
-                          className="ms-2"
-                        >
+                        <Button onClick={() => handleDeleteSession(session.id)} variant="outline-danger" size="sm" className="ms-2">
                           Delete
                         </Button>
                       </Col>
@@ -276,9 +235,7 @@ const EmployeeDetailsByDay: React.FC = () => {
           ) : (
             <Row className="justify-content-center my-3">
               <Col md={6} className="text-center">
-                <Alert variant="warning">
-                  There are no work sessions for this day.
-                </Alert>
+                <Alert variant="warning">There are no work sessions for this day.</Alert>
               </Col>
             </Row>
           )}

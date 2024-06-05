@@ -5,11 +5,11 @@ import api from "../api/api";
 import { Employee } from "../api/interfaces/types";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { HourglassSplit, Person, PersonFill, GeoAlt, CheckCircle, XCircle, Eye, Power, Clock } from "react-bootstrap-icons";
-import moment from "moment-timezone";
 import TimeElapsed from "./TimeElapsed";
 import BackButton from "./NavigateButton";
 import Loader from "./Loader";
 import ConfirmModal from "./ConfirmModal";
+import { formatDateTime } from "../utils/dateUtils"; // Importowanie funkcji formatujących
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -57,10 +57,6 @@ const EmployeeList: React.FC = () => {
     }
   };
 
-  const formatTimeToStockholm = (time: string) => {
-    return moment.utc(time).tz("Europe/Stockholm").format("YYYY.MM.DD HH:mm");
-  };
-
   if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
 
@@ -101,7 +97,7 @@ const EmployeeList: React.FC = () => {
                       </div>
                       <div className="d-flex align-items-center mb-2">
                         <Clock className="me-2" />
-                        {formatTimeToStockholm(employee.current_session_start_time)}
+                        {formatDateTime(employee.current_session_start_time)}
                       </div>
                       <div className="d-flex align-items-center mb-2">
                         <HourglassSplit className="me-2" />

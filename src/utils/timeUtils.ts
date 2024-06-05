@@ -1,5 +1,4 @@
-// timeUtils.ts
-import { WorkSession, ProfileWorksession } from "../interfaces/types";// Zakładam, że interfejs WorkSession jest już zdefiniowany
+import { WorkSession, ProfileWorksession } from "../api/interfaces/types"; 
 
 export const sumTotalTime = (sessions: WorkSession[]): string => {
   let totalMinutes = 0;
@@ -33,4 +32,4 @@ export const sumTotalTimeForProfile = (sessions: ProfileWorksession[]): string =
     const minutes = totalMinutes % 60;
   
     return `${hours} h, ${minutes} min`;
-  };
+};

@@ -3,26 +3,19 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
 import { Button, Container, Row, Col, Card } from "react-bootstrap";
-import {
-  ChevronLeft,
-  ChevronRight,
-  PersonCircle,
-  PersonBadge,
-  Envelope,
-  HourglassSplit,
-} from "react-bootstrap-icons";
+import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, HourglassSplit } from "react-bootstrap-icons";
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
+import Loader from "./Loader";
+import { sumTotalTime, sumTotalTimeForProfile } from "../utils/timeUtils"; // Importing timeUtils
+import { formatDate, formatTime } from "../utils/dateUtils"; // Importing dateUtils
 import moment from "moment-timezone";
 import { extendMoment } from "moment-range";
-import Loader from "./Loader";
 
 const Moment = extendMoment(moment);
 
 const WorkHour: React.FC = () => {
-  const [sessionsByDay, setSessionsByDay] = useState<
-    Map<string, ProfileWorksession[]>
-  >(new Map());
+  const [sessionsByDay, setSessionsByDay] = useState<Map<string, ProfileWorksession[]>>(new Map());
   const [profile, setProfile] = useState<Profile | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
@@ -36,9 +29,7 @@ const WorkHour: React.FC = () => {
 
   const fetchWorkSessions = async () => {
     try {
-      const response = await api.get<ProfileWorksession[]>(
-        "/profile/worksessions"
-      );
+      const response = await api.get<ProfileWorksession[]>("/profile/worksessions");
       const sessions = response.data;
       const splitSessions = splitSessionsByDay(sessions);
       const sessionsMap = groupSessionsByDay(splitSessions);
@@ -47,11 +38,8 @@ const WorkHour: React.FC = () => {
       }
 
       setSessionsByDay(sessionsMap);
-      const filteredSessions = filterSessionsByMonth(
-        splitSessions,
-        currentDate
-      );
-      const totalTimeCalculated = sumTotalTimeForMonth(filteredSessions);
+      const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
+      const totalTimeCalculated = sumTotalTimeForProfile(filteredSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
     } catch (error: any) {
@@ -60,9 +48,7 @@ const WorkHour: React.FC = () => {
     }
   };
 
-  const splitSessionsByDay = (
-    sessions: ProfileWorksession[]
-  ): ProfileWorksession[] => {
+  const splitSessionsByDay = (sessions: ProfileWorksession[]): ProfileWorksession[] => {
     const splitSessions: ProfileWorksession[] = [];
 
     sessions.forEach((session) => {
@@ -73,9 +59,7 @@ const WorkHour: React.FC = () => {
 
       while (currentStart.isBefore(end)) {
         const sessionEndOfDay = currentStart.clone().endOf("day");
-        const sessionEnd = end.isBefore(sessionEndOfDay)
-          ? end
-          : sessionEndOfDay;
+        const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
 
         splitSessions.push({
           ...session,
@@ -84,7 +68,6 @@ const WorkHour: React.FC = () => {
           total_time: calculateTotalTime(currentStart, sessionEnd),
         });
 
-        // Ustawienie currentStart na 00:00 następnego dnia
         currentStart = sessionEnd.clone().add(1, "second");
       }
     });
@@ -92,10 +75,7 @@ const WorkHour: React.FC = () => {
     return splitSessions;
   };
 
-  const calculateTotalTime = (
-    start: moment.Moment,
-    end: moment.Moment
-  ): string => {
+  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
@@ -104,15 +84,10 @@ const WorkHour: React.FC = () => {
 
   const daysInMonth = (): string[] => {
     const year = currentDate.getFullYear();
-    const month = currentDate.getMonth() + 1; // JavaScript miesiące są od 0, więc +1
+    const month = currentDate.getMonth() + 1; // JavaScript months are 0-based, so add 1
     return new Array(new Date(year, month, 0).getDate())
       .fill(null)
-      .map(
-        (_, i) =>
-          `${year}-${month.toString().padStart(2, "0")}-${(i + 1)
-            .toString()
-            .padStart(2, "0")}`
-      );
+      .map((_, i) => `${year}-${month.toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`);
   };
 
   const displayDaysWithSessions = (): JSX.Element[] => {
@@ -121,36 +96,20 @@ const WorkHour: React.FC = () => {
       const daySessions = sessionsByDay.get(day) || [];
       return (
         <Row key={day} className="mb-3">
-          <Col
-            xs={12}
-            className="d-flex justify-content-between align-items-center bg-light p-2"
-          >
-            <div>{day}</div>
-            <Button
-              onClick={() => navigate(`/work-hours/day/${day}`)}
-              variant="outline-secondary"
-              size="sm"
-            >
+          <Col xs={12} className="d-flex justify-content-between align-items-center bg-light p-2">
+            <div>{formatDate(day)}</div>
+            <Button onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-secondary" size="sm">
               <ChevronRight />
             </Button>
           </Col>
           {daySessions.length > 0 ? (
             daySessions.map((session) => (
-              <Col
-                xs={12}
-                className="d-flex justify-content-between align-items-center p-2"
-                key={session.id}
-              >
+              <Col xs={12} className="d-flex justify-content-between align-items-center p-2" key={session.id}>
                 <div>
                   <div>
-                    <small>
-                      {session.workplace.street}{" "}
-                      {session.workplace.street_number}
-                    </small>
+                    <small>{session.workplace.street} {session.workplace.street_number}</small>
                   </div>
-                  <small className="text-muted">
-                    {session.workplace.postal_code} {session.workplace.city}
-                  </small>
+                  <small className="text-muted">{session.workplace.postal_code} {session.workplace.city}</small>
                 </div>
                 <div>
                   <small style={{ color: "green" }}>{session.total_time}</small>
@@ -167,35 +126,21 @@ const WorkHour: React.FC = () => {
     });
   };
 
-  const groupSessionsByDay = (
-    sessions: ProfileWorksession[]
-  ): Map<string, ProfileWorksession[]> => {
+  const groupSessionsByDay = (sessions: ProfileWorksession[]): Map<string, ProfileWorksession[]> => {
     const map = new Map<string, ProfileWorksession[]>();
     sessions.forEach((session) => {
-      const startDay = moment
-        .utc(session.start_time)
-        .tz("Europe/Stockholm")
-        .format("YYYY-MM-DD");
-      const endDay = moment
-        .utc(session.end_time)
-        .tz("Europe/Stockholm")
-        .format("YYYY-MM-DD");
+      const startDay = moment.utc(session.start_time).tz("Europe/Stockholm").format("YYYY-MM-DD");
+      const endDay = moment.utc(session.end_time).tz("Europe/Stockholm").format("YYYY-MM-DD");
 
       if (startDay !== endDay) {
-        const range = Moment.range(
-          moment(startDay).add(1, "day"),
-          moment(endDay).subtract(1, "day")
-        );
+        const range = Moment.range(moment(startDay).add(1, "day"), moment(endDay).subtract(1, "day"));
 
         for (let day of Array.from(range.by("day"))) {
           const middleSession = {
             ...session,
             start_time: day.startOf("day").toISOString(),
             end_time: day.endOf("day").toISOString(),
-            total_time: calculateTotalTime(
-              day.startOf("day"),
-              day.endOf("day")
-            ),
+            total_time: calculateTotalTime(day.startOf("day"), day.endOf("day")),
           };
           const existing = map.get(day.format("YYYY-MM-DD")) || [];
           existing.push(middleSession);
@@ -205,15 +150,9 @@ const WorkHour: React.FC = () => {
         const startSession = {
           ...session,
           end_time: moment(startDay).endOf("day").toISOString(),
-          total_time: calculateTotalTime(
-            moment(startDay).startOf("day"),
-            moment(startDay).endOf("day")
-          ),
+          total_time: calculateTotalTime(moment(startDay).startOf("day"), moment(startDay).endOf("day")),
         };
-        startSession.total_time = addMinutesToTotalTime(
-          startSession.total_time,
-          1
-        ); // Dodaj minutę do czasu całkowitego
+        startSession.total_time = addMinutesToTotalTime(startSession.total_time, 1); // Add a minute to total time
         const existingStart = map.get(startDay) || [];
         existingStart.push(startSession);
         map.set(startDay, existingStart);
@@ -221,12 +160,9 @@ const WorkHour: React.FC = () => {
         const endSession = {
           ...session,
           start_time: moment(endDay).startOf("day").toISOString(),
-          total_time: calculateTotalTime(
-            moment(endDay).startOf("day"),
-            moment(endDay).endOf("day")
-          ),
+          total_time: calculateTotalTime(moment(endDay).startOf("day"), moment(endDay).endOf("day")),
         };
-        endSession.total_time = addMinutesToTotalTime(endSession.total_time, 1); // Dodaj minutę do czasu całkowitego
+        endSession.total_time = addMinutesToTotalTime(endSession.total_time, 1); // Add a minute to total time
         const existingEnd = map.get(endDay) || [];
         existingEnd.push(endSession);
         map.set(endDay, existingEnd);
@@ -239,78 +175,41 @@ const WorkHour: React.FC = () => {
     return map;
   };
 
-  const addMinutesToTotalTime = (
-    totalTime: string,
-    minutesToAdd: number
-  ): string => {
-    const [hoursPart, minutesPart] = totalTime
-      .split(", ")
-      .map((part) => parseInt(part, 10));
+  const addMinutesToTotalTime = (totalTime: string, minutesToAdd: number): string => {
+    const [hoursPart, minutesPart] = totalTime.split(", ").map((part) => parseInt(part, 10));
     const totalMinutes = hoursPart * 60 + minutesPart + minutesToAdd;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     return `${hours} h, ${minutes} min`;
   };
 
-  const filterSessionsByMonth = (
-    sessions: ProfileWorksession[],
-    date: Date
-  ): ProfileWorksession[] => {
+  const filterSessionsByMonth = (sessions: ProfileWorksession[], date: Date): ProfileWorksession[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
     return sessions.filter((session) => {
-      const sessionStart = moment
-        .utc(session.start_time)
-        .tz("Europe/Stockholm")
-        .toDate();
-      const sessionEnd = moment
-        .utc(session.end_time)
-        .tz("Europe/Stockholm")
-        .toDate();
+      const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm").toDate();
+      const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm").toDate();
       return (
-        (sessionStart.getFullYear() === year &&
-          sessionStart.getMonth() === month) ||
+        (sessionStart.getFullYear() === year && sessionStart.getMonth() === month) ||
         (sessionEnd.getFullYear() === year && sessionEnd.getMonth() === month)
       );
     });
   };
 
-  const sumTotalTimeForMonth = (sessions: ProfileWorksession[]): string => {
-    let totalMinutes = 0;
-
-    sessions.forEach((session) => {
-      const start = moment.utc(session.start_time).tz("Europe/Stockholm");
-      const end = moment.utc(session.end_time).tz("Europe/Stockholm");
-      totalMinutes += moment.duration(end.diff(start)).asMinutes();
-    });
-
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-
-    return `${hours} h, ${minutes} min`;
-  };
-
   const handleMonthChange = (offset: number) => {
-    const newDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + offset,
-      1
-    );
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
     setCurrentDate(newDate);
   };
 
   useEffect(() => {
     if (profile) {
-      const filteredSessions = filterSessionsByMonth(
-        Array.from(sessionsByDay.values()).flat(),
-        currentDate
-      );
-      const totalTimeCalculated = sumTotalTimeForMonth(filteredSessions);
+      const filteredSessions = filterSessionsByMonth(Array.from(sessionsByDay.values()).flat(), currentDate);
+      const totalTimeCalculated = sumTotalTimeForProfile(filteredSessions);
       setTotalTime(totalTimeCalculated);
     }
   }, [currentDate, profile, sessionsByDay]);
 
-  if (loading) return <Loader />
+  if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -320,10 +219,7 @@ const WorkHour: React.FC = () => {
         <Row className="justify-content-center mt-3">
           <Col md={6}>
             <Card className="mt-3 mb-3">
-              <Card.Header
-                as="h6"
-                className="d-flex justify-content-center align-items-center"
-              >
+              <Card.Header as="h6" className="d-flex justify-content-center align-items-center">
                 Monthly statement
               </Card.Header>
               <Card.Body>

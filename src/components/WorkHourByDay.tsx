@@ -2,27 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Alert,
-  Button,
-  ListGroup,
-} from "react-bootstrap";
-import {
-  House,
-  ClockHistory,
-  ClockFill,
-  HourglassSplit,
-  PersonBadge,
-  Envelope,
-  PersonCircle,
-  ChevronLeft,
-  ChevronRight,
-} from "react-bootstrap-icons";
-import { sumTotalTimeForProfile } from "../api/helper/timeUtils";
+import { Container, Row, Col, Card, Alert, Button, ListGroup } from "react-bootstrap";
+import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+import { sumTotalTimeForProfile } from "../utils/timeUtils";
+import { formatDate, formatTime } from "../utils/dateUtils"; // Importing dateUtils
 import BackButton from "./NavigateButton";
 import moment from "moment-timezone";
 
@@ -40,12 +23,11 @@ const WorkHourByDay: React.FC = () => {
       try {
         setLoading(true);
         const response = await api.get<ProfileWorksession[]>("/profile/worksessions");
-        console.log("Raw sessions data:", response.data); // Logowanie surowych danych
         const daySessions = getSessionsForDate(response.data, date);
         if (daySessions.length > 0) {
           setProfile(daySessions[0].profile);
         } else if (response.data.length > 0) {
-          setProfile(response.data[0].profile); // Ustaw profil, jeśli nie ma sesji, ale mamy dane
+          setProfile(response.data[0].profile); // Set profile if no sessions, but data is available
         }
         setSessions(daySessions);
         setTotalTime(sumTotalTimeForProfile(daySessions));
@@ -107,10 +89,6 @@ const WorkHourByDay: React.FC = () => {
     return `${hours} h, ${minutes} min`;
   };
 
-  const formatTime = (dateTime: string) => {
-    return moment.utc(dateTime).tz("Europe/Stockholm").format("HH:mm");
-  };
-
   const changeDay = (offset: number): void => {
     if (!date) {
       console.error("Date is undefined");
@@ -127,10 +105,7 @@ const WorkHourByDay: React.FC = () => {
         <Row className="justify-content-center mt-3">
           <Col md={6}>
             <Card className="mt-3 mb-3">
-              <Card.Header
-                as="h6"
-                className="d-flex justify-content-center align-items-center"
-              >
+              <Card.Header as="h6" className="d-flex justify-content-center align-items-center">
                 Daily statement
               </Card.Header>
               <Card.Body>
@@ -205,16 +180,13 @@ const WorkHourByDay: React.FC = () => {
                 <ListGroup.Item className="mb-2 small">
                   <Row className="align-items-center">
                     <Col xs={12}>
-                      <House className="me-2" /> {session.workplace.street}{" "}
-                      {session.workplace.street_number}, {session.workplace.postal_code}{" "}{session.workplace.city}
+                      <House className="me-2" /> {session.workplace.street} {session.workplace.street_number}, {session.workplace.postal_code} {session.workplace.city}
                     </Col>
                     <Col xs={12}>
-                      <ClockFill className="me-2" />{" "}
-                      {formatTime(session.start_time)}
+                      <ClockFill className="me-2" /> {formatTime(session.start_time)}
                     </Col>
                     <Col xs={12}>
-                      <ClockHistory className="me-2" />{" "}
-                      {formatTime(session.end_time)}
+                      <ClockHistory className="me-2" /> {formatTime(session.end_time)}
                     </Col>
                     <Col xs={12}>
                       <HourglassSplit className="me-2" /> {session.total_time}
