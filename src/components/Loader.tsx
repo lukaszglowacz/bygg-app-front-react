@@ -1,12 +1,16 @@
-import React from 'react';
-import { Spinner } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Loader: React.FC = () => {
   return (
-    <div className="d-flex vh-100 justify-content-center align-items-center">
-      <Spinner animation="grow" variant="success"/>
-    </div>
+    <Container>
+      <Row className="justify-content-center my-5">
+        <Col md={6} className="text-center">
+          <Spinner animation="grow" variant="primary" />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

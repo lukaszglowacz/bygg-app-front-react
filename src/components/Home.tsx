@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import ClockUpdate from "./ClockUpdate";
 import WorkplaceSelector from "./WorkplaceSelector";
 import ConfirmModal from "./ConfirmModal";
+import Loader from "./Loader"; // Import the Loader component
 
 interface Profile {
   id: number;
@@ -44,6 +45,7 @@ const Home: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("");
   const [modalAction, setModalAction] = useState<() => void>(() => {});
+  const [loading, setLoading] = useState(true); // Add loading state
 
   const { profileId } = useAuth();
 
@@ -53,30 +55,36 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchWorkplacesAndSession = async () => {
-      const workplacesResponse = await api.get("/workplace/");
-      setWorkplaces(workplacesResponse.data);
+      try {
+        const workplacesResponse = await api.get("/workplace/");
+        setWorkplaces(workplacesResponse.data);
 
-      const sessionResponse = await api.get("/livesession/active/");
-      if (sessionResponse.data.length > 0) {
-        const userActiveSession = sessionResponse.data.find(
-          (session: Session) => session.profile.id === Number(profileId)
-        );
-        if (userActiveSession) {
-          setActiveSession(userActiveSession);
-          setIsActiveSession(true);
-          setSelectedWorkplaceId(userActiveSession.workplace.id);
-          setAlertInfo("The work is in progress :) Click End when you're done");
+        const sessionResponse = await api.get("/livesession/active/");
+        if (sessionResponse.data.length > 0) {
+          const userActiveSession = sessionResponse.data.find(
+            (session: Session) => session.profile.id === Number(profileId)
+          );
+          if (userActiveSession) {
+            setActiveSession(userActiveSession);
+            setIsActiveSession(true);
+            setSelectedWorkplaceId(userActiveSession.workplace.id);
+            setAlertInfo("The work is in progress :) Click End when you're done");
+          } else {
+            setActiveSession(null);
+            setIsActiveSession(false);
+            setSelectedWorkplaceId(0);
+            setAlertInfo("No active session for this user");
+          }
         } else {
           setActiveSession(null);
           setIsActiveSession(false);
           setSelectedWorkplaceId(0);
-          setAlertInfo("No active session for this user");
+          setAlertInfo("Click Start to get started");
         }
-      } else {
-        setActiveSession(null);
-        setIsActiveSession(false);
-        setSelectedWorkplaceId(0);
-        setAlertInfo("Click Start to get started");
+      } catch (error) {
+        setAlertInfo("Failed to fetch data. Please try again later.");
+      } finally {
+        setLoading(false); // Set loading to false after fetching data
       }
     };
 
@@ -148,6 +156,10 @@ const Home: React.FC = () => {
 
   const today = new Date();
   const formattedDate = formatDate(today);
+
+  if (loading) {
+    return <Loader />; // Show Loader while data is being fetched
+  }
 
   return (
     <Container>
