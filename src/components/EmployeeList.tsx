@@ -3,22 +3,20 @@ import { useNavigate } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 import api from "../api/api";
 import { Employee } from "../api/interfaces/types";
-import { Button, Container, Row, Col } from "react-bootstrap";
-import {
-  HourglassSplit,
-  Person,
-  PersonFill,
-  GeoAlt,
-} from "react-bootstrap-icons";
+import { Container, Row, Col, Button } from "react-bootstrap";
+import { HourglassSplit, Person, PersonFill, GeoAlt, CheckCircle, XCircle, Eye, Power, Clock } from "react-bootstrap-icons";
 import moment from "moment-timezone";
 import TimeElapsed from "./TimeElapsed";
 import BackButton from "./NavigateButton";
 import Loader from "./Loader";
+import ConfirmModal from "./ConfirmModal";
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,18 +39,21 @@ const EmployeeList: React.FC = () => {
     navigate(`/employees/${id}`);
   };
 
-  const handleEndSession = async (sessionId: number) => {
-    try {
-      await api.patch(`/livesession/end/${sessionId}/`);
-      const updatedEmployees = employees.map((employee) =>
-        employee.current_session_id === sessionId
-          ? { ...employee, current_session_status: "Zakończona" }
-          : employee
-      );
-      setEmployees(updatedEmployees);
-    } catch (error) {
-      console.error("Error ending session", error);
-      setError("Failed to end session");
+  const handleEndSession = async () => {
+    if (selectedSessionId !== null) {
+      try {
+        await api.patch(`/livesession/end/${selectedSessionId}/`);
+        const updatedEmployees = employees.map((employee) =>
+          employee.current_session_id === selectedSessionId
+            ? { ...employee, current_session_status: "Zakończona" }
+            : employee
+        );
+        setEmployees(updatedEmployees);
+        setShowModal(false);
+      } catch (error) {
+        console.error("Error ending session", error);
+        setError("Failed to end session");
+      }
     }
   };
 
@@ -60,17 +61,14 @@ const EmployeeList: React.FC = () => {
     return moment.utc(time).tz("Europe/Stockholm").format("YYYY.MM.DD HH:mm");
   };
 
-  if (loading)
-    return (
-      <Loader />
-    );
+  if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <Container>
       <BackButton backPath="/" />
       <Row className="justify-content-center my-3">
-        <Col md={6}>
+        <Col md={8}>
           <Accordion>
             {employees.map((employee, index) => (
               <Accordion.Item eventKey={String(index)} key={employee.id}>
@@ -82,18 +80,18 @@ const EmployeeList: React.FC = () => {
                   )}
                   {employee.full_name}
                 </Accordion.Header>
-                <Accordion.Body
-                  style={{ fontSize: "0.9em", lineHeight: "1.6" }}
-                >
-                  <div className="d-flex align-items-center mb-2">
-                    {employee.current_session_status === "Trwa" ? (
-                      <i className="bi bi-check-circle-fill text-success me-2"></i>
-                    ) : (
-                      <i className="bi bi-x-circle-fill text-danger me-2"></i>
-                    )}
-                    {employee.current_session_status === "Trwa"
-                      ? "Currently working"
-                      : "Not working"}
+                <Accordion.Body style={{ fontSize: "0.9em", lineHeight: "1.6" }}>
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <div className="d-flex align-items-center">
+                      {employee.current_session_status === "Trwa" ? (
+                        <CheckCircle className="text-success me-2" />
+                      ) : (
+                        <XCircle className="text-danger me-2" />
+                      )}
+                      {employee.current_session_status === "Trwa"
+                        ? "Currently working"
+                        : "Not working"}
+                    </div>
                   </div>
                   {employee.current_session_status === "Trwa" && (
                     <>
@@ -102,39 +100,43 @@ const EmployeeList: React.FC = () => {
                         {employee.current_workplace}
                       </div>
                       <div className="d-flex align-items-center mb-2">
-                        <i className="bi bi-clock-fill me-2"></i>
-                        {formatTimeToStockholm(
-                          employee.current_session_start_time
-                        )}
+                        <Clock className="me-2" />
+                        {formatTimeToStockholm(employee.current_session_start_time)}
                       </div>
                       <div className="d-flex align-items-center mb-2">
                         <HourglassSplit className="me-2" />
-                        <TimeElapsed
-                          startTime={employee.current_session_start_time}
-                        />
-                      </div>
-                      <div className="text-center">
-                        <Button
-                          variant="danger"
-                          className="btn-sm mt-3"
-                          onClick={() =>
-                            handleEndSession(employee.current_session_id)
-                          }
-                        >
-                          End Session
-                        </Button>
+                        <TimeElapsed startTime={employee.current_session_start_time} />
                       </div>
                     </>
                   )}
-                  <div className="text-center">
-                    <Button
-                      variant="outline-success"
-                      className="btn-sm mt-3"
-                      onClick={() => handleEmployee(employee.id)}
-                    >
-                      <i className="bi bi-person-exclamation me-1"></i> Show
-                      more
-                    </Button>
+                  <div className="d-flex justify-content-around mt-3">
+                    <div className="text-center">
+                      <Button
+                        variant="outline-success"
+                        className="btn-sm p-0"
+                        onClick={() => handleEmployee(employee.id)}
+                        title="Show More"
+                      >
+                        <Eye size={24} />
+                      </Button>
+                      <div>Show Hours</div>
+                    </div>
+                    {employee.current_session_status === "Trwa" && (
+                      <div className="text-center">
+                        <Button
+                          variant="danger"
+                          className="btn-sm p-0"
+                          onClick={() => {
+                            setSelectedSessionId(employee.current_session_id);
+                            setShowModal(true);
+                          }}
+                          title="End Session"
+                        >
+                          <Power size={24} />
+                        </Button>
+                        <div>End Session</div>
+                      </div>
+                    )}
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
@@ -142,6 +144,14 @@ const EmployeeList: React.FC = () => {
           </Accordion>
         </Col>
       </Row>
+
+      <ConfirmModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        onConfirm={handleEndSession}
+      >
+        Are you sure you want to end this session?
+      </ConfirmModal>
     </Container>
   );
 };
