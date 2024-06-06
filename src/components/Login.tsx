@@ -1,21 +1,21 @@
-import React, { useState, FormEvent, ChangeEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import {
   Container,
   Col,
   Row,
-  Button,
   Form,
   Alert,
   InputGroup,
 } from "react-bootstrap";
 import { EnvelopeFill, LockFill } from "react-bootstrap-icons";
-import { EyeFill, EyeSlashFill, BoxArrowInRight } from "react-bootstrap-icons"; // Dodajemy ikony oka
+import { EyeFill, EyeSlashFill, BoxArrowInRight } from "react-bootstrap-icons";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { AxiosError } from "axios";
 import { useUserProfile } from "../context/UserProfileContext";
 import ToastNotification from "./ToastNotification";
+import LoadingButton from "./LoadingButton";
 
 interface FieldErrors {
   email?: string[];
@@ -32,7 +32,7 @@ interface ErrorResponse {
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false); // Stan do zarządzania widocznością hasła
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -50,16 +50,14 @@ const LoginComponent: React.FC = () => {
   const loadUserProfile = async (profileId: string) => {
     try {
       const response = await api.get(`/profile/${profileId}/`);
-      setProfile(response.data); // Aktualizacja kontekstu profilu
+      setProfile(response.data);
     } catch (error) {
       console.error("Failed to load user profile:", error);
     }
   };
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleLogin = async () => {
     setErrors({});
-
     try {
       const response = await api.post("/api/token/", { email, password });
       const { access, refresh, user_id, profile_id } = response.data;
@@ -71,7 +69,7 @@ const LoginComponent: React.FC = () => {
           profile_id,
           new Date().getTime() + 86400000
         );
-        await loadUserProfile(profile_id); // Ładowanie profilu
+        await loadUserProfile(profile_id);
         setToastMessage("Login successful.");
         navigate("/", {
           state: { showToast: true, toastMessage: "Login successful." },
@@ -104,7 +102,7 @@ const LoginComponent: React.FC = () => {
                 {error}
               </Alert>
             ))}
-          <Form onSubmit={handleLogin} className="mt-3">
+          <Form className="mt-3">
             <Form.Group controlId="email" className="mb-3">
               <InputGroup>
                 <InputGroup.Text>
@@ -133,7 +131,7 @@ const LoginComponent: React.FC = () => {
                   <LockFill />
                 </InputGroup.Text>
                 <Form.Control
-                  type={passwordVisible ? "text" : "password"} // Przełączamy typ pola
+                  type={passwordVisible ? "text" : "password"}
                   placeholder="Password"
                   name="password"
                   value={password}
@@ -159,14 +157,13 @@ const LoginComponent: React.FC = () => {
               </InputGroup>
             </Form.Group>
             <div className="text-center mb-3">
-              <Button
+              <LoadingButton
                 variant="success"
-                className="btn-sm p-0"
-                type="submit"
+                onClick={handleLogin}
+                icon={BoxArrowInRight}
                 title="Log In"
-              >
-                <BoxArrowInRight size={36} />
-              </Button>
+                size={36}
+              />
               <div>Log In</div>
             </div>
             <div className="text-center mt-2">

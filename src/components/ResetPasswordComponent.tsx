@@ -1,10 +1,11 @@
-import React, { useState, FormEvent, ChangeEvent } from "react";
-import { Container, Col, Row, Button, Form, Alert, InputGroup } from "react-bootstrap";
+import React, { useState, ChangeEvent } from "react";
+import { Container, Col, Row, Form, Alert, InputGroup } from "react-bootstrap";
 import { EnvelopeFill, KeyFill } from "react-bootstrap-icons";
 import api from "../api/api";
 import ToastNotification from "./ToastNotification";
 import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from 'axios';
+import LoadingButton from "./LoadingButton";
 
 interface FieldErrors {
   email?: string[];
@@ -29,8 +30,7 @@ const ResetPasswordComponent: React.FC = () => {
     setEmail(value);
   };
 
-  const handleReset = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleReset = async () => {
     setErrors({});
 
     try {
@@ -63,7 +63,7 @@ const ResetPasswordComponent: React.FC = () => {
           {errors.general && errors.general.map((error, index) => (
             <Alert key={index} variant="danger">{error}</Alert>
           ))}
-          <Form onSubmit={handleReset} className="mt-3">
+          <Form onSubmit={(e) => { e.preventDefault(); handleReset(); }} className="mt-3">
             <Form.Group controlId="email" className="mb-3">
               <InputGroup>
                 <InputGroup.Text>
@@ -83,14 +83,13 @@ const ResetPasswordComponent: React.FC = () => {
               </InputGroup>
             </Form.Group>
             <div className="text-center mb-3">
-              <Button
+              <LoadingButton
                 variant="success"
-                className="btn-sm p-0"
-                type="submit"
+                onClick={handleReset}
+                icon={KeyFill}
                 title="Reset Password"
-              >
-                <KeyFill size={36} />
-              </Button>
+                size={36}
+              />
               <div>Reset Password</div>
             </div>
             <div className="text-center mt-2">
