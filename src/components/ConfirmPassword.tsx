@@ -11,7 +11,7 @@ import {
 import api from "../api/api";
 import ToastNotification from "./ToastNotification";
 import { AxiosError } from "axios";
-import { LockFill, KeyFill } from "react-bootstrap-icons";
+import { LockFill, KeyFill, EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import LoadingButton from "./LoadingButton";
 
 interface FieldErrors {
@@ -30,6 +30,8 @@ const ConfirmPassword: React.FC = () => {
   const { uidb64, token } = useParams<{ uidb64: string; token: string }>();
   const [password, setPassword] = useState<string>("");
   const [confirm_password, setConfirmPassword] = useState<string>("");
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState<boolean>(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -87,7 +89,7 @@ const ConfirmPassword: React.FC = () => {
       const axiosError = error as AxiosError<ErrorResponse>;
       if (axiosError.response && axiosError.response.status === 400) {
         setErrors({
-          general: ["Your password reset link has expired. If you still want to reset your password, click "]
+          general: ["Your password reset link has expired. If you still want to reset your password, click here"]
         });
       } else if (axiosError.response && axiosError.response.data) {
         setErrors(axiosError.response.data);
@@ -97,6 +99,14 @@ const ConfirmPassword: React.FC = () => {
         });
       }
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
   };
 
   return (
@@ -111,13 +121,16 @@ const ConfirmPassword: React.FC = () => {
                   <LockFill />
                 </InputGroup.Text>
                 <Form.Control
-                  type="password"
+                  type={passwordVisible ? "text" : "password"}
                   placeholder="New Password"
                   name="password"
                   value={password}
                   onChange={handleChange}
                   isInvalid={!!errors.password}
                 />
+                <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
+                  {passwordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                </InputGroup.Text>
               </InputGroup>
               {errors.password?.map((err, index) => (
                 <Alert key={index} variant="warning" className="mt-2 w-100">
@@ -132,13 +145,16 @@ const ConfirmPassword: React.FC = () => {
                   <LockFill />
                 </InputGroup.Text>
                 <Form.Control
-                  type="password"
+                  type={confirmPasswordVisible ? "text" : "password"}
                   placeholder="Confirm New Password"
                   name="confirm_password"
                   value={confirm_password}
                   onChange={handleChange}
                   isInvalid={!!errors.confirm_password}
                 />
+                <InputGroup.Text onClick={toggleConfirmPasswordVisibility} style={{ cursor: "pointer" }}>
+                  {confirmPasswordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                </InputGroup.Text>
               </InputGroup>
               {errors.confirm_password?.map((err, index) => (
                 <Alert key={index} variant="warning" className="mt-2 w-100">
@@ -167,7 +183,7 @@ const ConfirmPassword: React.FC = () => {
           </Form>
           {errors.general && (
             <Alert variant="warning">
-              {errors.general} <Link to="/reset-password">here</Link>.
+              Your password reset link has expired. If you still want to reset your password, click <Link to="/reset-password">here</Link>.
             </Alert>
           )}
         </Col>
