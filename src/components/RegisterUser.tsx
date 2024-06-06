@@ -18,7 +18,6 @@ import {
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; // Dodajemy ikony oka
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
-import useGoBack from "../hooks/useGoBack";
 import ToastNotification from "./ToastNotification";
 
 interface RegistrationFormData {
@@ -51,7 +50,6 @@ const RegisterUser: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
-  const goBack = useGoBack();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

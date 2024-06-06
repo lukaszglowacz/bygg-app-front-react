@@ -5,7 +5,6 @@ import { ProfileWorksession, Profile } from "../api/interfaces/types";
 import { Button, Container, Row, Col, Card } from "react-bootstrap";
 import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, HourglassSplit } from "react-bootstrap-icons";
 import MonthYearDisplay from "./MonthYearDisplay";
-import BackButton from "./NavigateButton";
 import Loader from "./Loader";
 import { sumTotalTimeForProfile } from "../utils/timeUtils"; // Importing timeUtils
 import { formatDate } from "../utils/dateUtils"; // Importing dateUtils

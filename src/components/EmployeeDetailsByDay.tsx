@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { WorkSession, Employee } from "../api/interfaces/types";
 import {
@@ -27,13 +27,11 @@ import {
 } from "react-bootstrap-icons";
 import { sumTotalTime } from "../utils/timeUtils";
 import { formatTime } from "../utils/dateUtils"; // Import dateUtils
-import BackButton from "./NavigateButton";
 import Loader from "./Loader";
 import moment from "moment-timezone";
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
-  const { state } = useLocation();
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [sessions, setSessions] = useState<WorkSession[]>([]);
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");

@@ -3,7 +3,6 @@ import { useWorkPlaceData } from "../hooks/useWorkplaceData";
 import { Container, Col, Row, Button, Accordion } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../context/UserProfileContext";
-import BackButton from "./NavigateButton";
 import Loader from "./Loader";
 import { PencilSquare, PlusSquare } from "react-bootstrap-icons";
 

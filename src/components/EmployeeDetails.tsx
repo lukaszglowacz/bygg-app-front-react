@@ -13,7 +13,6 @@ import {
 } from "react-bootstrap-icons";
 import { FaDownload } from "react-icons/fa";
 import MonthYearDisplay from "./MonthYearDisplay";
-import BackButton from "./NavigateButton";
 import { saveAs } from "file-saver";
 import Loader from "./Loader";
 import { formatDate } from "../utils/dateUtils"; // Importowanie funkcji formatujących

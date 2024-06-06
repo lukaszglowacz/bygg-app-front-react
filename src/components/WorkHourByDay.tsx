@@ -6,7 +6,6 @@ import { Container, Row, Col, Card, Alert, Button, ListGroup } from "react-boots
 import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../utils/timeUtils";
 import { formatTime } from "../utils/dateUtils"; // Importing dateUtils
-import BackButton from "./NavigateButton";
 import Loader from "./Loader";
 import moment from "moment-timezone";
 

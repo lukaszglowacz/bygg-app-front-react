@@ -6,7 +6,6 @@ import { Employee } from "../api/interfaces/types";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { HourglassSplit, Person, PersonFill, GeoAlt, CheckCircle, XCircle, Power, Clock, ClockHistory } from "react-bootstrap-icons";
 import TimeElapsed from "./TimeElapsed";
-import BackButton from "./NavigateButton";
 import Loader from "./Loader";
 import ConfirmModal from "./ConfirmModal";
 import { formatDateTime } from "../utils/dateUtils"; // Importowanie funkcji formatujących

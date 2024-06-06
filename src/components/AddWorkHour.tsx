@@ -17,7 +17,6 @@ import {
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
-import useGoBack from "../hooks/useGoBack";
 import ToastNotification from "./ToastNotification";
 import { Employee } from "../api/interfaces/types";
 import Loader from "./Loader";
@@ -54,7 +53,6 @@ const AddWorkHour: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const goBack = useGoBack();
 
   useEffect(() => {
     const fetchWorkplacesAndEmployee = async () => {
