@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
-import { Button, Image, Container, Row, Col, Card } from "react-bootstrap";
+import { Button, Container, Row, Col, Card } from "react-bootstrap";
 import {
   ChevronLeft,
   ChevronRight,
@@ -135,7 +135,7 @@ const EmployeeDetails: React.FC = () => {
           >
             <div>{formatDate(day)}</div>
             <Button
-              onClick={() => navigate(`/employee/${id}/day/${day}`)}
+              onClick={() => navigate(`/employee/${id}/day/${day}`, { state: { id } })}
               variant="outline-success"
               size="sm"
             >

@@ -7,7 +7,7 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, matchPath } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useLogout from "../hooks/useLogOut";
 import ConfirmModal from "./ConfirmModal";
@@ -55,6 +55,7 @@ const NavbarComponent: React.FC = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [currentTitle, setCurrentTitle] = useState("Dashboard");
   const [showBackButton, setShowBackButton] = useState(false);
+  const [backPath, setBackPath] = useState("/");
 
   useEffect(() => {
     if (isAuthenticated && !profile) {
@@ -69,36 +70,71 @@ const NavbarComponent: React.FC = () => {
   }, [isAuthenticated, profile, loadProfile, location.state]);
 
   useEffect(() => {
-    switch (location.pathname) {
-      case "/":
-        setCurrentTitle(`Welcome`);
-        setShowBackButton(false);
-        break;
-      case "/profile":
-        setCurrentTitle("Account Settings");
-        setShowBackButton(true);
-        break;
-      case "/active-sessions":
-        setCurrentTitle("Active Sessions");
-        setShowBackButton(true);
-        break;
-      case "/work-hours":
-        setCurrentTitle("Time Tracking");
-        setShowBackButton(true);
-        break;
-      case "/work-places":
-        setCurrentTitle("Locations");
-        setShowBackButton(true);
-        break;
-      case "/employees":
-        setCurrentTitle("Team Management");
-        setShowBackButton(true);
-        break;
-      default:
-        setCurrentTitle("Dashboard");
-        setShowBackButton(false);
+    if (matchPath({ path: "/employees/:id", end: true }, location.pathname)) {
+      setCurrentTitle("Time Tracking\nMonth View");
+      setBackPath("/employees");
+      setShowBackButton(true);
+    } else if (matchPath({ path: "/employee/:id/day/:date", end: true }, location.pathname)) {
+      const { id } = location.state || {};
+      setCurrentTitle("Time Tracking\nDay View");
+      setBackPath(`/employees/${id}`);
+      setShowBackButton(true);
+    } else if (matchPath({ path: "/work-hours/day/:date", end: true }, location.pathname)) {
+      setCurrentTitle("Time Tracking\nDay View");
+      setBackPath("/work-hours");
+      setShowBackButton(true);
+    } else if (matchPath({ path: "/edit-work-hour/:id", end: true }, location.pathname)) {
+      setCurrentTitle("Edit Work Hour");
+      setBackPath("/work-hours");
+      setShowBackButton(true);
+    } else if (matchPath({ path: "/edit-work-place/:id", end: true }, location.pathname)) {
+      setCurrentTitle("Edit Work Place");
+      setBackPath("/work-places");
+      setShowBackButton(true);
+    } else {
+      switch (location.pathname) {
+        case "/":
+          setCurrentTitle("Welcome");
+          setBackPath("");
+          setShowBackButton(false);
+          break;
+        case "/profile":
+          setCurrentTitle("Account Settings");
+          setBackPath("/");
+          setShowBackButton(true);
+          break;
+        case "/active-sessions":
+          setCurrentTitle("Active Sessions");
+          setBackPath("/");
+          setShowBackButton(true);
+          break;
+        case "/work-hours":
+          setCurrentTitle("Time Tracking\nMonth View");
+          setBackPath("/");
+          setShowBackButton(true);
+          break;
+        case "/work-places":
+          setCurrentTitle("Locations");
+          setBackPath("/");
+          setShowBackButton(true);
+          break;
+        case "/add-work-place":
+          setCurrentTitle("Add Work Place");
+          setBackPath("/work-places");
+          setShowBackButton(true);
+          break;
+        case "/employees":
+          setCurrentTitle("Team Management");
+          setBackPath("/");
+          setShowBackButton(true);
+          break;
+        default:
+          setCurrentTitle("Dashboard");
+          setBackPath("/");
+          setShowBackButton(false);
+      }
     }
-  }, [location.pathname, profile?.full_name]);
+  }, [location.pathname, location.state]);
 
   const handleLogoutConfirm = () => {
     logout();
@@ -121,23 +157,18 @@ const NavbarComponent: React.FC = () => {
   return (
     <>
       <Navbar bg="light" expand={false} fixed="top" className={styles["navbar-custom"]}>
-        <Container className="p-0 d-flex justify-content-center">
-          <Row className="w-100 p-0 m-0" style={{ maxWidth: "540px" }}>
-            <Col className={`d-flex align-items-center ${styles["navbar-content"]}`}>
+        <Container className="p-0 d-flex justify-content-center align-items-center">
+          <Row className="w-100 p-0 m-0" style={{ maxWidth: "768px" }}>
+            <Col className="d-flex align-items-center">
               {isAuthenticated && profile && (
-                <Navbar.Brand onClick={() => navigateTo("/")}>
+                <Navbar.Brand onClick={() => navigateTo(backPath)}>
                   {showBackButton ? (
-                    <BackButton backPath="/" />
+                    <BackButton backPath={backPath} />
                   ) : (
                     <img
                       src={profile.image}
                       alt="Profile"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
+                      className={styles["navbar-image"]}
                     />
                   )}
                 </Navbar.Brand>
@@ -146,9 +177,16 @@ const NavbarComponent: React.FC = () => {
             <Col className={`d-flex justify-content-center align-items-center ${styles["navbar-content"]}`}>
               {isAuthenticated && profile && (
                 <div className="text-center">
-                  <p className="small mb-0">{currentTitle}</p>
-                  {!showBackButton && (
-                    <p className="small mb-0">{profile.full_name}</p>
+                  <p className="small m-0">
+                    {currentTitle.split("\n").map((line, index) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        <br />
+                      </React.Fragment>
+                    ))}
+                  </p>
+                  {location.pathname === "/" && (
+                    <p className="small m-0">{profile.first_name}</p>
                   )}
                 </div>
               )}

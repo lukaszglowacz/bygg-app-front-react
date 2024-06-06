@@ -2,6 +2,7 @@
   height: 60px; /* Stała wysokość, dopasuj według potrzeb */
   display: flex;
   align-items: center;
+  padding: 0;
 }
 
 .custom-burger {
@@ -22,27 +23,33 @@
   box-shadow: none; /* Remove focus outline and box-shadow */
 }
 
-
 .custom-burger {
-    border: none;
-    box-shadow: none;
-    font-size: 1.2rem;
-    cursor: default;
-  }
-  
-  .dropdown-toggle::after {
-    display: none; /* Hide the caret */
-  }
-  
-  .custom-burger:focus,
-  .custom-burger:focus-visible,
-  .custom-burger:active {
-    outline: none;
-    box-shadow: none; /* Remove focus outline and box-shadow */
-  }
-  
-  .navbar-content {
-    height: 40px; /* Dopasuj do wysokości obrazka profilowego */
-    display: flex;
-    align-items: center;
-  }
+  border: none;
+  box-shadow: none;
+  font-size: 1.2rem;
+  cursor: default;
+}
+
+.dropdown-toggle::after {
+  display: none; /* Hide the caret */
+}
+
+.custom-burger:focus,
+.custom-burger:focus-visible,
+.custom-burger:active {
+  outline: none;
+  box-shadow: none; /* Remove focus outline and box-shadow */
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Wyśrodkowanie poziome */
+}
+
+.navbar-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}

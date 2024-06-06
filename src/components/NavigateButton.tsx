@@ -1,7 +1,6 @@
-// BackButton.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Row, Col } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { ChevronLeft } from "react-bootstrap-icons"; // Zmiana ikony na ChevronLeft
 
 interface BackButtonProps {
@@ -18,7 +17,6 @@ const BackButton: React.FC<BackButtonProps> = ({ backPath }) => {
       className="p-0 border-0 bg-transparent m-0"
     >
       <ChevronLeft size={30} className="text-secondary" />{" "}
-      {/* Możesz dostosować rozmiar ikony */}
     </Button>
   );
 };

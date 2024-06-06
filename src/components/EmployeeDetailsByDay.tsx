@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../api/api";
 import { WorkSession, Employee } from "../api/interfaces/types";
 import {
@@ -33,6 +33,7 @@ import moment from "moment-timezone";
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
+  const { state } = useLocation();
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [sessions, setSessions] = useState<WorkSession[]>([]);
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
@@ -152,7 +153,7 @@ const EmployeeDetailsByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
-      <BackButton backPath={`/employees/${id}`} />
+      <BackButton backPath={`/employees/${state.id}`} />
       <Row className="justify-content-center my-3">
         <Col md={6} className="d-flex justify-content-end">
           <div className="text-center">
