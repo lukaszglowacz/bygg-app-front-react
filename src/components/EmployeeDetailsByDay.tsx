@@ -26,7 +26,7 @@ import {
   Trash,
 } from "react-bootstrap-icons";
 import { sumTotalTime } from "../utils/timeUtils";
-import { formatTime } from "../utils/dateUtils"; // Import dateUtils
+import { formatTime } from "../utils/dateUtils";
 import Loader from "./Loader";
 import moment from "moment-timezone";
 
@@ -149,6 +149,9 @@ const EmployeeDetailsByDay: React.FC = () => {
     navigate(`/add-work-hour?date=${date}&employeeId=${id}`);
   };
 
+  
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <Container className="mt-4">
       <Row className="justify-content-center my-3">
@@ -158,7 +161,7 @@ const EmployeeDetailsByDay: React.FC = () => {
               variant="primary"
               className="btn-sm p-0"
               onClick={handleAddSession}
-              title="Edit"
+              title="Add"
             >
               <PlusSquare size={24} />
             </Button>
@@ -233,17 +236,7 @@ const EmployeeDetailsByDay: React.FC = () => {
       </Row>
 
       {loading ? (
-        <Row className="justify-content-center my-5">
-          <Col md={6} className="text-center">
-            <Loader />
-          </Col>
-        </Row>
-      ) : error ? (
-        <Row className="justify-content-center my-3">
-          <Col md={6} className="text-center">
-            <Alert variant="danger">{error}</Alert>
-          </Col>
-        </Row>
+        <Loader />
       ) : (
         <ListGroup className="mb-4">
           {sessions.length > 0 ? (
