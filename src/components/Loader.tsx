@@ -7,7 +7,7 @@ const Loader: React.FC = () => {
     <Container>
       <Row className="justify-content-center">
         <Col md={6} className="text-center">
-          <Spinner animation="grow" variant="primary" />
+          <Spinner animation="grow" variant="success" />
         </Col>
       </Row>
     </Container>

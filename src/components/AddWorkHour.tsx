@@ -5,7 +5,6 @@ import {
   Form,
   Button,
   Alert,
-  Spinner,
   Row,
   Col,
   InputGroup,
@@ -14,12 +13,14 @@ import {
   GeoAltFill,
   CalendarEventFill,
   Calendar2CheckFill,
+  Save2,
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import useGoBack from "../hooks/useGoBack";
 import ToastNotification from "./ToastNotification";
 import { Employee } from "../api/interfaces/types";
+import Loader from "./Loader";
 
 interface Workplace {
   id: number;
@@ -61,7 +62,9 @@ const AddWorkHour: React.FC = () => {
         const responseWorkplaces = await api.get("/workplace/");
         setWorkplaces(responseWorkplaces.data);
         if (employeeId) {
-          const responseEmployee = await api.get<Employee>(`/employee/${employeeId}`);
+          const responseEmployee = await api.get<Employee>(
+            `/employee/${employeeId}`
+          );
           setEmployee(responseEmployee.data);
         }
       } catch (error) {
@@ -125,16 +128,21 @@ const AddWorkHour: React.FC = () => {
     }));
   };
 
-  if (loading) return <Spinner animation="border" />;
+  if (loading) return <Loader />;
 
   return (
     <Container>
       <Row>
         <Col>
           {employee && (
-            <Alert variant="info" className="text-center">
-              Adding work session for: <strong>{employee.full_name}</strong>
-            </Alert>
+            <Row className="justify-content-center mt-3">
+              <Col md={6}>
+                <Alert variant="info" className="text-center">
+                  Adding work session for: <br />
+                  <strong>{employee.full_name}</strong>
+                </Alert>
+              </Col>
+            </Row>
           )}
 
           <Form onSubmit={handleSubmit}>
@@ -206,29 +214,21 @@ const AddWorkHour: React.FC = () => {
                 </Col>
               </Row>
             )}
-
             <Row className="mb-3">
-              <Col md={6} className="mx-auto">
-                <Button
-                  variant="success"
-                  size="sm"
-                  type="submit"
-                  className="w-100"
-                >
-                  Add
-                </Button>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col md={6} className="mx-auto">
-                <Button
-                  variant="outline-secondary"
-                  size="sm"
-                  onClick={goBack}
-                  className="w-100"
-                >
-                  Back
-                </Button>
+              <Col>
+                <div className="d-flex justify-content-around mt-3">
+                  <div className="text-center">
+                    <Button
+                      variant="success"
+                      className="btn-sm p-0"
+                      type="submit"
+                      title="Save"
+                    >
+                      <Save2 size={24} />
+                    </Button>
+                    <div>Save</div>
+                  </div>
+                </div>
               </Col>
             </Row>
           </Form>

@@ -153,12 +153,27 @@ const EmployeeDetailsByDay: React.FC = () => {
   return (
     <Container className="mt-4">
       <BackButton backPath={`/employees/${id}`} />
+      <Row className="justify-content-center my-3">
+        <Col md={6} className="d-flex justify-content-end">
+          <div className="text-center">
+            <Button
+              variant="primary"
+              className="btn-sm p-0"
+              onClick={handleAddSession}
+              title="Edit"
+            >
+              <PlusSquare size={24} />
+            </Button>
+            <div>Add</div>
+          </div>
+        </Col>
+      </Row>
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">
             <Card.Header
               as="h6"
-              className="d-flex justify-content-between align-items-center"
+              className="d-flex justify-content-center align-items-center"
             >
               Daily summary
             </Card.Header>
@@ -216,21 +231,6 @@ const EmployeeDetailsByDay: React.FC = () => {
               </Button>
             </Col>
           </Row>
-        </Col>
-      </Row>
-      <Row className="justify-content-center my-3">
-        <Col md={6} className="d-flex justify-content-end">
-          <div className="text-center">
-            <Button
-              variant="primary"
-              className="btn-sm p-0"
-              onClick={handleAddSession}
-              title="Edit"
-            >
-              <PlusSquare size={24} />
-            </Button>
-            <div>Add</div>
-          </div>
         </Col>
       </Row>
 

@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, Button, Stack } from "react-bootstrap";
+import { Modal, Button, Row, Col, Stack } from "react-bootstrap";
+import { CheckSquareFill, XSquareFill } from "react-bootstrap-icons";
 
 interface ConfirmModalProps {
   show: boolean;
@@ -17,19 +18,31 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Body className="text-center">{children}</Modal.Body>
-      <Modal.Footer className="d-flex flex-column align-items-center">
-        <Stack gap={2} className="w-100">
-          <Button
-            variant="success"
-            className="w-100"
-            onClick={onConfirm}
-          >
-            Yes
-          </Button>
-          <Button variant="outline-danger" className="w-100" onClick={onHide}>
-            No
-          </Button>
-        </Stack>
+      <Modal.Footer>
+        <div className="d-flex justify-content-around mt-3 w-100">
+          <div className="text-center">
+            <Button
+              variant="outline-success"
+              className="btn-sm p-0"
+              onClick={onConfirm}
+              title="Yes"
+            >
+              <CheckSquareFill size={24} />
+            </Button>
+            <div>Yes</div>
+          </div>
+          <div className="text-center">
+            <Button
+              variant="outline-danger"
+              className="btn-sm p-0"
+              onClick={onHide}
+              title="No"
+            >
+              <XSquareFill size={24} />
+            </Button>
+            <div>No</div>
+          </div>
+        </div>
       </Modal.Footer>
     </Modal>
   );

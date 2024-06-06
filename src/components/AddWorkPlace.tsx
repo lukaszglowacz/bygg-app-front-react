@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import api from "../api/api";
 import ToastNotification from './ToastNotification';
+import { Save2 } from "react-bootstrap-icons";
 
 interface Workplace {
   street: string;
@@ -177,28 +178,21 @@ const AddWorkPlace: React.FC = () => {
               </Col>
             </Form.Group>
 
-            <Row className="mb-3 mt-5">
-              <Col md={6} className="mx-auto">
-                <Button
-                  variant="success"
-                  type="submit"
-                  className="w-100"
-                  size="sm"
-                >
-                  Add
-                </Button>
-              </Col>
-            </Row>
             <Row className="mb-3">
-              <Col md={6} className="mx-auto">
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => navigate("/work-places")}
-                  className="w-100"
-                  size="sm"
-                >
-                  Back
-                </Button>
+              <Col>
+                <div className="d-flex justify-content-around mt-3">
+                  <div className="text-center">
+                    <Button
+                      variant="success"
+                      className="btn-sm p-0"
+                      type="submit"
+                      title="Save"
+                    >
+                      <Save2 size={24} />
+                    </Button>
+                    <div>Save</div>
+                  </div>
+                </div>
               </Col>
             </Row>
           </Form>
