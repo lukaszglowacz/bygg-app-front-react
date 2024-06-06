@@ -85,7 +85,11 @@ const ConfirmPassword: React.FC = () => {
       }, 3000);
     } catch (error: any) {
       const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response && axiosError.response.data) {
+      if (axiosError.response && axiosError.response.status === 400) {
+        setErrors({
+          general: ["Your password reset link has expired. If you still want to reset your password, click "]
+        });
+      } else if (axiosError.response && axiosError.response.data) {
         setErrors(axiosError.response.data);
       } else {
         setErrors({
@@ -161,12 +165,11 @@ const ConfirmPassword: React.FC = () => {
               </p>
             </div>
           </Form>
-          {errors.general &&
-            errors.general.map((error, index) => (
-              <Alert key={index} variant="danger">
-                {error}
-              </Alert>
-            ))}
+          {errors.general && (
+            <Alert variant="warning">
+              {errors.general} <Link to="/reset-password">here</Link>.
+            </Alert>
+          )}
         </Col>
       </Row>
       <ToastNotification
