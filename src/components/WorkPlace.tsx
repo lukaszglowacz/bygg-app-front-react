@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../context/UserProfileContext";
 import BackButton from "./NavigateButton";
 import Loader from "./Loader";
+import { PencilSquare, PlusSquare } from "react-bootstrap-icons";
 
 const WorkPlaceContainer: React.FC = () => {
   const workplaces = useWorkPlaceData();
@@ -41,13 +42,17 @@ const WorkPlaceContainer: React.FC = () => {
       {isAuthenticated && profile?.is_employer && (
         <Row className="justify-content-center my-3">
           <Col md={6} className="d-flex justify-content-end">
-            <Button
-              variant="outline-secondary"
-              onClick={handleAddClick}
-              size="sm"
-            >
-              Add
-            </Button>
+            <div className="text-center">
+              <Button
+                variant="primary"
+                className="btn-sm p-0"
+                onClick={handleAddClick}
+                title="Edit"
+              >
+                <PlusSquare size={24} />
+              </Button>
+              <div>Add</div>
+            </div>
           </Col>
         </Row>
       )}
@@ -65,13 +70,19 @@ const WorkPlaceContainer: React.FC = () => {
 
                 {isAuthenticated && profile?.is_employer && (
                   <Accordion.Body>
-                    <Button
-                      variant="outline-success"
-                      size="sm"
-                      onClick={() => handleEditClick(workplace.id)}
-                    >
-                      Edit
-                    </Button>
+                    <div className="d-flex justify-content-around mt-3">
+                      <div className="text-center">
+                        <Button
+                          variant="outline-success"
+                          className="btn-sm p-0"
+                          onClick={() => handleEditClick(workplace.id)}
+                          title="Edit"
+                        >
+                          <PencilSquare size={24} />
+                        </Button>
+                        <div>Edit</div>
+                      </div>
+                    </div>
                   </Accordion.Body>
                 )}
               </Accordion.Item>
