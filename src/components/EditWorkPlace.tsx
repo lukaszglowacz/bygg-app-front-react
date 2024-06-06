@@ -103,7 +103,7 @@ const EditWorkPlace: React.FC = () => {
   }
 
   return (
-    <Container>
+    <Container className="mt-4">
       <Row>
         <Col>
           <Form onSubmit={handleSubmit}>

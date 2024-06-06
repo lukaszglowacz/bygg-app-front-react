@@ -153,7 +153,6 @@ const EmployeeDetailsByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
-      <BackButton backPath={`/employees/${state.id}`} />
       <Row className="justify-content-center my-3">
         <Col md={6} className="d-flex justify-content-end">
           <div className="text-center">

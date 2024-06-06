@@ -13,10 +13,9 @@ const ActiveSessions: React.FC = () => {
   }
 
   return (
-    <Container>
-      <BackButton backPath="/" />
+    <Container className="mt-4">
       {sessions.length === 0 ? (
-        <Row className="justify-content-center my-5">
+        <Row className="justify-content-center">
           <Col md={6}>
             <Alert className="text-center" variant="warning">
               You are not currently working.
@@ -24,7 +23,7 @@ const ActiveSessions: React.FC = () => {
           </Col>
         </Row>
       ) : (
-        <Row className="justify-content-center my-3">
+        <Row className="justify-content-center">
           <Col md={6}>
             <Accordion>
               {sessions.map((session, index) => (

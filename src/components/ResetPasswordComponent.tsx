@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 import { Container, Col, Row, Button, Form, Alert, InputGroup } from "react-bootstrap";
-import { EnvelopeFill } from "react-bootstrap-icons";
+import { EnvelopeFill, KeyFill } from "react-bootstrap-icons";
 import api from "../api/api";
 import ToastNotification from "./ToastNotification";
 import { Link, useNavigate } from "react-router-dom";
@@ -56,7 +56,7 @@ const ResetPasswordComponent: React.FC = () => {
   };
 
   return (
-    <Container className="my-4">
+    <Container className="mt-4">
       <Row className="justify-content-center">
         <Col md={6} className="mx-auto">
           <h2 className="text-center mb-4">Reset Password</h2>
@@ -82,9 +82,17 @@ const ResetPasswordComponent: React.FC = () => {
                 ))}
               </InputGroup>
             </Form.Group>
-            <Button variant="primary" type="submit" className="w-100 mb-2">
-              Reset Password
-            </Button>
+            <div className="text-center mb-3">
+              <Button
+                variant="success"
+                className="btn-sm p-0"
+                type="submit"
+                title="Reset Password"
+              >
+                <KeyFill size={36} />
+              </Button>
+              <div>Reset Password</div>
+            </div>
             <div className="text-center mt-2">
               <p style={{ fontSize: "0.9em" }}>
                 Remember your password?{" "}

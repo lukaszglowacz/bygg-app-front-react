@@ -148,7 +148,7 @@ const EditWorkHour: React.FC = () => {
   if (loading) return <Loader />;
 
   return (
-    <Container className="container-sm">
+    <Container className="mt-4">
       <Row>
         <Col md={6} className="mx-auto">
           <Form onSubmit={handleSubmit}>

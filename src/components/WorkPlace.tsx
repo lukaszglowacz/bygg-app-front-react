@@ -37,8 +37,7 @@ const WorkPlaceContainer: React.FC = () => {
   }
 
   return (
-    <Container>
-      <BackButton backPath="/" />
+    <Container className="mt-4">
       {isAuthenticated && profile?.is_employer && (
         <Row className="justify-content-center my-3">
           <Col md={6} className="d-flex justify-content-end">

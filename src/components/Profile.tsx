@@ -267,7 +267,7 @@ const ProfileComponent: React.FC = () => {
   }
 
   return (
-    <Container>
+    <Container className="mt-4">
       <Row className="justify-content-center">
         {profiles.map((profile) => (
           <Col md={6} lg={4} key={profile.id} className="mb-3">

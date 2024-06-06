@@ -101,7 +101,6 @@ const WorkHourByDay: React.FC = () => {
 
   return (
     <Container className="mt-4">
-      <BackButton backPath="/work-hours" />
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>

@@ -61,9 +61,8 @@ const EmployeeList: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <Container>
-      <BackButton backPath="/" />
-      <Row className="justify-content-center my-3">
+    <Container className="mt-4">
+      <Row className="justify-content-center">
         <Col md={6}>
           <Accordion>
             {employees.map((employee, index) => (

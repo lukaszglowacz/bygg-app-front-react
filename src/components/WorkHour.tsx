@@ -213,8 +213,7 @@ const WorkHour: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <Container className="my-5">
-      <BackButton backPath="/" />
+    <Container className="mt-4">
       {profile && (
         <Row className="justify-content-center mt-3">
           <Col md={6}>

@@ -83,7 +83,7 @@ const ConfirmPassword: React.FC = () => {
   };
 
   return (
-    <Container className="my-4">
+    <Container className="mt-4">
       <Row className="justify-content-center">
         <Col md={6} className="mx-auto">
           <h2 className="text-center mb-4">Reset Password</h2>

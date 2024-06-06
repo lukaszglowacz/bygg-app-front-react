@@ -1,7 +1,15 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-import { Container, Col, Row, Button, Form, Alert, InputGroup } from "react-bootstrap";
+import {
+  Container,
+  Col,
+  Row,
+  Button,
+  Form,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
 import { EnvelopeFill, LockFill } from "react-bootstrap-icons";
-import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; // Dodajemy ikony oka
+import { EyeFill, EyeSlashFill, BoxArrowInRight } from "react-bootstrap-icons"; // Dodajemy ikony oka
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
@@ -65,7 +73,9 @@ const LoginComponent: React.FC = () => {
         );
         await loadUserProfile(profile_id); // Ładowanie profilu
         setToastMessage("Login successful.");
-        navigate("/", { state: { showToast: true, toastMessage: "Login successful." } });
+        navigate("/", {
+          state: { showToast: true, toastMessage: "Login successful." },
+        });
       }
     } catch (error) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -84,13 +94,16 @@ const LoginComponent: React.FC = () => {
   };
 
   return (
-    <Container className="my-4">
+    <Container className="mt-4">
       <Row className="justify-content-center">
         <Col md={6} className="mx-auto">
           <h2 className="text-center mb-4">Log In</h2>
-          {errors.general && errors.general.map((error, index) => (
-            <Alert key={index} variant="danger">{error}</Alert>
-          ))}
+          {errors.general &&
+            errors.general.map((error, index) => (
+              <Alert key={index} variant="danger">
+                {error}
+              </Alert>
+            ))}
           <Form onSubmit={handleLogin} className="mt-3">
             <Form.Group controlId="email" className="mb-3">
               <InputGroup>
@@ -105,9 +118,12 @@ const LoginComponent: React.FC = () => {
                   onChange={handleChange}
                   isInvalid={!!errors.email}
                 />
-                {errors.email && errors.email.map((err, index) => (
-                  <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
-                ))}
+                {errors.email &&
+                  errors.email.map((err, index) => (
+                    <Alert key={index} variant="warning" className="mt-2 w-100">
+                      {err}
+                    </Alert>
+                  ))}
               </InputGroup>
             </Form.Group>
 
@@ -124,17 +140,35 @@ const LoginComponent: React.FC = () => {
                   onChange={handleChange}
                   isInvalid={!!errors.password}
                 />
-                <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
-                  {passwordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                <InputGroup.Text
+                  onClick={togglePasswordVisibility}
+                  style={{ cursor: "pointer" }}
+                >
+                  {passwordVisible ? (
+                    <EyeSlashFill size={20} />
+                  ) : (
+                    <EyeFill size={20} />
+                  )}
                 </InputGroup.Text>
-                {errors.password && errors.password.map((err, index) => (
-                  <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
-                ))}
+                {errors.password &&
+                  errors.password.map((err, index) => (
+                    <Alert key={index} variant="warning" className="mt-2 w-100">
+                      {err}
+                    </Alert>
+                  ))}
               </InputGroup>
             </Form.Group>
-            <Button variant="primary" type="submit" className="w-100 mb-2">
-              Log In
-            </Button>
+            <div className="text-center mb-3">
+              <Button
+                variant="success"
+                className="btn-sm p-0"
+                type="submit"
+                title="Log In"
+              >
+                <BoxArrowInRight size={36} />
+              </Button>
+              <div>Log In</div>
+            </div>
             <div className="text-center mt-2">
               <p style={{ fontSize: "0.9em" }}>
                 Don't have an account?{" "}
@@ -144,7 +178,10 @@ const LoginComponent: React.FC = () => {
               </p>
               <p style={{ fontSize: "0.9em" }}>
                 Forgot your password?{" "}
-                <Link to="/reset-password" style={{ textDecoration: "underline" }}>
+                <Link
+                  to="/reset-password"
+                  style={{ textDecoration: "underline" }}
+                >
                   Reset it here
                 </Link>
               </p>

@@ -303,8 +303,7 @@ const EmployeeDetails: React.FC = () => {
   if (!employee) return <div>No employee found</div>;
 
   return (
-    <Container className="my-5">
-      <BackButton backPath="/employees" />
+    <Container className="mt-4">
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">

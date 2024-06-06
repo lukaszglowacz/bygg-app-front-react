@@ -18,7 +18,7 @@ const ClockUpdate: React.FC = () => {
         <Col>
           <h1
             style={{
-              fontSize: "70px",
+              fontSize: "80px",
               fontWeight: "bold",
               textAlign: "center",
             }}

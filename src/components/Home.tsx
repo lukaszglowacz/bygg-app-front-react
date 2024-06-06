@@ -162,12 +162,12 @@ const Home: React.FC = () => {
   }
 
   return (
-    <Container>
-      <Row className="justify-content-md-center mt-3">
+    <Container className="mt-4">
+      <Row className="justify-content-md-center">
         <Col md={6}>
           <Row className="mb-0">
             <Col className="text-secondary text-center mb-0">
-              <h2 style={{ fontSize: "20px" }}>{formattedDate}</h2>
+              <h2 style={{ fontSize: "18px" }}>{formattedDate}</h2>
             </Col>
           </Row>
 

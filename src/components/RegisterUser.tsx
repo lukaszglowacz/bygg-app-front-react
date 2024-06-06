@@ -1,6 +1,20 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Container, Form, Button, Row, Col, Alert, InputGroup } from "react-bootstrap";
-import { EnvelopeFill, LockFill, PersonFill, CalendarFill } from "react-bootstrap-icons";
+import {
+  Container,
+  Form,
+  Button,
+  Row,
+  Col,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
+import {
+  EnvelopeFill,
+  LockFill,
+  PersonFill,
+  CalendarFill,
+  PersonPlusFill
+} from "react-bootstrap-icons";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; // Dodajemy ikony oka
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
@@ -94,13 +108,17 @@ const RegisterUser: React.FC = () => {
           navigate("/login");
         }, 3000); // Opóźnienie 3 sekundy przed przekierowaniem
       } else {
-        throw new Error('Unsuccessful registration attempt');
+        throw new Error("Unsuccessful registration attempt");
       }
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
         setErrors(error.response.data);
       } else {
-        setErrors({ general: ["Registration failed. Please check your details and try again."] });
+        setErrors({
+          general: [
+            "Registration failed. Please check your details and try again.",
+          ],
+        });
       }
     }
   };
@@ -110,13 +128,16 @@ const RegisterUser: React.FC = () => {
   };
 
   return (
-    <Container className="my-4">
+    <Container className="mt-4">
       <Row>
         <Col md={{ span: 6, offset: 3 }}>
           <h2 className="mb-3 text-center">Sign Up</h2>
-          {errors.general && errors.general.map((error, index) => (
-            <Alert key={index} variant="danger">{error}</Alert>
-          ))}
+          {errors.general &&
+            errors.general.map((error, index) => (
+              <Alert key={index} variant="danger">
+                {error}
+              </Alert>
+            ))}
           <Form onSubmit={handleSubmit} className="mt-3">
             <Form.Group className="mb-3">
               <InputGroup>
@@ -133,7 +154,9 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.email?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                <Alert key={index} variant="warning" className="mt-2 w-100">
+                  {err}
+                </Alert>
               ))}
             </Form.Group>
 
@@ -150,12 +173,21 @@ const RegisterUser: React.FC = () => {
                   onChange={handleChange}
                   isInvalid={!!errors.password}
                 />
-                <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
-                  {passwordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                <InputGroup.Text
+                  onClick={togglePasswordVisibility}
+                  style={{ cursor: "pointer" }}
+                >
+                  {passwordVisible ? (
+                    <EyeSlashFill size={20} />
+                  ) : (
+                    <EyeFill size={20} />
+                  )}
                 </InputGroup.Text>
               </InputGroup>
               {errors.password?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                <Alert key={index} variant="warning" className="mt-2 w-100">
+                  {err}
+                </Alert>
               ))}
             </Form.Group>
 
@@ -174,7 +206,9 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.first_name?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                <Alert key={index} variant="warning" className="mt-2 w-100">
+                  {err}
+                </Alert>
               ))}
             </Form.Group>
 
@@ -193,7 +227,9 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.last_name?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                <Alert key={index} variant="warning" className="mt-2 w-100">
+                  {err}
+                </Alert>
               ))}
             </Form.Group>
 
@@ -212,16 +248,22 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.personnummer?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                <Alert key={index} variant="warning" className="mt-2 w-100">
+                  {err}
+                </Alert>
               ))}
             </Form.Group>
-
-            <Button variant="primary" type="submit" className="w-100 mb-2">
-              Sign Up
-            </Button>
-            <Button variant="secondary" onClick={goBack} className="w-100 mb-2">
-              Back
-            </Button>
+            <div className="text-center mb-3">
+              <Button
+                variant="success"
+                className="btn-sm p-0"
+                type="submit"
+                title="Sign Up"
+              >
+                <PersonPlusFill size={36} />
+              </Button>
+              <div>Sign Up</div>
+            </div>
             <div className="text-center mt-2">
               <p style={{ fontSize: "0.9em" }}>
                 Already have an account?{" "}
