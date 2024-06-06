@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Container,
-  Form,
-  Button,
-  Alert,
-  Row,
-  Col,
-  InputGroup,
-} from "react-bootstrap";
+import { Container, Form, Alert, Row, Col, InputGroup } from "react-bootstrap";
 import {
   GeoAltFill,
   CalendarEventFill,
@@ -20,6 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import ToastNotification from "./ToastNotification";
 import { Employee } from "../api/interfaces/types";
 import Loader from "./Loader";
+import LoadingButton from "./LoadingButton";
 
 interface Workplace {
   id: number;
@@ -74,8 +67,7 @@ const AddWorkHour: React.FC = () => {
     fetchWorkplacesAndEmployee();
   }, [employeeId]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     setError(null);
 
     if (!isAuthenticated || !employeeId || !newSession.workplaceId) {
@@ -143,7 +135,12 @@ const AddWorkHour: React.FC = () => {
             </Row>
           )}
 
-          <Form onSubmit={handleSubmit}>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
             <Form.Group as={Row} className="mb-3" controlId="workplaceSelect">
               <Col md={6} className="mx-auto">
                 <InputGroup>
@@ -216,14 +213,13 @@ const AddWorkHour: React.FC = () => {
               <Col>
                 <div className="d-flex justify-content-around mt-3">
                   <div className="text-center">
-                    <Button
+                    <LoadingButton
                       variant="success"
-                      className="btn-sm p-0"
-                      type="submit"
+                      onClick={handleSubmit}
+                      icon={Save2}
                       title="Save"
-                    >
-                      <Save2 size={24} />
-                    </Button>
+                      size={24}
+                    />
                     <div>Save</div>
                   </div>
                 </div>

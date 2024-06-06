@@ -20,6 +20,7 @@ import api from "../api/api";
 import { AxiosError } from "axios";
 import ToastNotification from "./ToastNotification";
 import Loader from "./Loader";
+import LoadingButton from "./LoadingButton";
 
 interface Profile {
   id: number;
@@ -73,8 +74,7 @@ const EditWorkHour: React.FC = () => {
     fetchData();
   }, [id]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     setError(null);
 
     if (workSession) {
@@ -151,7 +151,7 @@ const EditWorkHour: React.FC = () => {
     <Container className="mt-4">
       <Row>
         <Col md={6} className="mx-auto">
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <InputGroup className="mb-3">
               <InputGroup.Text>
                 <GeoAltFill />
@@ -206,14 +206,13 @@ const EditWorkHour: React.FC = () => {
               <Col>
                 <div className="d-flex justify-content-around mt-3">
                   <div className="text-center">
-                    <Button
+                    <LoadingButton
                       variant="success"
-                      className="btn-sm p-0"
-                      type="submit"
+                      onClick={handleSubmit}
+                      icon={Save2}
                       title="Save"
-                    >
-                      <Save2 size={24} />
-                    </Button>
+                      size={24}
+                    />
                     <div>Save</div>
                   </div>
                   <div className="text-center">

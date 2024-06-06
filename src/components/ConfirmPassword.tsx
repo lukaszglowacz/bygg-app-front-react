@@ -1,9 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Container,
   Form,
-  Button,
   Alert,
   InputGroup,
   Row,
@@ -12,7 +11,8 @@ import {
 import api from "../api/api";
 import ToastNotification from "./ToastNotification";
 import { AxiosError } from "axios";
-import { LockFill, KeyFill} from "react-bootstrap-icons";
+import { LockFill, KeyFill } from "react-bootstrap-icons";
+import LoadingButton from "./LoadingButton";
 
 interface FieldErrors {
   password?: string[];
@@ -59,8 +59,7 @@ const ConfirmPassword: React.FC = () => {
     return errors;
   };
 
-  const handleReset = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleReset = async () => {
     setErrors({});
 
     const passwordErrors = validatePassword(password);
@@ -101,7 +100,7 @@ const ConfirmPassword: React.FC = () => {
       <Row className="justify-content-center">
         <Col md={6} className="mx-auto">
           <h2 className="text-center mb-4">Reset Password</h2>
-          <Form onSubmit={handleReset} className="mt-3">
+          <Form onSubmit={(e) => { e.preventDefault(); handleReset(); }} className="mt-3">
             <Form.Group controlId="password" className="mb-3">
               <InputGroup>
                 <InputGroup.Text>
@@ -144,14 +143,13 @@ const ConfirmPassword: React.FC = () => {
               ))}
             </Form.Group>
             <div className="text-center mb-3">
-              <Button
+              <LoadingButton
                 variant="success"
-                className="btn-sm p-0"
-                type="submit"
+                onClick={handleReset}
+                icon={KeyFill}
                 title="Reset Password"
-              >
-                <KeyFill size={36} />
-              </Button>
+                size={36}
+              />
               <div>Reset Password</div>
             </div>
             <div className="text-center mt-2">

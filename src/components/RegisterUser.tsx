@@ -1,8 +1,7 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import {
   Container,
   Form,
-  Button,
   Row,
   Col,
   Alert,
@@ -13,12 +12,13 @@ import {
   LockFill,
   PersonFill,
   CalendarFill,
-  PersonPlusFill
+  PersonPlusFill,
 } from "react-bootstrap-icons";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; // Dodajemy ikony oka
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/api";
 import ToastNotification from "./ToastNotification";
+import LoadingButton from "./LoadingButton";
 
 interface RegistrationFormData {
   email: string;
@@ -89,8 +89,7 @@ const RegisterUser: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setErrors({});
 
     if (!validateForm()) {
@@ -136,7 +135,7 @@ const RegisterUser: React.FC = () => {
                 {error}
               </Alert>
             ))}
-          <Form onSubmit={handleSubmit} className="mt-3">
+          <Form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="mt-3">
             <Form.Group className="mb-3">
               <InputGroup>
                 <InputGroup.Text>
@@ -252,14 +251,13 @@ const RegisterUser: React.FC = () => {
               ))}
             </Form.Group>
             <div className="text-center mb-3">
-              <Button
+              <LoadingButton
                 variant="success"
-                className="btn-sm p-0"
-                type="submit"
+                onClick={handleSubmit}
+                icon={PersonPlusFill}
                 title="Sign Up"
-              >
-                <PersonPlusFill size={36} />
-              </Button>
+                size={36}
+              />
               <div>Sign Up</div>
             </div>
             <div className="text-center mt-2">
