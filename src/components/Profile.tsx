@@ -7,8 +7,6 @@ import {
   Image,
   Form,
   Button,
-  OverlayTrigger,
-  Tooltip,
   Alert,
   InputGroup,
 } from "react-bootstrap";
@@ -27,7 +25,6 @@ import {
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
 import { useUserProfile } from "../context/UserProfileContext";
-import BackButton from "./NavigateButton";
 import ToastNotification from "./ToastNotification";
 import Loader from "./Loader"; // Importowanie komponentu Loader
 import { AxiosError } from "axios";
@@ -271,7 +268,6 @@ const ProfileComponent: React.FC = () => {
 
   return (
     <Container>
-      <BackButton backPath="/" />
       <Row className="justify-content-center">
         {profiles.map((profile) => (
           <Col md={6} lg={4} key={profile.id} className="mb-3">
@@ -308,12 +304,6 @@ const ProfileComponent: React.FC = () => {
                 </div>
               </Card.Header>
               <Card.Body>
-                <h5
-                  className="text-center"
-                  style={{ fontSize: "1rem", marginBottom: "1rem" }}
-                >
-                  Account Settings
-                </h5>
                 <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
                   <Form.Group className="mb-3">
                     <InputGroup>
@@ -427,152 +417,147 @@ const ProfileComponent: React.FC = () => {
                     </div>
                   </div>
                 </Form>
-                <hr />
-                <div className="d-flex justify-content-center">
-                  <Form
-                    onSubmit={handlePasswordSubmit}
-                    style={{ width: "100%" }}
-                  >
-                    <h5
-                      className="text-center"
-                      style={{ fontSize: "1rem", marginBottom: "1rem" }}
-                    >
-                      Change Password
-                    </h5>
-                    <Form.Group className="mb-3">
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <Lock />
-                        </InputGroup.Text>
-                        <Form.Control
-                          type={
-                            passwordVisible.oldPassword ? "text" : "password"
-                          }
-                          placeholder="Old password"
-                          value={passwordData.oldPassword}
-                          onChange={(e) =>
-                            handlePasswordChange("oldPassword", e.target.value)
-                          }
-                          isInvalid={!!errors.oldPassword}
-                        />
-                        <InputGroup.Text
-                          onClick={() =>
-                            togglePasswordVisibility("oldPassword")
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          {passwordVisible.oldPassword ? (
-                            <EyeSlashFill size={20} />
-                          ) : (
-                            <EyeFill size={20} />
-                          )}
-                        </InputGroup.Text>
-                        <Form.Control.Feedback type="invalid">
-                          {errors.oldPassword && (
-                            <Alert variant="warning" className="mt-2 w-100">
-                              {errors.oldPassword}
-                            </Alert>
-                          )}
-                        </Form.Control.Feedback>
-                      </InputGroup>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <LockFill />
-                        </InputGroup.Text>
-                        <Form.Control
-                          type={
-                            passwordVisible.newPassword ? "text" : "password"
-                          }
-                          placeholder="New password"
-                          value={passwordData.newPassword}
-                          onChange={(e) =>
-                            handlePasswordChange("newPassword", e.target.value)
-                          }
-                          isInvalid={!!errors.newPassword}
-                        />
-                        <InputGroup.Text
-                          onClick={() =>
-                            togglePasswordVisibility("newPassword")
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          {passwordVisible.newPassword ? (
-                            <EyeSlashFill size={20} />
-                          ) : (
-                            <EyeFill size={20} />
-                          )}
-                        </InputGroup.Text>
-                        <Form.Control.Feedback type="invalid">
-                          {errors.newPassword && (
-                            <Alert variant="warning" className="mt-2 w-100">
-                              {errors.newPassword}
-                            </Alert>
-                          )}
-                        </Form.Control.Feedback>
-                      </InputGroup>
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <InputGroup>
-                        <InputGroup.Text>
-                          <LockFill />
-                        </InputGroup.Text>
-                        <Form.Control
-                          type={
-                            passwordVisible.confirmPassword
-                              ? "text"
-                              : "password"
-                          }
-                          placeholder="Confirm new password"
-                          value={passwordData.confirmPassword}
-                          onChange={(e) =>
-                            handlePasswordChange(
-                              "confirmPassword",
-                              e.target.value
-                            )
-                          }
-                          isInvalid={!!errors.confirmPassword}
-                        />
-                        <InputGroup.Text
-                          onClick={() =>
-                            togglePasswordVisibility("confirmPassword")
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          {passwordVisible.confirmPassword ? (
-                            <EyeSlashFill size={20} />
-                          ) : (
-                            <EyeFill size={20} />
-                          )}
-                        </InputGroup.Text>
-                        <Form.Control.Feedback type="invalid">
-                          {errors.confirmPassword && (
-                            <Alert variant="warning" className="mt-2 w-100">
-                              {errors.confirmPassword}
-                            </Alert>
-                          )}
-                        </Form.Control.Feedback>
-                      </InputGroup>
-                    </Form.Group>
-                    {errors.password && (
-                      <Alert variant="warning">{errors.password}</Alert>
-                    )}
-                    <div className="d-flex justify-content-around mt-3">
-                      <div className="text-center">
-                        <Button
-                          variant="primary"
-                          className="btn-sm p-0"
-                          type="submit"
-                          title="Change password"
-                        >
-                          <Save2 size={24} />
-                        </Button>
-                        <div>Change password</div>
-                      </div>
+              </Card.Body>
+            </Card>
+            <Card className="mt-3">
+              <Card.Body>
+                <Form onSubmit={handlePasswordSubmit}>
+                  <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem" }}>
+                    Change Password
+                  </h5>
+                  <Form.Group className="mb-3">
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <Lock />
+                      </InputGroup.Text>
+                      <Form.Control
+                        type={
+                          passwordVisible.oldPassword ? "text" : "password"
+                        }
+                        placeholder="Old password"
+                        value={passwordData.oldPassword}
+                        onChange={(e) =>
+                          handlePasswordChange("oldPassword", e.target.value)
+                        }
+                        isInvalid={!!errors.oldPassword}
+                      />
+                      <InputGroup.Text
+                        onClick={() =>
+                          togglePasswordVisibility("oldPassword")
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        {passwordVisible.oldPassword ? (
+                          <EyeSlashFill size={20} />
+                        ) : (
+                          <EyeFill size={20} />
+                        )}
+                      </InputGroup.Text>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.oldPassword && (
+                          <Alert variant="warning" className="mt-2 w-100">
+                            {errors.oldPassword}
+                          </Alert>
+                        )}
+                      </Form.Control.Feedback>
+                    </InputGroup>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <LockFill />
+                      </InputGroup.Text>
+                      <Form.Control
+                        type={
+                          passwordVisible.newPassword ? "text" : "password"
+                        }
+                        placeholder="New password"
+                        value={passwordData.newPassword}
+                        onChange={(e) =>
+                          handlePasswordChange("newPassword", e.target.value)
+                        }
+                        isInvalid={!!errors.newPassword}
+                      />
+                      <InputGroup.Text
+                        onClick={() =>
+                          togglePasswordVisibility("newPassword")
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        {passwordVisible.newPassword ? (
+                          <EyeSlashFill size={20} />
+                        ) : (
+                          <EyeFill size={20} />
+                        )}
+                      </InputGroup.Text>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.newPassword && (
+                          <Alert variant="warning" className="mt-2 w-100">
+                            {errors.newPassword}
+                          </Alert>
+                        )}
+                      </Form.Control.Feedback>
+                    </InputGroup>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <LockFill />
+                      </InputGroup.Text>
+                      <Form.Control
+                        type={
+                          passwordVisible.confirmPassword
+                            ? "text"
+                            : "password"
+                        }
+                        placeholder="Confirm new password"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) =>
+                          handlePasswordChange(
+                            "confirmPassword",
+                            e.target.value
+                          )
+                        }
+                        isInvalid={!!errors.confirmPassword}
+                      />
+                      <InputGroup.Text
+                        onClick={() =>
+                          togglePasswordVisibility("confirmPassword")
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        {passwordVisible.confirmPassword ? (
+                          <EyeSlashFill size={20} />
+                        ) : (
+                          <EyeFill size={20} />
+                        )}
+                      </InputGroup.Text>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.confirmPassword && (
+                          <Alert variant="warning" className="mt-2 w-100">
+                            {errors.confirmPassword}
+                          </Alert>
+                        )}
+                      </Form.Control.Feedback>
+                    </InputGroup>
+                  </Form.Group>
+                  {errors.password && (
+                    <Alert variant="warning">{errors.password}</Alert>
+                  )}
+                  <div className="d-flex justify-content-around mt-3">
+                    <div className="text-center">
+                      <Button
+                        variant="primary"
+                        className="btn-sm p-0"
+                        type="submit"
+                        title="Change password"
+                      >
+                        <Save2 size={24} />
+                      </Button>
+                      <div>Change password</div>
                     </div>
-                  </Form>
-                </div>
+                  </div>
+                </Form>
               </Card.Body>
             </Card>
           </Col>

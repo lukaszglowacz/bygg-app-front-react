@@ -70,7 +70,7 @@ const RegisterUser: React.FC = () => {
     if (!formData.personnummer) {
       newErrors.personnummer = ["Personnummer is required."];
     } else if (!/^\d{6}-\d{4}$/.test(formData.personnummer)) {
-      newErrors.personnummer = ["Personnummer must be in format XXXXXX-XXXX."];
+      newErrors.personnummer = ["Personnummer must be in format YYMMDD-XXXX."];
     }
 
     setErrors(newErrors);
@@ -204,7 +204,7 @@ const RegisterUser: React.FC = () => {
                 </InputGroup.Text>
                 <Form.Control
                   type="text"
-                  placeholder="Personnummer (XXXXXX-XXXX)"
+                  placeholder="Personnummer (YYMMDD-XXXX)"
                   name="personnummer"
                   value={formData.personnummer}
                   onChange={handleChange}
