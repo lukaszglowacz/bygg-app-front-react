@@ -1,11 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import React, { useEffect, useState, forwardRef, MouseEvent } from "react";
+import {
+  Container,
+  Navbar,
+  Dropdown,
+  DropdownToggleProps,
+  Row,
+  Col,
+} from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useLogout from "../hooks/useLogOut";
 import ConfirmModal from "./ConfirmModal";
 import { useUserProfile } from "../context/UserProfileContext";
 import ToastNotification from "./ToastNotification";
+import {
+  Speedometer2,
+  PersonCircle,
+  PeopleFill,
+  ClockHistory,
+  CalendarCheck,
+  GeoAltFill,
+  BoxArrowRight,
+} from "react-bootstrap-icons";
+import styles from "../assets/styles/Navbar.module.css";
+
+const CustomToggle = forwardRef<HTMLDivElement, DropdownToggleProps>(
+  ({ children, onClick }, ref) => (
+    <div
+      ref={ref}
+      onClick={(e: MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        if (onClick) onClick(e as unknown as MouseEvent<HTMLButtonElement>);
+      }}
+      className={styles["custom-burger"]}
+    >
+      {children}
+      <Navbar.Toggle
+        aria-controls="basic-navbar-nav"
+        className={styles["custom-burger"]}
+      />
+    </div>
+  )
+);
 
 const NavbarComponent: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -49,68 +85,74 @@ const NavbarComponent: React.FC = () => {
 
   return (
     <>
-      <Navbar bg="light" fixed="top">
-        <Container>
-          {isAuthenticated && profile && (
-            <Navbar.Brand onClick={() => navigateTo("/")}>
-              <img
-                src={profile.image}
-                alt="Profile"
-                style={{
-                  width: "60px",
-                  height: "60px",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  margin: "0 auto",
-                }}
-              />
-            </Navbar.Brand>
-          )}
-          <Nav className="ms-auto">
-            {isAuthenticated && profile && (
-              <NavDropdown
-                title={profile.first_name}
-                id="basic-nav-dropdown"
-                menuVariant="light"
-                align="end"
-              >
-                <NavDropdown.Item onClick={() => navigateTo("/")}>
-                  Dashboard
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigateTo("/profile")}>
-                  Account Settings
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  onClick={() => navigateTo("/active-sessions")}
-                >
-                  Active sessions
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigateTo("/work-hours")}>
-                  Time Tracking
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigateTo("/work-places")}>
-                  Locations
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                {profile?.is_employer && (
-                  <NavDropdown.Item onClick={() => navigateTo("/employees")}>
-                    Team Management
-                  </NavDropdown.Item>
-                )}
-                <NavDropdown.Item onClick={handleLogoutClick}>
-                  Sign Out
-                </NavDropdown.Item>
-              </NavDropdown>
-            )}
-          </Nav>
+      <Navbar bg="light" expand={false} fixed="top">
+        <Container className="p-0 d-flex justify-content-center">
+          <Row className="w-100 p-0 m-0" style={{ maxWidth: "540px" }}>
+            <Col className="d-flex align-items-center">
+              {isAuthenticated && profile && (
+                <Navbar.Brand onClick={() => navigateTo("/")}>
+                  <img
+                    src={profile.image}
+                    alt="Profile"
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Navbar.Brand>
+              )}
+            </Col>
+            <Col className="d-flex justify-content-center align-items-center">
+              {isAuthenticated && profile && (
+                <div className="text-center">
+                  <p className="small m-0 p-0">Welcome</p>
+                  <p className="small m-0 p-0">{profile.full_name}</p>
+                </div>
+              )}
+            </Col>
+            <Col className="d-flex justify-content-end align-items-center">
+              <Dropdown align="end">
+                <Dropdown.Toggle as={CustomToggle} />
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => navigateTo("/")}>
+                    <Speedometer2 className="me-2" /> Dashboard
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigateTo("/profile")}>
+                    <PersonCircle className="me-2" /> Account Settings
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigateTo("/active-sessions")}>
+                    <ClockHistory className="me-2" /> Active sessions
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigateTo("/work-hours")}>
+                    <CalendarCheck className="me-2" /> Time Tracking
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigateTo("/work-places")}>
+                    <GeoAltFill className="me-2" /> Locations
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                  {profile?.is_employer && (
+                    <Dropdown.Item onClick={() => navigateTo("/employees")}>
+                      <PeopleFill className="me-2" /> Team Management
+                    </Dropdown.Item>
+                  )}
+                  <Dropdown.Item onClick={handleLogoutClick}>
+                    <BoxArrowRight className="me-2" /> Sign Out
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          </Row>
         </Container>
       </Navbar>
       <ConfirmModal
         show={showModal}
         onHide={() => setShowModal(false)}
         onConfirm={handleLogoutConfirm}
-        children={<p>Are you sure you want to sign out?</p>}
-      />
+      >
+        <p>Are you sure you want to sign out?</p>
+      </ConfirmModal>
       <ToastNotification
         show={showToast}
         onClose={() => setShowToast(false)}
