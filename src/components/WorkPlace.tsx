@@ -4,28 +4,36 @@ import { Container, Col, Row, Button, Accordion } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../context/UserProfileContext";
 import BackButton from "./NavigateButton";
+import Loader from "./Loader";
 
 const WorkPlaceContainer: React.FC = () => {
   const workplaces = useWorkPlaceData();
   const navigate = useNavigate();
   const { profile, loadProfile } = useUserProfile();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!profile) {
-      loadProfile();
-    } else {
-      setIsAuthenticated(true);
-    }
+    const fetchProfile = async () => {
+      await loadProfile();
+      setIsAuthenticated(!!profile);
+      setLoading(false);
+    };
+
+    fetchProfile();
   }, [profile, loadProfile]);
 
   const handleAddClick = () => {
-    navigate("/add-work-place"); // Przekierowanie do AddWorkPlace
+    navigate("/add-work-place");
   };
 
   const handleEditClick = (id: number) => {
-    navigate(`/edit-work-place/${id}`); // Przekierowanie do formularza edycji z ID miejsca pracy
+    navigate(`/edit-work-place/${id}`);
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Container>

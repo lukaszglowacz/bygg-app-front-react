@@ -7,6 +7,7 @@ import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, 
 import { sumTotalTimeForProfile } from "../utils/timeUtils";
 import { formatTime } from "../utils/dateUtils"; // Importing dateUtils
 import BackButton from "./NavigateButton";
+import Loader from "./Loader";
 import moment from "moment-timezone";
 
 const WorkHourByDay: React.FC = () => {
@@ -163,6 +164,13 @@ const WorkHourByDay: React.FC = () => {
         </Col>
       </Row>
 
+      {loading && (
+        <Row className="justify-content-center my-5">
+          <Col md={6} className="text-center">
+            <Loader />
+          </Col>
+        </Row>
+      )}
       {!loading && !error && !sessions.length && (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
@@ -197,13 +205,6 @@ const WorkHourByDay: React.FC = () => {
             </Row>
           ))}
         </ListGroup>
-      )}
-      {loading && (
-        <Row className="justify-content-center my-3">
-          <Col md={6} className="text-center">
-            <Alert variant="info">Loading data...</Alert>
-          </Col>
-        </Row>
       )}
       {error && (
         <Row className="justify-content-center my-3">

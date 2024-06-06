@@ -7,6 +7,7 @@ import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, 
 import { sumTotalTime } from "../utils/timeUtils";
 import { formatTime } from "../utils/dateUtils"; // Import dateUtils
 import BackButton from "./NavigateButton";
+import Loader from "./Loader";
 import moment from "moment-timezone";
 
 const EmployeeDetailsByDay: React.FC = () => {
@@ -50,10 +51,10 @@ const EmployeeDetailsByDay: React.FC = () => {
       let currentStart = start.clone();
 
       while (currentStart.isBefore(end)) {
-        const sessionEndOfDay = currentStart.clone().endOf('day');
+        const sessionEndOfDay = currentStart.clone().endOf("day");
         const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
 
-        if (currentStart.isSame(targetDate, 'day')) {
+        if (currentStart.isSame(targetDate, "day")) {
           sessionsForDate.push({
             ...session,
             start_time: currentStart.toISOString(),
@@ -61,8 +62,8 @@ const EmployeeDetailsByDay: React.FC = () => {
             total_time: calculateTotalTime(currentStart, sessionEnd),
           });
         } else if (currentStart.isBefore(targetDate) && sessionEnd.isAfter(targetDate)) {
-          const fullDaySessionStart = targetDate.clone().startOf('day');
-          const fullDaySessionEnd = targetDate.clone().endOf('day');
+          const fullDaySessionStart = targetDate.clone().startOf("day");
+          const fullDaySessionEnd = targetDate.clone().endOf("day");
 
           sessionsForDate.push({
             ...session,
@@ -72,7 +73,7 @@ const EmployeeDetailsByDay: React.FC = () => {
           });
         }
 
-        currentStart = sessionEnd.clone().add(1, 'second');
+        currentStart = sessionEnd.clone().add(1, "second");
       }
     });
 
@@ -91,7 +92,7 @@ const EmployeeDetailsByDay: React.FC = () => {
       console.error("Date is undefined");
       return;
     }
-    const currentDate = moment.tz(date, "Europe/Stockholm").add(offset, 'days');
+    const currentDate = moment.tz(date, "Europe/Stockholm").add(offset, "days");
     navigate(`/employee/${id}/day/${currentDate.format("YYYY-MM-DD")}`);
   };
 
@@ -186,9 +187,9 @@ const EmployeeDetailsByDay: React.FC = () => {
       </Row>
 
       {loading ? (
-        <Row className="justify-content-center my-3">
+        <Row className="justify-content-center my-5">
           <Col md={6} className="text-center">
-            <Alert variant="info">Loading data...</Alert>
+            <Loader />
           </Col>
         </Row>
       ) : error ? (

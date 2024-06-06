@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const Loader: React.FC = () => {
   return (
     <Container>
-      <Row className="justify-content-center my-5">
+      <Row className="justify-content-center">
         <Col md={6} className="text-center">
           <Spinner animation="grow" variant="primary" />
         </Col>

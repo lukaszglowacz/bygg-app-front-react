@@ -27,6 +27,7 @@ import { useProfileData } from "../hooks/useProfileData";
 import { useUserProfile } from "../context/UserProfileContext";
 import BackButton from "./NavigateButton";
 import ToastNotification from "./ToastNotification";
+import Loader from "./Loader";  // Importowanie komponentu Loader
 import { AxiosError } from "axios";
 
 interface PasswordData {
@@ -83,6 +84,7 @@ const ProfileComponent: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [loading, setLoading] = useState(true);  // Stan ładowania
 
   useEffect(() => {
     const newFormData = new Map();
@@ -94,6 +96,7 @@ const ProfileComponent: React.FC = () => {
       });
     });
     setFormData(newFormData);
+    setLoading(false);  // Ustawienie stanu ładowania na false po załadowaniu danych
   }, [profiles]);
 
   const handleFileChange = (
@@ -248,6 +251,10 @@ const ProfileComponent: React.FC = () => {
       });
     }
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Container>

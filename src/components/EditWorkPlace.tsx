@@ -4,12 +4,14 @@ import { Container, Form, Button, Col, Row, Alert } from "react-bootstrap";
 import api from "../api/api";
 import { IWorkPlacesData } from "../api/interfaces/types";
 import ToastNotification from "./ToastNotification";
+import Loader from "./Loader";
 
 const EditWorkPlace: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const [workplace, setWorkplace] = useState<IWorkPlacesData>({
@@ -25,8 +27,10 @@ const EditWorkPlace: React.FC = () => {
       try {
         const response = await api.get<IWorkPlacesData>(`/workplace/${id}/`);
         setWorkplace(response.data);
+        setLoading(false);
       } catch (error) {
         console.log("Failed to retrieve workplace data.", error);
+        setLoading(false);
       }
     };
 
@@ -92,6 +96,10 @@ const EditWorkPlace: React.FC = () => {
       setShowToast(true);
     }
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Container>
