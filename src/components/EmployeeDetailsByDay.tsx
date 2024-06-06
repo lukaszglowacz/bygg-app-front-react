@@ -2,8 +2,29 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { WorkSession, Employee } from "../api/interfaces/types";
-import { Container, Row, Col, Alert, ListGroup, Button, Card } from "react-bootstrap";
-import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+import {
+  Container,
+  Row,
+  Col,
+  Alert,
+  ListGroup,
+  Button,
+  Card,
+} from "react-bootstrap";
+import {
+  House,
+  ClockHistory,
+  ClockFill,
+  HourglassSplit,
+  PersonBadge,
+  Envelope,
+  PersonCircle,
+  ChevronLeft,
+  ChevronRight,
+  PlusSquare,
+  PencilSquare,
+  Trash,
+} from "react-bootstrap-icons";
 import { sumTotalTime } from "../utils/timeUtils";
 import { formatTime } from "../utils/dateUtils"; // Import dateUtils
 import BackButton from "./NavigateButton";
@@ -52,7 +73,9 @@ const EmployeeDetailsByDay: React.FC = () => {
 
       while (currentStart.isBefore(end)) {
         const sessionEndOfDay = currentStart.clone().endOf("day");
-        const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
+        const sessionEnd = end.isBefore(sessionEndOfDay)
+          ? end
+          : sessionEndOfDay;
 
         if (currentStart.isSame(targetDate, "day")) {
           sessionsForDate.push({
@@ -61,7 +84,10 @@ const EmployeeDetailsByDay: React.FC = () => {
             end_time: sessionEnd.toISOString(),
             total_time: calculateTotalTime(currentStart, sessionEnd),
           });
-        } else if (currentStart.isBefore(targetDate) && sessionEnd.isAfter(targetDate)) {
+        } else if (
+          currentStart.isBefore(targetDate) &&
+          sessionEnd.isAfter(targetDate)
+        ) {
           const fullDaySessionStart = targetDate.clone().startOf("day");
           const fullDaySessionEnd = targetDate.clone().endOf("day");
 
@@ -69,7 +95,10 @@ const EmployeeDetailsByDay: React.FC = () => {
             ...session,
             start_time: fullDaySessionStart.toISOString(),
             end_time: fullDaySessionEnd.toISOString(),
-            total_time: calculateTotalTime(fullDaySessionStart, fullDaySessionEnd),
+            total_time: calculateTotalTime(
+              fullDaySessionStart,
+              fullDaySessionEnd
+            ),
           });
         }
 
@@ -80,7 +109,10 @@ const EmployeeDetailsByDay: React.FC = () => {
     return sessionsForDate;
   };
 
-  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+  const calculateTotalTime = (
+    start: moment.Moment,
+    end: moment.Moment
+  ): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
@@ -103,7 +135,9 @@ const EmployeeDetailsByDay: React.FC = () => {
   const handleDeleteSession = async (sessionId: number) => {
     try {
       await api.delete(`/worksession/${sessionId}`);
-      const updatedSessions = sessions.filter((session) => session.id !== sessionId);
+      const updatedSessions = sessions.filter(
+        (session) => session.id !== sessionId
+      );
       setSessions(updatedSessions);
       setTotalTime(sumTotalTime(updatedSessions));
     } catch (error) {
@@ -122,7 +156,10 @@ const EmployeeDetailsByDay: React.FC = () => {
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">
-            <Card.Header as="h6" className="d-flex justify-content-between align-items-center">
+            <Card.Header
+              as="h6"
+              className="d-flex justify-content-between align-items-center"
+            >
               Daily summary
             </Card.Header>
             <Card.Body>
@@ -158,7 +195,10 @@ const EmployeeDetailsByDay: React.FC = () => {
             <Col className="text-center">
               {date ? (
                 <>
-                  <div className="font-weight-bold" style={{ fontSize: "15px" }}>
+                  <div
+                    className="font-weight-bold"
+                    style={{ fontSize: "15px" }}
+                  >
                     {moment.tz(date, "Europe/Stockholm").format("D MMMM YYYY")}
                   </div>
                   <small className="text-muted">
@@ -180,9 +220,17 @@ const EmployeeDetailsByDay: React.FC = () => {
       </Row>
       <Row className="justify-content-center my-3">
         <Col md={6} className="d-flex justify-content-end">
-          <Button onClick={handleAddSession} variant="outline-secondary" size="sm">
-            Add
-          </Button>
+          <div className="text-center">
+            <Button
+              variant="primary"
+              className="btn-sm p-0"
+              onClick={handleAddSession}
+              title="Edit"
+            >
+              <PlusSquare size={24} />
+            </Button>
+            <div>Add</div>
+          </div>
         </Col>
       </Row>
 
@@ -210,23 +258,43 @@ const EmployeeDetailsByDay: React.FC = () => {
                         <House className="me-2" /> {session.workplace}
                       </Col>
                       <Col xs={12}>
-                        <ClockFill className="me-2" /> {formatTime(session.start_time)}
+                        <ClockFill className="me-2" />{" "}
+                        {formatTime(session.start_time)}
                       </Col>
                       <Col xs={12}>
-                        <ClockHistory className="me-2" /> {formatTime(session.end_time)}
+                        <ClockHistory className="me-2" />{" "}
+                        {formatTime(session.end_time)}
                       </Col>
                       <Col xs={12}>
                         <HourglassSplit className="me-2" /> {session.total_time}
                       </Col>
                     </Row>
                     <Row>
-                      <Col xs={12} className="d-flex justify-content-end">
-                        <Button onClick={() => handleEditSession(session.id)} variant="outline-success" size="sm">
-                          Edit
-                        </Button>
-                        <Button onClick={() => handleDeleteSession(session.id)} variant="outline-danger" size="sm" className="ms-2">
-                          Delete
-                        </Button>
+                      <Col xs={12}>
+                        <div className="d-flex justify-content-around mt-3">
+                          <div className="text-center">
+                            <Button
+                              variant="outline-success"
+                              className="btn-sm p-0"
+                              onClick={() => handleEditSession(session.id)}
+                              title="Edit"
+                            >
+                              <PencilSquare size={24} />
+                            </Button>
+                            <div>Edit</div>
+                          </div>
+                          <div className="text-center">
+                            <Button
+                              variant="danger"
+                              className="btn-sm p-0"
+                              onClick={() => handleDeleteSession(session.id)}
+                              title="Delete"
+                            >
+                              <Trash size={24} />
+                            </Button>
+                            <div>Delete</div>
+                          </div>
+                        </div>
                       </Col>
                     </Row>
                   </ListGroup.Item>
@@ -236,7 +304,9 @@ const EmployeeDetailsByDay: React.FC = () => {
           ) : (
             <Row className="justify-content-center my-3">
               <Col md={6} className="text-center">
-                <Alert variant="warning">There are no work sessions for this day.</Alert>
+                <Alert variant="warning">
+                  There are no work sessions for this day.
+                </Alert>
               </Col>
             </Row>
           )}

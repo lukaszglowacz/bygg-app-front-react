@@ -4,7 +4,7 @@ import Accordion from "react-bootstrap/Accordion";
 import api from "../api/api";
 import { Employee } from "../api/interfaces/types";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { HourglassSplit, Person, PersonFill, GeoAlt, CheckCircle, XCircle, Eye, Power, Clock } from "react-bootstrap-icons";
+import { HourglassSplit, Person, PersonFill, GeoAlt, CheckCircle, XCircle, Power, Clock, ClockHistory } from "react-bootstrap-icons";
 import TimeElapsed from "./TimeElapsed";
 import BackButton from "./NavigateButton";
 import Loader from "./Loader";
@@ -64,7 +64,7 @@ const EmployeeList: React.FC = () => {
     <Container>
       <BackButton backPath="/" />
       <Row className="justify-content-center my-3">
-        <Col md={8}>
+        <Col md={6}>
           <Accordion>
             {employees.map((employee, index) => (
               <Accordion.Item eventKey={String(index)} key={employee.id}>
@@ -108,12 +108,12 @@ const EmployeeList: React.FC = () => {
                   <div className="d-flex justify-content-around mt-3">
                     <div className="text-center">
                       <Button
-                        variant="outline-success"
+                        variant="primary"
                         className="btn-sm p-0"
                         onClick={() => handleEmployee(employee.id)}
                         title="Show More"
                       >
-                        <Eye size={24} />
+                        <ClockHistory size={24} />
                       </Button>
                       <div>Show Hours</div>
                     </div>

@@ -7,18 +7,19 @@ import {
   Col,
   Row,
   Alert,
-  Spinner,
   InputGroup,
 } from "react-bootstrap";
 import {
   GeoAltFill,
   CalendarEventFill,
   Calendar2CheckFill,
+  Trash,
+  Save2,
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { AxiosError } from "axios";
-import useGoBack from "../hooks/useGoBack";
 import ToastNotification from "./ToastNotification";
+import Loader from "./Loader";
 
 interface Profile {
   id: number;
@@ -55,7 +56,6 @@ const EditWorkHour: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const goBack = useGoBack();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,7 +145,7 @@ const EditWorkHour: React.FC = () => {
     }
   };
 
-  if (loading) return <Spinner animation="border" />;
+  if (loading) return <Loader />;
 
   return (
     <Container className="container-sm">
@@ -204,40 +204,32 @@ const EditWorkHour: React.FC = () => {
 
             <Row className="mb-3">
               <Col>
-                <Button
-                  variant="success"
-                  size="sm"
-                  type="submit"
-                  className="w-100 w-md-auto"
-                >
-                  Save
-                </Button>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col>
-                <Button
-                  variant="outline-secondary"
-                  size="sm"
-                  onClick={goBack}
-                  className="w-100 w-md-auto"
-                >
-                  Back
-                </Button>
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() =>
-                    workSession && handleDeleteClick(workSession.id)
-                  }
-                  className="w-100 w-md-auto"
-                >
-                  Delete
-                </Button>
+                <div className="d-flex justify-content-around mt-3">
+                  <div className="text-center">
+                    <Button
+                      variant="success"
+                      className="btn-sm p-0"
+                      type="submit"
+                      title="Save"
+                    >
+                      <Save2 size={24} />
+                    </Button>
+                    <div>Save</div>
+                  </div>
+                  <div className="text-center">
+                    <Button
+                      variant="danger"
+                      className="btn-sm p-0"
+                      onClick={() =>
+                        workSession && handleDeleteClick(workSession.id)
+                      }
+                      title="Delete"
+                    >
+                      <Trash size={24} />
+                    </Button>
+                    <div>Delete</div>
+                  </div>
+                </div>
               </Col>
             </Row>
           </Form>

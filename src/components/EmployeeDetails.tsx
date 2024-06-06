@@ -3,7 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
 import { Button, Image, Container, Row, Col, Card } from "react-bootstrap";
-import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, HourglassSplit } from "react-bootstrap-icons";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PersonCircle,
+  PersonBadge,
+  Envelope,
+  HourglassSplit,
+} from "react-bootstrap-icons";
 import { FaDownload } from "react-icons/fa";
 import MonthYearDisplay from "./MonthYearDisplay";
 import BackButton from "./NavigateButton";
@@ -17,7 +24,9 @@ const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [sessionsByDay, setSessionsByDay] = useState<Map<string, WorkSession[]>>(new Map());
+  const [sessionsByDay, setSessionsByDay] = useState<
+    Map<string, WorkSession[]>
+  >(new Map());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,7 +44,10 @@ const EmployeeDetails: React.FC = () => {
       const splitSessions = splitSessionsByDay(sessions);
       const sessionsMap = groupSessionsByDay(splitSessions);
       setSessionsByDay(sessionsMap);
-      const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
+      const filteredSessions = filterSessionsByMonth(
+        splitSessions,
+        currentDate
+      );
       const totalTimeCalculated = sumTotalTime(filteredSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
@@ -88,7 +100,10 @@ const EmployeeDetails: React.FC = () => {
     return splitSessions;
   };
 
-  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+  const calculateTotalTime = (
+    start: moment.Moment,
+    end: moment.Moment
+  ): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
@@ -100,7 +115,12 @@ const EmployeeDetails: React.FC = () => {
     const month = currentDate.getMonth() + 1;
     return new Array(new Date(year, month, 0).getDate())
       .fill(null)
-      .map((_, i) => `${year}-${month.toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`);
+      .map(
+        (_, i) =>
+          `${year}-${month.toString().padStart(2, "0")}-${(i + 1)
+            .toString()
+            .padStart(2, "0")}`
+      );
   };
 
   const displayDaysWithSessions = (): JSX.Element[] => {
@@ -147,7 +167,9 @@ const EmployeeDetails: React.FC = () => {
     });
   };
 
-  const groupSessionsByDay = (sessions: WorkSession[]): Map<string, WorkSession[]> => {
+  const groupSessionsByDay = (
+    sessions: WorkSession[]
+  ): Map<string, WorkSession[]> => {
     const map = new Map<string, WorkSession[]>();
     sessions.forEach((session) => {
       const start = moment.utc(session.start_time).tz("Europe/Stockholm");
@@ -176,14 +198,19 @@ const EmployeeDetails: React.FC = () => {
     return map;
   };
 
-  const filterSessionsByMonth = (sessions: WorkSession[], date: Date): WorkSession[] => {
+  const filterSessionsByMonth = (
+    sessions: WorkSession[],
+    date: Date
+  ): WorkSession[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
 
     const filteredSessions: WorkSession[] = [];
 
     sessions.forEach((session) => {
-      const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const sessionStart = moment
+        .utc(session.start_time)
+        .tz("Europe/Stockholm");
       const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm");
 
       if (sessionStart.month() === month && sessionStart.year() === year) {
@@ -254,7 +281,9 @@ const EmployeeDetails: React.FC = () => {
 
       if (employee) {
         const year = currentDate.getFullYear();
-        const monthName = new Date(currentDate).toLocaleString('default', { month: 'long' });
+        const monthName = new Date(currentDate).toLocaleString("default", {
+          month: "long",
+        });
         const personnummer = employee.personnummer;
         const fullName = employee.full_name.replace(" ", "_");
         const fileName = `${monthName}_${year}_${personnummer}_${fullName}.pdf`;
@@ -276,27 +305,14 @@ const EmployeeDetails: React.FC = () => {
   return (
     <Container className="my-5">
       <BackButton backPath="/employees" />
-      <Row className="justify-content-center">
-        <Col md={6} className="text-center">
-          <Image
-            src={employee?.image}
-            roundedCircle
-            fluid
-            style={{ width: "200px", height: "200px", objectFit: "cover" }}
-          />
-        </Col>
-      </Row>
       <Row className="justify-content-center mt-3">
         <Col md={6}>
           <Card className="mt-3 mb-3">
             <Card.Header
               as="h6"
-              className="d-flex justify-content-between align-items-center"
+              className="d-flex justify-content-center align-items-center"
             >
               Monthly summary
-              <Button onClick={handleDownloadPDF} variant="link">
-                <FaDownload style={{ color: "grey" }} />
-              </Button>
             </Card.Header>
             <Card.Body>
               <Card.Text className="small text-muted">
@@ -315,6 +331,17 @@ const EmployeeDetails: React.FC = () => {
                 <HourglassSplit className="me-2" />
                 <strong>{totalTime}</strong>
               </Card.Text>
+              <div className="text-center">
+                <Button
+                  variant="secondary"
+                  className="btn-sm p-0"
+                  onClick={handleDownloadPDF}
+                  title="Download"
+                >
+                  <FaDownload size={24} />
+                </Button>
+                <div>Download</div>
+              </div>
             </Card.Body>
           </Card>
         </Col>

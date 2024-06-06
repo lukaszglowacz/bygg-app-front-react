@@ -5,6 +5,7 @@ import api from "../api/api";
 import { IWorkPlacesData } from "../api/interfaces/types";
 import ToastNotification from "./ToastNotification";
 import Loader from "./Loader";
+import { Trash, Save2 } from "react-bootstrap-icons";
 
 const EditWorkPlace: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -198,42 +199,35 @@ const EditWorkPlace: React.FC = () => {
               </Col>
             </Form.Group>
 
-            <Row className="justify-content-center mb-3 mt-5">
-              <Col md={6} className="d-flex justify-content-center">
-                <Button
-                  variant="success"
-                  type="submit"
-                  size="sm"
-                  className="w-100"
-                >
-                  Edit
-                </Button>
+            <Row className="justify-content-around my-3">
+              <Col md={6}>
+                <div className="d-flex justify-content-around mt-3">
+                  <div className="text-center">
+                    <Button
+                      variant="success"
+                      className="btn-sm p-0"
+                      type="submit"
+                      title="Save"
+                    >
+                      <Save2 size={24} />
+                    </Button>
+                    <div>Save</div>
+                  </div>
+                  <div className="text-center">
+                    <Button
+                      variant="danger"
+                      className="btn-sm p-0"
+                      onClick={() => handleDeleteClick(workplace.id)}
+                      title="Delete"
+                    >
+                      <Trash size={24} />
+                    </Button>
+                    <div>Delete</div>
+                  </div>
+                </div>
               </Col>
             </Row>
-            <Row className="justify-content-center my-3">
-              <Col md={6} className="d-flex justify-content-center">
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => navigate("/work-places")}
-                  size="sm"
-                  className="w-100"
-                >
-                  Back
-                </Button>
-              </Col>
-            </Row>
-            <Row className="justify-content-center my-3">
-              <Col md={6} className="d-flex justify-content-center">
-                <Button
-                  variant="outline-danger"
-                  onClick={() => handleDeleteClick(workplace.id)}
-                  size="sm"
-                  className="w-100"
-                >
-                  Delete
-                </Button>
-              </Col>
-            </Row>
+            
           </Form>
         </Col>
       </Row>

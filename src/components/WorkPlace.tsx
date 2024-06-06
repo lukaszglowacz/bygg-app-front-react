@@ -47,7 +47,7 @@ const WorkPlaceContainer: React.FC = () => {
                 variant="primary"
                 className="btn-sm p-0"
                 onClick={handleAddClick}
-                title="Edit"
+                title="Add"
               >
                 <PlusSquare size={24} />
               </Button>
