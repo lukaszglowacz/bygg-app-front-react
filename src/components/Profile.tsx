@@ -6,7 +6,6 @@ import {
   Card,
   Image,
   Form,
-  Button,
   Alert,
   InputGroup,
 } from "react-bootstrap";
@@ -20,7 +19,7 @@ import {
   EyeFill,
   EyeSlashFill,
   Save2,
-  Envelope
+  Envelope,
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
@@ -28,6 +27,7 @@ import { useUserProfile } from "../context/UserProfileContext";
 import ToastNotification from "./ToastNotification";
 import Loader from "./Loader"; // Importowanie komponentu Loader
 import { AxiosError } from "axios";
+import LoadingButton from "./LoadingButton";
 
 interface PasswordData {
   oldPassword: string;
@@ -167,11 +167,7 @@ const ProfileComponent: React.FC = () => {
     return regex.test(personnummer);
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>,
-    profileId: number
-  ) => {
-    event.preventDefault();
+  const handleSubmit = async (profileId: number) => {
     const payload = new FormData();
     if (selectedFiles.has(profileId)) {
       payload.append("image", selectedFiles.get(profileId) as Blob);
@@ -213,10 +209,7 @@ const ProfileComponent: React.FC = () => {
     }
   };
 
-  const handlePasswordSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
+  const handlePasswordSubmit = async () => {
     const { newPassword, confirmPassword, oldPassword } = passwordData;
 
     if (newPassword !== confirmPassword) {
@@ -304,7 +297,7 @@ const ProfileComponent: React.FC = () => {
                 </div>
               </Card.Header>
               <Card.Body>
-                <Form onSubmit={(e) => handleSubmit(e, profile.id)}>
+                <Form onSubmit={(e) => e.preventDefault()}>
                   <Form.Group className="mb-3">
                     <InputGroup>
                       <InputGroup.Text>
@@ -405,14 +398,13 @@ const ProfileComponent: React.FC = () => {
                   )}
                   <div className="d-flex justify-content-around mt-3">
                     <div className="text-center">
-                      <Button
+                      <LoadingButton
                         variant="success"
-                        className="btn-sm p-0"
-                        type="submit"
+                        onClick={() => handleSubmit(profile.id)}
+                        icon={Save2}
                         title="Save"
-                      >
-                        <Save2 size={24} />
-                      </Button>
+                        size={24}
+                      />
                       <div>Save</div>
                     </div>
                   </div>
@@ -421,8 +413,16 @@ const ProfileComponent: React.FC = () => {
             </Card>
             <Card className="mt-3">
               <Card.Body>
-                <Form onSubmit={handlePasswordSubmit}>
-                  <h5 className="text-center" style={{ fontSize: "1rem", marginBottom: "1rem" }}>
+                <Form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handlePasswordSubmit();
+                  }}
+                >
+                  <h5
+                    className="text-center"
+                    style={{ fontSize: "1rem", marginBottom: "1rem" }}
+                  >
                     Change Password
                   </h5>
                   <Form.Group className="mb-3">
@@ -431,9 +431,7 @@ const ProfileComponent: React.FC = () => {
                         <Lock />
                       </InputGroup.Text>
                       <Form.Control
-                        type={
-                          passwordVisible.oldPassword ? "text" : "password"
-                        }
+                        type={passwordVisible.oldPassword ? "text" : "password"}
                         placeholder="Old password"
                         value={passwordData.oldPassword}
                         onChange={(e) =>
@@ -442,9 +440,7 @@ const ProfileComponent: React.FC = () => {
                         isInvalid={!!errors.oldPassword}
                       />
                       <InputGroup.Text
-                        onClick={() =>
-                          togglePasswordVisibility("oldPassword")
-                        }
+                        onClick={() => togglePasswordVisibility("oldPassword")}
                         style={{ cursor: "pointer" }}
                       >
                         {passwordVisible.oldPassword ? (
@@ -468,9 +464,7 @@ const ProfileComponent: React.FC = () => {
                         <LockFill />
                       </InputGroup.Text>
                       <Form.Control
-                        type={
-                          passwordVisible.newPassword ? "text" : "password"
-                        }
+                        type={passwordVisible.newPassword ? "text" : "password"}
                         placeholder="New password"
                         value={passwordData.newPassword}
                         onChange={(e) =>
@@ -479,9 +473,7 @@ const ProfileComponent: React.FC = () => {
                         isInvalid={!!errors.newPassword}
                       />
                       <InputGroup.Text
-                        onClick={() =>
-                          togglePasswordVisibility("newPassword")
-                        }
+                        onClick={() => togglePasswordVisibility("newPassword")}
                         style={{ cursor: "pointer" }}
                       >
                         {passwordVisible.newPassword ? (
@@ -506,9 +498,7 @@ const ProfileComponent: React.FC = () => {
                       </InputGroup.Text>
                       <Form.Control
                         type={
-                          passwordVisible.confirmPassword
-                            ? "text"
-                            : "password"
+                          passwordVisible.confirmPassword ? "text" : "password"
                         }
                         placeholder="Confirm new password"
                         value={passwordData.confirmPassword}
@@ -546,14 +536,13 @@ const ProfileComponent: React.FC = () => {
                   )}
                   <div className="d-flex justify-content-around mt-3">
                     <div className="text-center">
-                      <Button
+                      <LoadingButton
                         variant="primary"
-                        className="btn-sm p-0"
-                        type="submit"
+                        onClick={handlePasswordSubmit}
+                        icon={Save2}
                         title="Change password"
-                      >
-                        <Save2 size={24} />
-                      </Button>
+                        size={24}
+                      />
                       <div>Change password</div>
                     </div>
                   </div>

@@ -1,9 +1,10 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
+import { Container, Form, Row, Col, Alert } from "react-bootstrap";
 import api from "../api/api";
 import ToastNotification from './ToastNotification';
 import { Save2 } from "react-bootstrap-icons";
+import LoadingButton from "./LoadingButton";
 
 interface Workplace {
   street: string;
@@ -51,8 +52,7 @@ const AddWorkPlace: React.FC = () => {
     setWorkplace((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!validate()) return;
 
     try {
@@ -73,7 +73,7 @@ const AddWorkPlace: React.FC = () => {
     <Container className="mt-4">
       <Row>
         <Col>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={(e) => e.preventDefault()}>
             <Form.Group as={Row} className="mb-3" controlId="streetInput">
               <Col md={6} className="mx-auto">
                 <div className="input-group">
@@ -182,14 +182,13 @@ const AddWorkPlace: React.FC = () => {
               <Col>
                 <div className="d-flex justify-content-around mt-3">
                   <div className="text-center">
-                    <Button
+                    <LoadingButton
                       variant="success"
-                      className="btn-sm p-0"
-                      type="submit"
+                      onClick={handleSubmit}
+                      icon={Save2}
                       title="Save"
-                    >
-                      <Save2 size={24} />
-                    </Button>
+                      size={24}
+                    />
                     <div>Save</div>
                   </div>
                 </div>
