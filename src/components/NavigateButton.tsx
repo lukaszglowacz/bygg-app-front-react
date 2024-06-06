@@ -12,17 +12,14 @@ const BackButton: React.FC<BackButtonProps> = ({ backPath }) => {
   const navigate = useNavigate();
 
   return (
-    <Row className="justify-content-center my-3">
-      <Col md={6}>
-        <Button
-          onClick={() => navigate(backPath)}
-          variant="link"
-          className="p-0 border-0 bg-transparent mb-3"
-        >
-          <ChevronLeft size={30} className="text-secondary"/> {/* Możesz dostosować rozmiar ikony */}
-        </Button>
-      </Col>
-    </Row>
+    <Button
+      onClick={() => navigate(backPath)}
+      variant="link"
+      className="p-0 border-0 bg-transparent m-0"
+    >
+      <ChevronLeft size={30} className="text-secondary" />{" "}
+      {/* Możesz dostosować rozmiar ikony */}
+    </Button>
   );
 };
 

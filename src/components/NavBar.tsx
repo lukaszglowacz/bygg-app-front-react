@@ -23,6 +23,7 @@ import {
   BoxArrowRight,
 } from "react-bootstrap-icons";
 import styles from "../assets/styles/Navbar.module.css";
+import BackButton from "./NavigateButton";
 
 const CustomToggle = forwardRef<HTMLDivElement, DropdownToggleProps>(
   ({ children, onClick }, ref) => (
@@ -52,6 +53,8 @@ const NavbarComponent: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [currentTitle, setCurrentTitle] = useState("Dashboard");
+  const [showBackButton, setShowBackButton] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated && !profile) {
@@ -64,6 +67,38 @@ const NavbarComponent: React.FC = () => {
       window.history.replaceState({}, document.title);
     }
   }, [isAuthenticated, profile, loadProfile, location.state]);
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/":
+        setCurrentTitle(`Welcome`);
+        setShowBackButton(false);
+        break;
+      case "/profile":
+        setCurrentTitle("Account Settings");
+        setShowBackButton(true);
+        break;
+      case "/active-sessions":
+        setCurrentTitle("Active Sessions");
+        setShowBackButton(true);
+        break;
+      case "/work-hours":
+        setCurrentTitle("Time Tracking");
+        setShowBackButton(true);
+        break;
+      case "/work-places":
+        setCurrentTitle("Locations");
+        setShowBackButton(true);
+        break;
+      case "/employees":
+        setCurrentTitle("Team Management");
+        setShowBackButton(true);
+        break;
+      default:
+        setCurrentTitle("Dashboard");
+        setShowBackButton(false);
+    }
+  }, [location.pathname, profile?.full_name]);
 
   const handleLogoutConfirm = () => {
     logout();
@@ -85,34 +120,40 @@ const NavbarComponent: React.FC = () => {
 
   return (
     <>
-      <Navbar bg="light" expand={false} fixed="top">
+      <Navbar bg="light" expand={false} fixed="top" className={styles["navbar-custom"]}>
         <Container className="p-0 d-flex justify-content-center">
           <Row className="w-100 p-0 m-0" style={{ maxWidth: "540px" }}>
-            <Col className="d-flex align-items-center">
+            <Col className={`d-flex align-items-center ${styles["navbar-content"]}`}>
               {isAuthenticated && profile && (
                 <Navbar.Brand onClick={() => navigateTo("/")}>
-                  <img
-                    src={profile.image}
-                    alt="Profile"
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
+                  {showBackButton ? (
+                    <BackButton backPath="/" />
+                  ) : (
+                    <img
+                      src={profile.image}
+                      alt="Profile"
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
                 </Navbar.Brand>
               )}
             </Col>
-            <Col className="d-flex justify-content-center align-items-center">
+            <Col className={`d-flex justify-content-center align-items-center ${styles["navbar-content"]}`}>
               {isAuthenticated && profile && (
                 <div className="text-center">
-                  <p className="small m-0 p-0">Welcome</p>
-                  <p className="small m-0 p-0">{profile.full_name}</p>
+                  <p className="small mb-0">{currentTitle}</p>
+                  {!showBackButton && (
+                    <p className="small mb-0">{profile.full_name}</p>
+                  )}
                 </div>
               )}
             </Col>
-            <Col className="d-flex justify-content-end align-items-center">
+            <Col className={`d-flex justify-content-end align-items-center ${styles["navbar-content"]}`}>
               <Dropdown align="end">
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu>
