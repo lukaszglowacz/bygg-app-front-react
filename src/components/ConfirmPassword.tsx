@@ -1,10 +1,18 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Form, Button, Alert, InputGroup, Row, Col } from 'react-bootstrap';
-import api from '../api/api';
-import ToastNotification from './ToastNotification';
-import { AxiosError } from 'axios';
-import { LockFill } from "react-bootstrap-icons";
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import {
+  Container,
+  Form,
+  Button,
+  Alert,
+  InputGroup,
+  Row,
+  Col,
+} from "react-bootstrap";
+import api from "../api/api";
+import ToastNotification from "./ToastNotification";
+import { AxiosError } from "axios";
+import { LockFill, KeyFill} from "react-bootstrap-icons";
 
 interface FieldErrors {
   password?: string[];
@@ -20,29 +28,32 @@ interface ErrorResponse {
 
 const ConfirmPassword: React.FC = () => {
   const { uidb64, token } = useParams<{ uidb64: string; token: string }>();
-  const [password, setPassword] = useState<string>('');
-  const [confirm_password, setConfirmPassword] = useState<string>('');
+  const [password, setPassword] = useState<string>("");
+  const [confirm_password, setConfirmPassword] = useState<string>("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setErrors((prev) => ({ ...prev, [name]: undefined }));
-    if (name === 'password') setPassword(value);
-    if (name === 'confirm_password') setConfirmPassword(value);
+    if (name === "password") setPassword(value);
+    if (name === "confirm_password") setConfirmPassword(value);
   };
 
   const validatePassword = (password: string): string[] => {
     const errors: string[] = [];
-    const regex_password = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const regex_password =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (password.length < 8) {
       errors.push("The password must contain at least 8 characters.");
     }
     if (!regex_password.test(password)) {
-      errors.push("The password must contain at least one uppercase letter, one number, and one special character.");
+      errors.push(
+        "The password must contain at least one uppercase letter, one number, and one special character."
+      );
     }
 
     return errors;
@@ -59,16 +70,19 @@ const ConfirmPassword: React.FC = () => {
     }
 
     if (password !== confirm_password) {
-      setErrors({ confirm_password: ['Passwords do not match'] });
+      setErrors({ confirm_password: ["Passwords do not match"] });
       return;
     }
 
     try {
-      await api.post(`/password-reset/confirm/${uidb64}/${token}/`, { password, confirm_password });
-      setToastMessage('Password has been reset successfully.');
+      await api.post(`/password-reset/confirm/${uidb64}/${token}/`, {
+        password,
+        confirm_password,
+      });
+      setToastMessage("Password has been reset successfully.");
       setShowToast(true);
       setTimeout(() => {
-        navigate('/login');
+        navigate("/login");
       }, 3000);
     } catch (error: any) {
       const axiosError = error as AxiosError<ErrorResponse>;
@@ -76,7 +90,7 @@ const ConfirmPassword: React.FC = () => {
         setErrors(axiosError.response.data);
       } else {
         setErrors({
-          general: ['Failed to reset password. Please try again later.'],
+          general: ["Failed to reset password. Please try again later."],
         });
       }
     }
@@ -103,7 +117,9 @@ const ConfirmPassword: React.FC = () => {
                 />
               </InputGroup>
               {errors.password?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                <Alert key={index} variant="warning" className="mt-2 w-100">
+                  {err}
+                </Alert>
               ))}
             </Form.Group>
 
@@ -122,17 +138,37 @@ const ConfirmPassword: React.FC = () => {
                 />
               </InputGroup>
               {errors.confirm_password?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                <Alert key={index} variant="warning" className="mt-2 w-100">
+                  {err}
+                </Alert>
               ))}
             </Form.Group>
-
-            <Button variant="primary" type="submit" className="w-100 mb-2">
-              Reset Password
-            </Button>
+            <div className="text-center mb-3">
+              <Button
+                variant="success"
+                className="btn-sm p-0"
+                type="submit"
+                title="Reset Password"
+              >
+                <KeyFill size={36} />
+              </Button>
+              <div>Reset Password</div>
+            </div>
+            <div className="text-center mt-2">
+              <p style={{ fontSize: "0.9em" }}>
+                Remember your password?{" "}
+                <Link to="/login" style={{ textDecoration: "underline" }}>
+                  Log In here
+                </Link>
+              </p>
+            </div>
           </Form>
-          {errors.general && errors.general.map((error, index) => (
-            <Alert key={index} variant="danger">{error}</Alert>
-          ))}
+          {errors.general &&
+            errors.general.map((error, index) => (
+              <Alert key={index} variant="danger">
+                {error}
+              </Alert>
+            ))}
         </Col>
       </Row>
       <ToastNotification
