@@ -1,11 +1,12 @@
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Form, Button, Col, Row, Alert } from "react-bootstrap";
+import { Container, Form, Row, Col, Alert } from "react-bootstrap";
 import api from "../api/api";
 import { IWorkPlacesData } from "../api/interfaces/types";
 import ToastNotification from "./ToastNotification";
 import Loader from "./Loader";
 import { Trash, Save2 } from "react-bootstrap-icons";
+import LoadingButton from "./LoadingButton";
 
 const EditWorkPlace: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,9 +61,9 @@ const EditWorkPlace: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleDeleteClick = async (id: number) => {
+  const handleDeleteClick = async () => {
     try {
-      await api.delete(`/workplace/${id}/`);
+      await api.delete(`/workplace/${workplace.id}/`);
       setToastMessage("Workplace has been removed.");
       setShowToast(true);
       setTimeout(() => {
@@ -80,8 +81,7 @@ const EditWorkPlace: React.FC = () => {
     setWorkplace((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!validate()) return;
 
     try {
@@ -106,7 +106,7 @@ const EditWorkPlace: React.FC = () => {
     <Container className="mt-4">
       <Row>
         <Col>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={(e) => e.preventDefault()}>
             <Form.Group as={Row} className="mb-3" controlId="streetInput">
               <Col md={6} className="mx-auto">
                 <div className="input-group">
@@ -203,31 +203,28 @@ const EditWorkPlace: React.FC = () => {
               <Col md={6}>
                 <div className="d-flex justify-content-around mt-3">
                   <div className="text-center">
-                    <Button
+                    <LoadingButton
                       variant="success"
-                      className="btn-sm p-0"
-                      type="submit"
+                      onClick={handleSubmit}
+                      icon={Save2}
                       title="Save"
-                    >
-                      <Save2 size={24} />
-                    </Button>
+                      size={24}
+                    />
                     <div>Save</div>
                   </div>
                   <div className="text-center">
-                    <Button
+                    <LoadingButton
                       variant="danger"
-                      className="btn-sm p-0"
-                      onClick={() => handleDeleteClick(workplace.id)}
+                      onClick={handleDeleteClick}
+                      icon={Trash}
                       title="Delete"
-                    >
-                      <Trash size={24} />
-                    </Button>
+                      size={24}
+                    />
                     <div>Delete</div>
                   </div>
                 </div>
               </Col>
             </Row>
-            
           </Form>
         </Col>
       </Row>

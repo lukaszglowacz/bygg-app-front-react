@@ -18,14 +18,13 @@ import Loader from "./Loader";
 import { formatDate } from "../utils/dateUtils"; // Importowanie funkcji formatujących
 import { sumTotalTime } from "../utils/timeUtils"; // Importowanie funkcji obliczającej całkowity czas
 import moment from "moment-timezone";
+import LoadingButton from "./LoadingButton";
 
 const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [sessionsByDay, setSessionsByDay] = useState<
-    Map<string, WorkSession[]>
-  >(new Map());
+  const [sessionsByDay, setSessionsByDay] = useState<Map<string, WorkSession[]>>(new Map());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
@@ -43,10 +42,7 @@ const EmployeeDetails: React.FC = () => {
       const splitSessions = splitSessionsByDay(sessions);
       const sessionsMap = groupSessionsByDay(splitSessions);
       setSessionsByDay(sessionsMap);
-      const filteredSessions = filterSessionsByMonth(
-        splitSessions,
-        currentDate
-      );
+      const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
       const totalTimeCalculated = sumTotalTime(filteredSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
@@ -99,10 +95,7 @@ const EmployeeDetails: React.FC = () => {
     return splitSessions;
   };
 
-  const calculateTotalTime = (
-    start: moment.Moment,
-    end: moment.Moment
-  ): string => {
+  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
@@ -166,9 +159,7 @@ const EmployeeDetails: React.FC = () => {
     });
   };
 
-  const groupSessionsByDay = (
-    sessions: WorkSession[]
-  ): Map<string, WorkSession[]> => {
+  const groupSessionsByDay = (sessions: WorkSession[]): Map<string, WorkSession[]> => {
     const map = new Map<string, WorkSession[]>();
     sessions.forEach((session) => {
       const start = moment.utc(session.start_time).tz("Europe/Stockholm");
@@ -197,10 +188,7 @@ const EmployeeDetails: React.FC = () => {
     return map;
   };
 
-  const filterSessionsByMonth = (
-    sessions: WorkSession[],
-    date: Date
-  ): WorkSession[] => {
+  const filterSessionsByMonth = (sessions: WorkSession[], date: Date): WorkSession[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
 
@@ -330,14 +318,13 @@ const EmployeeDetails: React.FC = () => {
                 <strong>{totalTime}</strong>
               </Card.Text>
               <div className="text-center">
-                <Button
+                <LoadingButton
                   variant="secondary"
-                  className="btn-sm p-0"
                   onClick={handleDownloadPDF}
+                  icon={FaDownload}
                   title="Download"
-                >
-                  <FaDownload size={24} />
-                </Button>
+                  size={24}
+                />
                 <div>Download</div>
               </div>
             </Card.Body>
