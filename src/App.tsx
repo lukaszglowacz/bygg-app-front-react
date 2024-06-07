@@ -22,12 +22,14 @@ import { UserProfileProvider } from "./context/UserProfileContext";
 import ConfirmPassword from "./components/ConfirmPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
+import NetworkStatusAlert from "./components/NetworkStatusAlert";
+import Loader from "./components/Loader";
 
 const App: React.FC = () => {
   const { isLoading, isAuthenticated } = useAuth();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (
@@ -35,6 +37,7 @@ const App: React.FC = () => {
       <Router>
         {isAuthenticated && <NavbarComponent />}
         <Container style={{ marginTop: "100px" }}>
+          <NetworkStatusAlert />
           <Row>
             <Col>
               <Routes>
