@@ -68,18 +68,18 @@ const Home: React.FC = () => {
             setActiveSession(userActiveSession);
             setIsActiveSession(true);
             setSelectedWorkplaceId(userActiveSession.workplace.id);
-            setAlertInfo("The work is in progress :) Click End when you're done");
+            setAlertInfo("Work in progress. Click 'End' when done.");
           } else {
             setActiveSession(null);
             setIsActiveSession(false);
             setSelectedWorkplaceId(0);
-            setAlertInfo("No active session for this user");
+            setAlertInfo("No active session. Click 'Start' to begin.");
           }
         } else {
           setActiveSession(null);
           setIsActiveSession(false);
           setSelectedWorkplaceId(0);
-          setAlertInfo("Click Start to get started");
+          setAlertInfo("Click 'Start' to begin.");
         }
       } catch (error) {
         setAlertInfo("Failed to fetch data. Please try again later.");
@@ -93,10 +93,10 @@ const Home: React.FC = () => {
 
   const handleStartSession = () => {
     if (!profileId || selectedWorkplaceId <= 0 || activeSession) {
-      setAlertInfo("Cool, but where are you working today?");
+      setAlertInfo("Please select a workplace.");
       return;
     }
-    setModalText("Are you sure you want to start work at the selected location?");
+    setModalText("Start work at the selected location?");
     setModalAction(() => startSession);
     setShowModal(true);
   };
@@ -110,19 +110,19 @@ const Home: React.FC = () => {
       });
       setActiveSession(response.data);
       setIsActiveSession(true);
-      setAlertInfo("Work has begun. Click End to finish.");
+      setAlertInfo("Session started. Click 'End' to finish.");
     } catch (error) {
       console.error("Error starting session", error);
-      setAlertInfo("The session failed to start. Please try again.");
+      setAlertInfo("Failed to start session. Please try again.");
     }
   };
 
   const handleEndSession = () => {
     if (!activeSession || !activeSession.id) {
-      setAlertInfo("You are not working now. Click Start to get started.");
+      setAlertInfo("No active session to end.");
       return;
     }
-    setModalText("Are you sure you want to end your work?");
+    setModalText("End your work session?");
     setModalAction(() => endSession);
     setShowModal(true);
   };
@@ -135,10 +135,10 @@ const Home: React.FC = () => {
       setActiveSession(null);
       setIsActiveSession(false);
       setSelectedWorkplaceId(0);
-      setAlertInfo("Congratulations! It was a good day's work.");
+      setAlertInfo("Session ended successfully.");
     } catch (error) {
       console.error("Error ending session", error);
-      setAlertInfo("The session could not be ended. Please try again.");
+      setAlertInfo("Failed to end session. Please try again.");
     }
   };
 
