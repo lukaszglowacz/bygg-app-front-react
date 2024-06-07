@@ -29,6 +29,7 @@ import { sumTotalTime } from "../utils/timeUtils";
 import { formatTime } from "../utils/dateUtils";
 import Loader from "./Loader";
 import moment from "moment-timezone";
+import ConfirmModal from "./ConfirmModal";
 
 const EmployeeDetailsByDay: React.FC = () => {
   const { id, date } = useParams<{ id: string; date?: string }>();
@@ -37,6 +38,8 @@ const EmployeeDetailsByDay: React.FC = () => {
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -131,17 +134,28 @@ const EmployeeDetailsByDay: React.FC = () => {
     navigate(`/edit-work-hour/${sessionId}?date=${date}`);
   };
 
-  const handleDeleteSession = async (sessionId: number) => {
-    try {
-      await api.delete(`/worksession/${sessionId}`);
-      const updatedSessions = sessions.filter(
-        (session) => session.id !== sessionId
-      );
-      setSessions(updatedSessions);
-      setTotalTime(sumTotalTime(updatedSessions));
-    } catch (error) {
-      console.error("Failed to delete the session", error);
-      setError("Failed to delete the session.");
+  const handleDeleteSession = (sessionId: number) => {
+    setShowModal(true);
+    setSessionToDelete(sessionId);
+  };
+
+  const confirmDeleteSession = async () => {
+    if (sessionToDelete !== null) {
+      try {
+        await api.delete(`/worksession/${sessionToDelete}`);
+        const updatedSessions = sessions.filter(
+          (session) => session.id !== sessionToDelete
+        );
+        setSessions(updatedSessions);
+        setTotalTime(sumTotalTime(updatedSessions));
+        setShowModal(false);
+        setSessionToDelete(null);
+      } catch (error) {
+        console.error("Failed to delete the session", error);
+        setError("Failed to delete the session.");
+        setShowModal(false);
+        setSessionToDelete(null);
+      }
     }
   };
 
@@ -149,7 +163,7 @@ const EmployeeDetailsByDay: React.FC = () => {
     navigate(`/add-work-hour?date=${date}&employeeId=${id}`);
   };
 
-  
+  if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -235,74 +249,78 @@ const EmployeeDetailsByDay: React.FC = () => {
         </Col>
       </Row>
 
-      {loading ? (
-        <Loader />
-      ) : (
-        <ListGroup className="mb-4">
-          {sessions.length > 0 ? (
-            sessions.map((session) => (
-              <Row key={session.id} className="justify-content-center">
-                <Col md={6}>
-                  <ListGroup.Item className="mb-2 small">
-                    <Row className="align-items-center">
-                      <Col xs={12}>
-                        <House className="me-2" /> {session.workplace}
-                      </Col>
-                      <Col xs={12}>
-                        <ClockFill className="me-2" />{" "}
-                        {formatTime(session.start_time)}
-                      </Col>
-                      <Col xs={12}>
-                        <ClockHistory className="me-2" />{" "}
-                        {formatTime(session.end_time)}
-                      </Col>
-                      <Col xs={12}>
-                        <HourglassSplit className="me-2" /> {session.total_time}
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col xs={12}>
-                        <div className="d-flex justify-content-around mt-3">
-                          <div className="text-center">
-                            <Button
-                              variant="outline-success"
-                              className="btn-sm p-0"
-                              onClick={() => handleEditSession(session.id)}
-                              title="Edit"
-                            >
-                              <PencilSquare size={24} />
-                            </Button>
-                            <div>Edit</div>
-                          </div>
-                          <div className="text-center">
-                            <Button
-                              variant="danger"
-                              className="btn-sm p-0"
-                              onClick={() => handleDeleteSession(session.id)}
-                              title="Delete"
-                            >
-                              <Trash size={24} />
-                            </Button>
-                            <div>Delete</div>
-                          </div>
+      <ListGroup className="mb-4">
+        {sessions.length > 0 ? (
+          sessions.map((session) => (
+            <Row key={session.id} className="justify-content-center">
+              <Col md={6}>
+                <ListGroup.Item className="mb-2 small">
+                  <Row className="align-items-center">
+                    <Col xs={12}>
+                      <House className="me-2" /> {session.workplace}
+                    </Col>
+                    <Col xs={12}>
+                      <ClockFill className="me-2" />{" "}
+                      {formatTime(session.start_time)}
+                    </Col>
+                    <Col xs={12}>
+                      <ClockHistory className="me-2" />{" "}
+                      {formatTime(session.end_time)}
+                    </Col>
+                    <Col xs={12}>
+                      <HourglassSplit className="me-2" /> {session.total_time}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12}>
+                      <div className="d-flex justify-content-around mt-3">
+                        <div className="text-center">
+                          <Button
+                            variant="outline-success"
+                            className="btn-sm p-0"
+                            onClick={() => handleEditSession(session.id)}
+                            title="Edit"
+                          >
+                            <PencilSquare size={24} />
+                          </Button>
+                          <div>Edit</div>
                         </div>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                </Col>
-              </Row>
-            ))
-          ) : (
-            <Row className="justify-content-center my-3">
-              <Col md={6} className="text-center">
-                <Alert variant="warning">
-                  There are no work sessions for this day.
-                </Alert>
+                        <div className="text-center">
+                          <Button
+                            variant="danger"
+                            className="btn-sm p-0"
+                            onClick={() => handleDeleteSession(session.id)}
+                            title="Delete"
+                          >
+                            <Trash size={24} />
+                          </Button>
+                          <div>Delete</div>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
               </Col>
             </Row>
-          )}
-        </ListGroup>
-      )}
+          ))
+        ) : (
+          <Row className="justify-content-center my-3">
+            <Col md={6} className="text-center">
+              <Alert variant="warning">
+                There are no work sessions for this day.
+              </Alert>
+            </Col>
+          </Row>
+        )}
+      </ListGroup>
+
+      <ConfirmModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        onConfirm={confirmDeleteSession}
+      >
+        Are you sure you want to delete this work session?
+      </ConfirmModal>
     </Container>
   );
 };
