@@ -5,7 +5,7 @@ import api from "../api/api";
 import { IWorkPlacesData } from "../api/interfaces/types";
 import ToastNotification from "./ToastNotification";
 import Loader from "./Loader";
-import { Trash, Save2 } from "react-bootstrap-icons";
+import { Save2 } from "react-bootstrap-icons";
 import LoadingButton from "./LoadingButton";
 
 const EditWorkPlace: React.FC = () => {
@@ -59,21 +59,6 @@ const EditWorkPlace: React.FC = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleDeleteClick = async () => {
-    try {
-      await api.delete(`/workplace/${workplace.id}/`);
-      setToastMessage("Workplace has been removed.");
-      setShowToast(true);
-      setTimeout(() => {
-        navigate("/work-places");
-      }, 3000);
-    } catch (error) {
-      console.error("An error occurred while deleting the workplace: ", error);
-      setToastMessage("Workplace could not be removed.");
-      setShowToast(true);
-    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,16 +196,6 @@ const EditWorkPlace: React.FC = () => {
                       size={24}
                     />
                     <div>Save</div>
-                  </div>
-                  <div className="text-center">
-                    <LoadingButton
-                      variant="danger"
-                      onClick={handleDeleteClick}
-                      icon={Trash}
-                      title="Delete"
-                      size={24}
-                    />
-                    <div>Delete</div>
                   </div>
                 </div>
               </Col>
