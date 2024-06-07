@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
-import { Button, Container, Row, Col, Card } from "react-bootstrap";
+import { Button, Container, Row, Col, Card, Alert } from "react-bootstrap";
 import { ChevronLeft, ChevronRight, PersonCircle, PersonBadge, Envelope, HourglassSplit } from "react-bootstrap-icons";
 import MonthYearDisplay from "./MonthYearDisplay";
 import Loader from "./Loader";
@@ -211,38 +211,42 @@ const WorkHour: React.FC = () => {
   if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
 
+  const hasWorkSessions = Array.from(sessionsByDay.values()).flat().length > 0;
+
   return (
     <Container className="mt-4">
       {profile && (
-        <>
-          <Row className="justify-content-center mt-3">
-            <Col md={6}>
-              <Card className="mt-3 mb-3">
-                <Card.Header as="h6" className="d-flex justify-content-center align-items-center">
-                  Monthly statement
-                </Card.Header>
-                <Card.Body>
-                  <Card.Text className="small text-muted">
-                    <PersonCircle className="me-2" />
-                    {profile.full_name}
-                  </Card.Text>
-                  <Card.Text className="small text-muted">
-                    <PersonBadge className="me-2" />
-                    {profile.personnummer}
-                  </Card.Text>
-                  <Card.Text className="small text-muted">
-                    <Envelope className="me-2" />
-                    {profile.user_email}
-                  </Card.Text>
-                  <Card.Text className="small text-muted">
-                    <HourglassSplit className="me-2" />
-                    <strong>{totalTime}</strong>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+        <Row className="justify-content-center mt-3">
+          <Col md={6}>
+            <Card className="mt-3 mb-3">
+              <Card.Header as="h6" className="d-flex justify-content-center align-items-center">
+                Monthly statement
+              </Card.Header>
+              <Card.Body>
+                <Card.Text className="small text-muted">
+                  <PersonCircle className="me-2" />
+                  {profile.full_name}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <PersonBadge className="me-2" />
+                  {profile.personnummer}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <Envelope className="me-2" />
+                  {profile.user_email}
+                </Card.Text>
+                <Card.Text className="small text-muted">
+                  <HourglassSplit className="me-2" />
+                  <strong>{totalTime}</strong>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      )}
 
+      {hasWorkSessions ? (
+        <>
           <Row className="justify-content-center mt-3 align-items-center">
             <Col md={6}>
               <Row className="align-items-center">
@@ -267,6 +271,12 @@ const WorkHour: React.FC = () => {
             <Col md={6}>{displayDaysWithSessions()}</Col>
           </Row>
         </>
+      ) : (
+        <Row className="justify-content-center mt-3">
+          <Col md={6}>
+            <Alert variant="info" className="text-center">No work sessions available</Alert>
+          </Col>
+        </Row>
       )}
     </Container>
   );

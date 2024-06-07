@@ -16,8 +16,8 @@ const ActiveSessions: React.FC = () => {
       {sessions.length === 0 ? (
         <Row className="justify-content-center">
           <Col md={6}>
-            <Alert className="text-center" variant="warning">
-              You are not currently working.
+            <Alert className="text-center" variant="info">
+              You are not currently working
             </Alert>
           </Col>
         </Row>
