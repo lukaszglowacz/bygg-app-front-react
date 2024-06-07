@@ -70,71 +70,82 @@ const NavbarComponent: React.FC = () => {
   }, [isAuthenticated, profile, loadProfile, location.state]);
 
   useEffect(() => {
-    if (matchPath({ path: "/employees/:id", end: true }, location.pathname)) {
-      setCurrentTitle("Time Tracking\nMonth View");
-      setBackPath("/employees");
-      setShowBackButton(true);
-    } else if (matchPath({ path: "/employee/:id/day/:date", end: true }, location.pathname)) {
-      const { id } = location.state || {};
-      setCurrentTitle("Time Tracking\nDay View");
-      setBackPath(`/employees/${id}`);
-      setShowBackButton(true);
-    } else if (matchPath({ path: "/work-hours/day/:date", end: true }, location.pathname)) {
-      setCurrentTitle("Time Tracking\nDay View");
-      setBackPath("/work-hours");
-      setShowBackButton(true);
-    } else if (matchPath({ path: "/edit-work-hour/:id", end: true }, location.pathname)) {
-      setCurrentTitle("Edit Work Hour");
-      setBackPath("/work-hours");
-      setShowBackButton(true);
-    } else if (matchPath({ path: "/edit-work-place/:id", end: true }, location.pathname)) {
-      setCurrentTitle("Edit Work Place");
-      setBackPath("/work-places");
-      setShowBackButton(true);
-    } else {
-      switch (location.pathname) {
-        case "/":
-          setCurrentTitle("Welcome");
-          setBackPath("");
-          setShowBackButton(false);
-          break;
-        case "/profile":
-          setCurrentTitle("Account Settings");
-          setBackPath("/");
-          setShowBackButton(true);
-          break;
-        case "/active-sessions":
-          setCurrentTitle("Active Sessions");
-          setBackPath("/");
-          setShowBackButton(true);
-          break;
-        case "/work-hours":
-          setCurrentTitle("Time Tracking\nMonth View");
-          setBackPath("/");
-          setShowBackButton(true);
-          break;
-        case "/work-places":
-          setCurrentTitle("Locations");
-          setBackPath("/");
-          setShowBackButton(true);
-          break;
-        case "/add-work-place":
-          setCurrentTitle("Add Work Place");
-          setBackPath("/work-places");
-          setShowBackButton(true);
-          break;
-        case "/employees":
-          setCurrentTitle("Team Management");
-          setBackPath("/");
-          setShowBackButton(true);
-          break;
-        default:
-          setCurrentTitle("Dashboard");
-          setBackPath("/");
-          setShowBackButton(false);
+    const updateNavbar = () => {
+      if (matchPath({ path: "/employees/:id", end: true }, location.pathname)) {
+        setCurrentTitle("Time Tracking\nMonth View");
+        setBackPath("/employees");
+        setShowBackButton(true);
+      } else if (matchPath({ path: "/employee/:id/day/:date", end: true }, location.pathname)) {
+        const { id } = matchPath("/employee/:id/day/:date", location.pathname)?.params || {};
+        setCurrentTitle("Time Tracking\nDay View");
+        setBackPath(`/employees/${id}`);
+        setShowBackButton(true);
+      } else if (matchPath({ path: "/work-hours/day/:date", end: true }, location.pathname)) {
+        setCurrentTitle("Time Tracking\nDay View");
+        setBackPath("/work-hours");
+        setShowBackButton(true);
+      } else if (matchPath({ path: "/add-work-hour", end: true }, location.pathname)) {
+        const searchParams = new URLSearchParams(location.search);
+        const employeeId = searchParams.get("employeeId");
+        const date = searchParams.get("date");
+        setCurrentTitle("Add Work Session");
+        setBackPath(`/employee/${employeeId}/day/${date}`);
+        setShowBackButton(true);
+      } else if (matchPath({ path: "/edit-work-hour/:id", end: true }, location.pathname)) {
+        setCurrentTitle("Edit Work Hour");
+        setBackPath("/work-hours");
+        setShowBackButton(true);
+      } else if (matchPath({ path: "/edit-work-place/:id", end: true }, location.pathname)) {
+        setCurrentTitle("Edit Work Place");
+        setBackPath("/work-places");
+        setShowBackButton(true);
+      } else {
+        switch (location.pathname) {
+          case "/":
+            setCurrentTitle("Welcome");
+            setBackPath("");
+            setShowBackButton(false);
+            break;
+          case "/profile":
+            setCurrentTitle("Account Settings");
+            setBackPath("/");
+            setShowBackButton(true);
+            break;
+          case "/active-sessions":
+            setCurrentTitle("Active Sessions");
+            setBackPath("/");
+            setShowBackButton(true);
+            break;
+          case "/work-hours":
+            setCurrentTitle("Time Tracking\nMonth View");
+            setBackPath("/");
+            setShowBackButton(true);
+            break;
+          case "/work-places":
+            setCurrentTitle("Locations");
+            setBackPath("/");
+            setShowBackButton(true);
+            break;
+          case "/add-work-place":
+            setCurrentTitle("Add Work Place");
+            setBackPath("/work-places");
+            setShowBackButton(true);
+            break;
+          case "/employees":
+            setCurrentTitle("Team Management");
+            setBackPath("/");
+            setShowBackButton(true);
+            break;
+          default:
+            setCurrentTitle("Dashboard");
+            setBackPath("/");
+            setShowBackButton(false);
+        }
       }
-    }
-  }, [location.pathname, location.state]);
+    };
+
+    updateNavbar();
+  }, [location.pathname, location.search, location.state]);
 
   const handleLogoutConfirm = () => {
     logout();
