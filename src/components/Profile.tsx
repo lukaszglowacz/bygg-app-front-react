@@ -20,14 +20,17 @@ import {
   EyeSlashFill,
   Save2,
   Envelope,
+  Trash,
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { useProfileData } from "../hooks/useProfileData";
 import { useUserProfile } from "../context/UserProfileContext";
 import ToastNotification from "./ToastNotification";
-import Loader from "./Loader"; // Importowanie komponentu Loader
+import Loader from "./Loader";
+import ConfirmModal from "./ConfirmModal";
 import { AxiosError } from "axios";
 import LoadingButton from "./LoadingButton";
+import { useAuth } from "../context/AuthContext";
 
 interface PasswordData {
   oldPassword: string;
@@ -70,6 +73,7 @@ const validatePassword = (password: string): string[] => {
 const ProfileComponent: React.FC = () => {
   const profiles: ProfileData[] = useProfileData();
   const { loadProfile, setProfile } = useUserProfile();
+  const { logout } = useAuth();
   const [selectedFiles, setSelectedFiles] = useState<Map<number, File>>(
     new Map()
   );
@@ -94,7 +98,8 @@ const ProfileComponent: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [loading, setLoading] = useState(true); // Stan ładowania
+  const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     const newFormData = new Map();
@@ -106,7 +111,7 @@ const ProfileComponent: React.FC = () => {
       });
     });
     setFormData(newFormData);
-    setLoading(false); // Ustawienie stanu ładowania na false po załadowaniu danych
+    setLoading(false);
   }, [profiles]);
 
   const handleFileChange = (
@@ -253,6 +258,28 @@ const ProfileComponent: React.FC = () => {
         password: errorResponse?.old_password || [errorMessage],
       });
     }
+  };
+
+  const handleDeleteProfile = async () => {
+    try {
+      await api.delete(`/accounts/user/delete/`); // Użyj endpointa z widoku Django do trwałego usunięcia użytkownika
+      setToastMessage("Profile has been deleted.");
+      setShowToast(true);
+      setTimeout(() => {
+        logout();
+        window.location.href = "/login";
+      }, 3000);
+    } catch (error) {
+      console.error("An error occurred while deleting the profile:", error);
+      setErrors({
+        ...errors,
+        general: ["Failed to delete profile."],
+      });
+    }
+  };
+
+  const handleShowDeleteModal = async () => {
+    setShowDeleteModal(true);
   };
 
   if (loading) {
@@ -549,9 +576,45 @@ const ProfileComponent: React.FC = () => {
                 </Form>
               </Card.Body>
             </Card>
+            <Card className="mt-3">
+              <Card.Body>
+                <h5
+                  className="text-danger text-center"
+                  style={{ fontSize: "1rem", marginBottom: "1rem" }}
+                >
+                  Delete Account
+                </h5>
+                <p className="text-muted text-center">
+                  Once you delete your account, there is no going back. Please
+                  be certain.
+                </p>
+                <div className="d-flex justify-content-around mt-3">
+                  <div className="text-center">
+                    <LoadingButton
+                      variant="danger"
+                      onClick={handleShowDeleteModal}
+                      icon={Trash}
+                      title="Delete Account"
+                      size={24}
+                    />
+                    <div>Delete Account</div>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
           </Col>
         ))}
       </Row>
+      <ConfirmModal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteProfile}
+      >
+        <p>Are you sure you want to delete your account?</p>
+        <p className="text-danger">
+          This action is irreversible and will delete all your data permanently.
+        </p>
+      </ConfirmModal>
       <ToastNotification
         show={showToast}
         onClose={() => setShowToast(false)}
