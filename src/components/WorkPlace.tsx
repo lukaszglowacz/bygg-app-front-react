@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Col, Row, Button, Accordion } from "react-bootstrap";
+import { Container, Col, Row, Button, Accordion, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "../context/UserProfileContext";
 import Loader from "./Loader";
@@ -10,12 +10,13 @@ import { IWorkPlacesData } from "../api/interfaces/types";
 
 const WorkPlaceContainer: React.FC = () => {
   const [workplaces, setWorkplaces] = useState<IWorkPlacesData[]>([]);
-  const navigate = useNavigate();
-  const { profile, loadProfile } = useUserProfile();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [workplaceToDelete, setWorkplaceToDelete] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { profile, loadProfile } = useUserProfile();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -30,7 +31,7 @@ const WorkPlaceContainer: React.FC = () => {
   const fetchWorkplaces = async () => {
     try {
       setLoading(true);
-      const response = await api.get<IWorkPlacesData[]>('/workplace/');
+      const response = await api.get<IWorkPlacesData[]>("/workplace/");
       setWorkplaces(response.data);
       setLoading(false);
     } catch (error) {
@@ -51,9 +52,27 @@ const WorkPlaceContainer: React.FC = () => {
     navigate(`/edit-work-place/${id}`);
   };
 
-  const handleDeleteClick = (id: number) => {
-    setShowModal(true);
-    setWorkplaceToDelete(id);
+  const handleDeleteClick = async (id: number) => {
+    try {
+      const response = await api.get(`/livesession/active/`);
+      const activeSessions = response.data.filter(
+        (session: any) => session.workplace.id === id
+      );
+
+      if (activeSessions.length > 0) {
+        setDeleteError(
+          "Cannot delete this workplace as it is currently in use. Please try again later."
+        );
+      } else {
+        setShowModal(true);
+        setWorkplaceToDelete(id);
+        setDeleteError(null);
+      }
+    } catch (error) {
+      setDeleteError(
+        "Failed to check workplace usage. Please try again later."
+      );
+    }
   };
 
   const confirmDeleteWorkplace = async () => {
@@ -131,6 +150,11 @@ const WorkPlaceContainer: React.FC = () => {
                         <div>Delete</div>
                       </div>
                     </div>
+                    {deleteError && (
+                      <Alert variant="danger" className="mt-3">
+                        {deleteError}
+                      </Alert>
+                    )}
                   </Accordion.Body>
                 )}
               </Accordion.Item>
