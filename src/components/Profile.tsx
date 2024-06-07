@@ -100,6 +100,7 @@ const ProfileComponent: React.FC = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showFinalDeleteModal, setShowFinalDeleteModal] = useState(false);
 
   useEffect(() => {
     const newFormData = new Map();
@@ -214,7 +215,7 @@ const ProfileComponent: React.FC = () => {
     }
   };
 
-  const handlePasswordSubmit = async () => {
+  const handlePasswordSubmit = async (): Promise<void> => {
     const { newPassword, confirmPassword, oldPassword } = passwordData;
 
     if (newPassword !== confirmPassword) {
@@ -260,7 +261,7 @@ const ProfileComponent: React.FC = () => {
     }
   };
 
-  const handleDeleteProfile = async () => {
+  const handleDeleteProfile = async (): Promise<void> => {
     try {
       await api.delete(`/accounts/user/delete/`); // Użyj endpointa z widoku Django do trwałego usunięcia użytkownika
       setToastMessage("Profile has been deleted.");
@@ -278,8 +279,13 @@ const ProfileComponent: React.FC = () => {
     }
   };
 
-  const handleShowDeleteModal = async () => {
+  const handleShowDeleteModal = async (): Promise<void> => {
     setShowDeleteModal(true);
+  };
+
+  const handleConfirmFirstDelete = async (): Promise<void> => {
+    setShowDeleteModal(false);
+    setShowFinalDeleteModal(true);
   };
 
   if (loading) {
@@ -608,11 +614,18 @@ const ProfileComponent: React.FC = () => {
       <ConfirmModal
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}
-        onConfirm={handleDeleteProfile}
+        onConfirm={handleConfirmFirstDelete}
       >
         <p>Are you sure you want to delete your account?</p>
+      </ConfirmModal>
+      <ConfirmModal
+        show={showFinalDeleteModal}
+        onHide={() => setShowFinalDeleteModal(false)}
+        onConfirm={handleDeleteProfile}
+      >
+        <p>This action is irreversible and will delete all your data permanently.</p>
         <p className="text-danger">
-          This action is irreversible and will delete all your data permanently.
+          You will no longer have access to your account and all associated data will be lost.
         </p>
       </ConfirmModal>
       <ToastNotification
