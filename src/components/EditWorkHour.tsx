@@ -85,11 +85,12 @@ const EditWorkHour: React.FC = () => {
           id,
           profile: profile.id,
           workplace: workplace.id,
-          start_time,
-          end_time,
+          start_time: new Date(start_time).toISOString(),
+          end_time: new Date(end_time).toISOString(),
         };
         console.log("Updated session data:", updatedSession); // Debugowanie danych
-        await api.put(`/worksession/${id}`, updatedSession);
+        const response = await api.put(`/worksession/${id}`, updatedSession);
+        console.log('API response:', response); // Logowanie odpowiedzi API
         setToastMessage("Work session updated");
         setShowToast(true);
         setTimeout(() => {
@@ -108,6 +109,7 @@ const EditWorkHour: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<any>) => {
     const { name, value } = event.target;
+    console.log(`Field changed: ${name}, Value: ${value}`); // Debugowanie wartości pól formularza
     setWorkSession((prev: any) => {
       if (!prev) return null;
 
