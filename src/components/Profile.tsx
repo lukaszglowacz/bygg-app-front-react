@@ -245,7 +245,8 @@ const ProfileComponent: React.FC = () => {
       setShowToast(true);
 
       setTimeout(() => {
-        setShowToast(false);
+        logout();
+        window.location.href = "/login";
       }, 3000);
     } catch (error) {
       console.error("An error occurred while changing the password:", error);
