@@ -100,7 +100,7 @@ const EditWorkHour: React.FC = () => {
         const error = err as AxiosError;
         console.error("Error updating session:", error.response?.data || error.message);
         const errorMessage = error.response?.data
-          ? JSON.stringify(error.response.data)
+          ? JSON.stringify(error.response.data, null, 2) // Lepsze formatowanie błędów
           : error.message;
         setError(`Error updating session: ${errorMessage}`);
       }
