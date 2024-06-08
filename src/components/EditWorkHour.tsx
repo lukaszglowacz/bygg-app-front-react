@@ -12,11 +12,6 @@ import ToastNotification from "./ToastNotification";
 import Loader from "./Loader";
 import LoadingButton from "./LoadingButton";
 
-interface Profile {
-  id: number;
-  full_name: string;
-  personnummer: string;
-}
 
 interface Workplace {
   id: number;
@@ -28,10 +23,22 @@ interface Workplace {
 
 interface WorkSession {
   id: number;
-  profile: Profile;
-  workplace: string;
+  workplace: string; // workplace as a string
   start_time: string;
   end_time: string;
+}
+
+interface Employee {
+  id: number;
+  full_name: string;
+  user_email: string;
+  personnummer: string;
+  current_session_start_time: string | null;
+  current_session_status: string;
+  current_workplace: string;
+  current_session_id: number | null;
+  image: string;
+  work_session: WorkSession[];
 }
 
 const formatDateTimeLocal = (date: string) => {
@@ -41,26 +48,33 @@ const formatDateTimeLocal = (date: string) => {
 };
 
 const EditWorkHour: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, employeeId } = useParams<{ id: string, employeeId: string }>();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const date = queryParams.get("date");
 
   const navigate = useNavigate();
-  const [workSession, setWorkSession] = useState<WorkSession | null>(null);
+  const [employee, setEmployee] = useState<Employee | null>(null);
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [workSession, setWorkSession] = useState<WorkSession | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sessionRes = await api.get<WorkSession>(`/worksession/${id}`);
+        if (!id || !employeeId) {
+          throw new Error("Missing id or employeeId");
+        }
+
+        const employeeRes = await api.get<Employee>(`/employee/${employeeId}`);
         const workplacesRes = await api.get<Workplace[]>("/workplace");
-        setWorkSession(sessionRes.data);
+        const session = employeeRes.data.work_session.find(ws => ws.id === parseInt(id, 10));
+        setEmployee(employeeRes.data);
         setWorkplaces(workplacesRes.data);
+        setWorkSession(session || null);
       } catch (error) {
         setError("Error loading data");
       } finally {
@@ -68,7 +82,7 @@ const EditWorkHour: React.FC = () => {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, employeeId]);
 
   const handleSubmit = async () => {
     setError(null);
@@ -80,13 +94,10 @@ const EditWorkHour: React.FC = () => {
       }
 
       try {
-        const { id, profile, workplace, start_time, end_time } = workSession;
         const updatedSession = {
-          id,
-          profile: profile.id,
-          workplace: workplace,
-          start_time: new Date(start_time).toISOString(),
-          end_time: new Date(end_time).toISOString(),
+          ...workSession,
+          start_time: new Date(workSession.start_time).toISOString(),
+          end_time: new Date(workSession.end_time).toISOString(),
         };
         console.log("Updated session data:", updatedSession); // Debugowanie danych
         const response = await api.put(`/worksession/${id}`, updatedSession);
@@ -94,7 +105,7 @@ const EditWorkHour: React.FC = () => {
         setToastMessage("Work session updated");
         setShowToast(true);
         setTimeout(() => {
-          navigate(`/employee/${profile.id}/day/${date}`);
+          navigate(`/employee/${employeeId}/day/${date}`);
         }, 3000);
       } catch (err) {
         const error = err as AxiosError;
@@ -110,22 +121,21 @@ const EditWorkHour: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<any>) => {
     const { name, value } = event.target;
     console.log(`Field changed: ${name}, Value: ${value}`); // Debugowanie wartości pól formularza
-    setWorkSession((prev: any) => {
+    setWorkSession((prev) => {
       if (!prev) return null;
 
       let updatedSession: any = { ...prev };
 
       switch (name) {
         case "workplace":
-          updatedSession.workplace = {
-            ...prev.workplace,
-            id: parseInt(value, 10),
-          };
+          updatedSession.workplace = value;
           break;
         case "start_time":
         case "end_time":
           updatedSession[name] = value;
           break;
+        default:
+          updatedSession[name] = value;
       }
 
       return updatedSession;
@@ -136,88 +146,90 @@ const EditWorkHour: React.FC = () => {
 
   return (
     <Container className="mt-4">
-      {workSession && (
-        <Row className="justify-content-center mt-3">
-          <Col md={6}>
-            <Alert variant="info" className="text-center">
-              Editing work session for: <br />
-              <strong>{workSession.profile.full_name}</strong>
-            </Alert>
-          </Col>
-        </Row>
-      )}
-      <Row>
-        <Col md={6} className="mx-auto">
-          <Form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
-            <InputGroup className="mb-3">
-              <InputGroup.Text>
-                <GeoAltFill />
-              </InputGroup.Text>
-              <Form.Select
-                name="workplace"
-                value={workSession?.workplace || ""}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Choose your workplace</option>
-                {workplaces.map((workplace) => (
-                  <option key={workplace.id} value={workplace.id}>
-                    {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}
-                  </option>
-                ))}
-              </Form.Select>
-            </InputGroup>
-
-            <InputGroup className="mb-3">
-              <InputGroup.Text>
-                <CalendarEventFill />
-              </InputGroup.Text>
-              <Form.Control
-                type="datetime-local"
-                name="start_time"
-                value={workSession ? formatDateTimeLocal(workSession.start_time) : ""}
-                onChange={handleChange}
-                required
-              />
-            </InputGroup>
-
-            <InputGroup className="mb-5">
-              <InputGroup.Text>
-                <Calendar2CheckFill />
-              </InputGroup.Text>
-              <Form.Control
-                type="datetime-local"
-                name="end_time"
-                value={workSession ? formatDateTimeLocal(workSession.end_time) : ""}
-                onChange={handleChange}
-                required
-              />
-            </InputGroup>
-            {error && (
-              <Alert variant="danger" className="mt-3 text-center">
-                {error}
+      {employee && workSession && (
+        <>
+          <Row className="justify-content-center mt-3">
+            <Col md={6}>
+              <Alert variant="info" className="text-center">
+                Editing work session for: <br />
+                <strong>{employee.full_name}</strong>
               </Alert>
-            )}
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} className="mx-auto">
+              <Form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+                <InputGroup className="mb-3">
+                  <InputGroup.Text>
+                    <GeoAltFill />
+                  </InputGroup.Text>
+                  <Form.Select
+                    name="workplace"
+                    value={workSession.workplace}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Choose your workplace</option>
+                    {workplaces.map((workplace) => (
+                      <option key={workplace.id} value={`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}>
+                        {`${workplace.street} ${workplace.street_number}, ${workplace.postal_code} ${workplace.city}`}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </InputGroup>
 
-            <Row className="mb-3">
-              <Col>
-                <div className="d-flex justify-content-around mt-3">
-                  <div className="text-center">
-                    <LoadingButton
-                      variant="success"
-                      onClick={handleSubmit}
-                      icon={Save2}
-                      title="Save"
-                      size={24}
-                    />
-                    <div>Save</div>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
-      </Row>
+                <InputGroup className="mb-3">
+                  <InputGroup.Text>
+                    <CalendarEventFill />
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="datetime-local"
+                    name="start_time"
+                    value={formatDateTimeLocal(workSession.start_time)}
+                    onChange={handleChange}
+                    required
+                  />
+                </InputGroup>
+
+                <InputGroup className="mb-5">
+                  <InputGroup.Text>
+                    <Calendar2CheckFill />
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="datetime-local"
+                    name="end_time"
+                    value={formatDateTimeLocal(workSession.end_time)}
+                    onChange={handleChange}
+                    required
+                  />
+                </InputGroup>
+                {error && (
+                  <Alert variant="danger" className="mt-3 text-center">
+                    {error}
+                  </Alert>
+                )}
+
+                <Row className="mb-3">
+                  <Col>
+                    <div className="d-flex justify-content-around mt-3">
+                      <div className="text-center">
+                        <LoadingButton
+                          variant="success"
+                          onClick={handleSubmit}
+                          icon={Save2}
+                          title="Save"
+                          size={24}
+                        />
+                        <div>Save</div>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Form>
+            </Col>
+          </Row>
+        </>
+      )}
       <ToastNotification
         show={showToast}
         onClose={() => setShowToast(false)}
