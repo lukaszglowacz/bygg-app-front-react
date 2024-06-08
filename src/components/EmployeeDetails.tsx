@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../api/api";
 import { Employee, WorkSession } from "../api/interfaces/types";
 import { Button, Container, Row, Col, Card } from "react-bootstrap";
@@ -23,39 +23,44 @@ import LoadingButton from "./LoadingButton";
 const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [employee, setEmployee] = useState<Employee | null>(null);
-  const [sessionsByDay, setSessionsByDay] = useState<
-    Map<string, WorkSession[]>
-  >(new Map());
+  const location = useLocation();
+  const locationState = location.state as { employee?: Employee };
+
+  const [employee, setEmployee] = useState<Employee | null>(locationState?.employee || null);
+  const [sessionsByDay, setSessionsByDay] = useState<Map<string, WorkSession[]>>(new Map());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchEmployeeDetails();
+    if (!employee) {
+      fetchEmployeeDetails();
+    } else {
+      processSessions(employee.work_session);
+    }
   }, [id, currentDate]);
 
   const fetchEmployeeDetails = async () => {
     try {
       const response = await api.get<Employee>(`/employee/${id}`);
       setEmployee(response.data);
-      const sessions = response.data.work_session;
-      const splitSessions = splitSessionsByDay(sessions);
-      const sessionsMap = groupSessionsByDay(splitSessions);
-      setSessionsByDay(sessionsMap);
-      const filteredSessions = filterSessionsByMonth(
-        splitSessions,
-        currentDate
-      );
-      const totalTimeCalculated = sumTotalTime(filteredSessions);
-      setTotalTime(totalTimeCalculated);
+      processSessions(response.data.work_session);
       setLoading(false);
     } catch (err: any) {
       console.error("Error fetching employee details", err);
       setError("Error fetching employee details");
       setLoading(false);
     }
+  };
+
+  const processSessions = (sessions: WorkSession[]) => {
+    const splitSessions = splitSessionsByDay(sessions);
+    const sessionsMap = groupSessionsByDay(splitSessions);
+    setSessionsByDay(sessionsMap);
+    const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
+    const totalTimeCalculated = sumTotalTime(filteredSessions);
+    setTotalTime(totalTimeCalculated);
   };
 
   const splitSessionsByDay = (sessions: WorkSession[]): WorkSession[] => {
@@ -100,10 +105,7 @@ const EmployeeDetails: React.FC = () => {
     return splitSessions;
   };
 
-  const calculateTotalTime = (
-    start: moment.Moment,
-    end: moment.Moment
-  ): string => {
+  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
@@ -156,7 +158,7 @@ const EmployeeDetails: React.FC = () => {
               >
                 <div>
                   <div>
-                    <small>{session.workplace}</small>
+                    <small>{session.workplace.street} {session.workplace.street_number}, {session.workplace.postal_code} {session.workplace.city}</small>
                   </div>
                   <small className="text-muted">{session.total_time}</small>
                 </div>
@@ -172,9 +174,7 @@ const EmployeeDetails: React.FC = () => {
     });
   };
 
-  const groupSessionsByDay = (
-    sessions: WorkSession[]
-  ): Map<string, WorkSession[]> => {
+  const groupSessionsByDay = (sessions: WorkSession[]): Map<string, WorkSession[]> => {
     const map = new Map<string, WorkSession[]>();
     sessions.forEach((session) => {
       const start = moment.utc(session.start_time).tz("Europe/Stockholm");
@@ -203,19 +203,14 @@ const EmployeeDetails: React.FC = () => {
     return map;
   };
 
-  const filterSessionsByMonth = (
-    sessions: WorkSession[],
-    date: Date
-  ): WorkSession[] => {
+  const filterSessionsByMonth = (sessions: WorkSession[], date: Date): WorkSession[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
 
     const filteredSessions: WorkSession[] = [];
 
     sessions.forEach((session) => {
-      const sessionStart = moment
-        .utc(session.start_time)
-        .tz("Europe/Stockholm");
+      const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm");
       const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm");
 
       if (sessionStart.month() === month && sessionStart.year() === year) {

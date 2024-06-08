@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Container, Form, Col, Row, Alert, InputGroup,
+  Container,
+  Form,
+  Col,
+  Row,
+  Alert,
+  InputGroup,
 } from "react-bootstrap";
 import {
-  GeoAltFill, CalendarEventFill, Calendar2CheckFill, Save2,
+  GeoAltFill,
+  CalendarEventFill,
+  Calendar2CheckFill,
+  Save2,
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { AxiosError } from "axios";
@@ -41,13 +49,15 @@ const formatDateTimeLocal = (date: string) => {
 };
 
 const EditWorkHour: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const date = queryParams.get("date");
-
   const navigate = useNavigate();
-  const [workSession, setWorkSession] = useState<WorkSession | null>(null);
+  const { session, date, employee } = location.state as {
+    session: WorkSession;
+    date: string;
+    employee: Profile;
+  };
+
+  const [workSession, setWorkSession] = useState<WorkSession>(session);
   const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,9 +67,7 @@ const EditWorkHour: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sessionRes = await api.get<WorkSession>(`/worksession/${id}`);
         const workplacesRes = await api.get<Workplace[]>("/workplace");
-        setWorkSession(sessionRes.data);
         setWorkplaces(workplacesRes.data);
       } catch (error) {
         setError("Error loading data");
@@ -68,56 +76,53 @@ const EditWorkHour: React.FC = () => {
       }
     };
     fetchData();
-  }, [id]);
+  }, []);
 
   const handleSubmit = async () => {
     setError(null);
 
-    if (workSession) {
-      if (new Date(workSession.end_time) < new Date(workSession.start_time)) {
-        setError("End time must be after start time");
-        return;
-      }
+    if (new Date(workSession.end_time) < new Date(workSession.start_time)) {
+      setError("End time must be after start time");
+      return;
+    }
 
-      try {
-        const { id, profile, workplace, start_time, end_time } = workSession;
-        const updatedSession = {
-          id,
-          profile: profile.id,
-          workplace: workplace.id,
-          start_time,
-          end_time,
-        };
-        await api.put(`/worksession/${id}`, updatedSession);
-        setToastMessage("Work session updated");
-        setShowToast(true);
-        setTimeout(() => {
-          navigate(`/employee/${profile.id}/day/${date}`);
-        }, 3000);
-      } catch (err) {
-        const error = err as AxiosError;
-        console.error("Error updating session:", error.response?.data || error.message);
-        const errorMessage = error.response?.data
-          ? JSON.stringify(error.response.data)
-          : error.message;
-        setError(`Error updating session: ${errorMessage}`);
-      }
+    try {
+      const { id, profile, workplace, start_time, end_time } = workSession;
+      const updatedSession = {
+        id,
+        profile: profile.id,
+        workplace: workplace.id,
+        start_time,
+        end_time,
+      };
+      await api.put(`/worksession/${id}`, updatedSession);
+      setToastMessage("Work session updated");
+      setShowToast(true);
+      setTimeout(() => {
+        navigate(`/employee/${profile.id}/day/${date}`);
+      }, 3000);
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error("Error updating session:", error.response?.data || error.message);
+      const errorMessage = error.response?.data
+        ? JSON.stringify(error.response.data)
+        : error.message;
+      setError(`Error updating session: ${errorMessage}`);
     }
   };
 
   const handleChange = (event: React.ChangeEvent<any>) => {
     const { name, value } = event.target;
-    setWorkSession((prev: any) => {
+    setWorkSession((prev) => {
       if (!prev) return null;
 
       let updatedSession: any = { ...prev };
 
       switch (name) {
         case "workplace":
-          updatedSession.workplace = {
-            ...prev.workplace,
-            id: parseInt(value, 10),
-          };
+          updatedSession.workplace = workplaces.find(
+            (workplace) => workplace.id === parseInt(value, 10)
+          ) || updatedSession.workplace;
           break;
         case "start_time":
         case "end_time":
@@ -138,7 +143,7 @@ const EditWorkHour: React.FC = () => {
           <Col md={6}>
             <Alert variant="info" className="text-center">
               Editing work session for: <br />
-              <strong>{workSession.profile.full_name}</strong>
+              <strong>{employee.full_name}</strong>
             </Alert>
           </Col>
         </Row>

@@ -92,7 +92,7 @@ export interface Profile {
   export interface WorkSession {
     id: number;
     profile: Profile;
-    workplace: string;
+    workplace: Workplace;
     start_time: string;
     end_time: string;
     total_time: string;

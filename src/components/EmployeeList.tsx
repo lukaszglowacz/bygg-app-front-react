@@ -46,8 +46,8 @@ const EmployeeList: React.FC = () => {
     fetchEmployees();
   }, []);
 
-  const handleEmployee = (id: number) => {
-    navigate(`/employees/${id}`);
+  const handleEmployee = (employee: Employee) => {
+    navigate(`/employees/${employee.id}`, { state: { employee } });
   };
 
   const handleEndSession = async () => {
@@ -124,7 +124,7 @@ const EmployeeList: React.FC = () => {
                       <Button
                         variant="primary"
                         className="btn-sm p-0"
-                        onClick={() => handleEmployee(employee.id)}
+                        onClick={() => handleEmployee(employee)}
                         title="Show More"
                       >
                         <ClockHistory size={24} />
