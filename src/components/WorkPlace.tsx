@@ -35,7 +35,7 @@ const WorkPlaceContainer: React.FC = () => {
       setWorkplaces(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch workplaces", error);
+      console.error("Unable to load workplaces", error);
       setLoading(false);
     }
   };
@@ -61,7 +61,7 @@ const WorkPlaceContainer: React.FC = () => {
 
       if (activeSessions.length > 0) {
         setDeleteError(
-          "Cannot delete this workplace as it is currently in use. Please try again later."
+          "Cannot delete, workplace in use. Try again later"
         );
       } else {
         setShowModal(true);
@@ -70,7 +70,7 @@ const WorkPlaceContainer: React.FC = () => {
       }
     } catch (error) {
       setDeleteError(
-        "Failed to check workplace usage. Please try again later."
+        "Failed to verify workplace usage. Try again later"
       );
     }
   };
@@ -83,7 +83,7 @@ const WorkPlaceContainer: React.FC = () => {
         setShowModal(false);
         fetchWorkplaces(); // Refresh the workplaces after deletion
       } catch (error) {
-        console.error("Failed to delete the workplace", error);
+        console.error("Unable to delete workplace", error);
         setShowModal(false);
         setDeleteError(
           "Cannot delete this workplace as it is currently in use. Please try again later."

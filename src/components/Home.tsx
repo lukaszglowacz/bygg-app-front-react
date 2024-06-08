@@ -82,7 +82,7 @@ const Home: React.FC = () => {
           setAlertInfo("Click 'Start' to begin.");
         }
       } catch (error) {
-        setAlertInfo("Failed to fetch data. Please try again later.");
+        setAlertInfo("Error fetching data");
       } finally {
         setLoading(false); // Set loading to false after fetching data
       }
@@ -93,10 +93,10 @@ const Home: React.FC = () => {
 
   const handleStartSession = () => {
     if (!profileId || selectedWorkplaceId <= 0 || activeSession) {
-      setAlertInfo("Please select a workplace.");
+      setAlertInfo("Select a workplace");
       return;
     }
-    setModalText("Start work at the selected location?");
+    setModalText("Start work?");
     setModalAction(() => startSession);
     setShowModal(true);
   };
@@ -110,19 +110,19 @@ const Home: React.FC = () => {
       });
       setActiveSession(response.data);
       setIsActiveSession(true);
-      setAlertInfo("Session started. Click 'End' to finish.");
+      setAlertInfo("Session started. Click 'End' to finish");
     } catch (error) {
       console.error("Error starting session", error);
-      setAlertInfo("Failed to start session. Please try again.");
+      setAlertInfo("Error starting session");
     }
   };
 
   const handleEndSession = () => {
     if (!activeSession || !activeSession.id) {
-      setAlertInfo("No active session to end.");
+      setAlertInfo("No active session to end");
       return;
     }
-    setModalText("End your work session?");
+    setModalText("End session?");
     setModalAction(() => endSession);
     setShowModal(true);
   };
@@ -135,10 +135,10 @@ const Home: React.FC = () => {
       setActiveSession(null);
       setIsActiveSession(false);
       setSelectedWorkplaceId(0);
-      setAlertInfo("Session ended successfully.");
+      setAlertInfo("Session ended");
     } catch (error) {
       console.error("Error ending session", error);
-      setAlertInfo("Failed to end session. Please try again.");
+      setAlertInfo("Error ending session");
     }
   };
 

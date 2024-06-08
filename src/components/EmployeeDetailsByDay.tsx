@@ -54,7 +54,7 @@ const EmployeeDetailsByDay: React.FC = () => {
         setTotalTime(sumTotalTime(daySessions));
         setLoading(false);
       } catch (err) {
-        setError("Failed to retrieve work session data.");
+        setError("Error retrieving work session data");
         setLoading(false);
       }
     };
@@ -123,7 +123,7 @@ const EmployeeDetailsByDay: React.FC = () => {
 
   const changeDay = (offset: number): void => {
     if (!date) {
-      console.error("Date is undefined");
+      console.error("Date not available");
       return;
     }
     const currentDate = moment.tz(date, "Europe/Stockholm").add(offset, "days");
@@ -151,8 +151,8 @@ const EmployeeDetailsByDay: React.FC = () => {
         setShowModal(false);
         setSessionToDelete(null);
       } catch (error) {
-        console.error("Failed to delete the session", error);
-        setError("Failed to delete the session.");
+        console.error("Error deleting session: ", error);
+        setError("Error deleting session");
         setShowModal(false);
         setSessionToDelete(null);
       }
@@ -306,9 +306,7 @@ const EmployeeDetailsByDay: React.FC = () => {
         ) : (
           <Row className="justify-content-center my-3">
             <Col md={6} className="text-center">
-              <Alert variant="warning">
-                There are no work sessions for this day.
-              </Alert>
+              <Alert variant="warning">No work sessions for this day</Alert>
             </Col>
           </Row>
         )}
@@ -319,7 +317,7 @@ const EmployeeDetailsByDay: React.FC = () => {
         onHide={() => setShowModal(false)}
         onConfirm={confirmDeleteSession}
       >
-        Are you sure you want to delete this work session?
+        Confirm deletion of this work session
       </ConfirmModal>
     </Container>
   );

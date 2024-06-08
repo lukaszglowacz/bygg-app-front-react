@@ -70,9 +70,9 @@ const LoginComponent: React.FC = () => {
           new Date().getTime() + 86400000
         );
         await loadUserProfile(profile_id);
-        setToastMessage("Login successful.");
+        setToastMessage("Logged in successfully");
         navigate("/", {
-          state: { showToast: true, toastMessage: "Login successful." },
+          state: { showToast: true, toastMessage: "Logged in successfully" },
         });
       }
     } catch (error) {
@@ -81,7 +81,7 @@ const LoginComponent: React.FC = () => {
         setErrors(axiosError.response.data);
       } else {
         setErrors({
-          general: ["Failed to log in. Please check your login details."],
+          general: ["Login failed. Check your details"],
         });
       }
     }
@@ -98,7 +98,7 @@ const LoginComponent: React.FC = () => {
           <h2 className="text-center mb-4">Log In</h2>
           {errors.general &&
             errors.general.map((error, index) => (
-              <Alert key={index} variant="danger">
+              <Alert key={index} variant="danger" className="text-center">
                 {error}
               </Alert>
             ))}
@@ -118,7 +118,7 @@ const LoginComponent: React.FC = () => {
                 />
                 {errors.email &&
                   errors.email.map((err, index) => (
-                    <Alert key={index} variant="warning" className="mt-2 w-100">
+                    <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                       {err}
                     </Alert>
                   ))}
@@ -150,7 +150,7 @@ const LoginComponent: React.FC = () => {
                 </InputGroup.Text>
                 {errors.password &&
                   errors.password.map((err, index) => (
-                    <Alert key={index} variant="warning" className="mt-2 w-100">
+                    <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                       {err}
                     </Alert>
                   ))}
@@ -161,10 +161,10 @@ const LoginComponent: React.FC = () => {
                 variant="success"
                 onClick={handleLogin}
                 icon={BoxArrowInRight}
-                title="Log In"
+                title="Login"
                 size={36}
               />
-              <div>Log In</div>
+              <div>Login</div>
             </div>
             <div className="text-center mt-2">
               <p style={{ fontSize: "0.9em" }}>

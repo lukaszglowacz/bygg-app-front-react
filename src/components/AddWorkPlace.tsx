@@ -29,19 +29,19 @@ const AddWorkPlace: React.FC = () => {
   const validate = (): boolean => {
     let newErrors: { [key: string]: string } = {};
     if (!workplace.street)
-      newErrors = { ...newErrors, street: "Street is required." };
+      newErrors = { ...newErrors, street: "Street required" };
     if (!workplace.street_number.match(/^\d+$/))
       newErrors = {
         ...newErrors,
-        street_number: "The street number must be a number.",
+        street_number: "Street number must be numeric",
       };
     if (!workplace.postal_code.match(/^\d{3}\s\d{2}$/))
       newErrors = {
         ...newErrors,
-        postal_code: "Zip code must be in the format 'XXX XX'.",
+        postal_code: "Postal code must be 'XXX XX'",
       };
     if (!workplace.city)
-      newErrors = { ...newErrors, city: "City is required." };
+      newErrors = { ...newErrors, city: "City required" };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

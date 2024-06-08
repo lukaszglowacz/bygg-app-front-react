@@ -70,7 +70,7 @@ const EditWorkHour: React.FC = () => {
         setWorkSession(sessionRes.data);
         setWorkplaces(workplacesRes.data);
       } catch (error) {
-        setError("Failed to load data.");
+        setError("Error loading data");
       } finally {
         setLoading(false);
       }
@@ -83,7 +83,7 @@ const EditWorkHour: React.FC = () => {
 
     if (workSession) {
       if (new Date(workSession.end_time) < new Date(workSession.start_time)) {
-        setError("End time cannot be earlier than start time.");
+        setError("End time must be after start time");
         return;
       }
 
@@ -97,7 +97,7 @@ const EditWorkHour: React.FC = () => {
           end_time,
         };
         await api.put(`/worksession/${id}`, updatedSession);
-        setToastMessage("Work session updated successfully.");
+        setToastMessage("Work session updated");
         setShowToast(true);
         setTimeout(() => {
           navigate(`/employee/${profile.id}/day/${date}`);
@@ -105,7 +105,7 @@ const EditWorkHour: React.FC = () => {
       } catch (err) {
         const error = err as AxiosError;
         setError(
-          `Failed to update session. ${error.response?.data || error.message}`
+          `Error updating session: ${error.response?.data || error.message}`
         );
         console.error(error);
       }

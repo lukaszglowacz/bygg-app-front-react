@@ -31,7 +31,7 @@ const EditWorkPlace: React.FC = () => {
         setWorkplace(response.data);
         setLoading(false);
       } catch (error) {
-        console.log("Failed to retrieve workplace data.", error);
+        console.log("Error loading workplace data", error);
         setLoading(false);
       }
     };
@@ -45,16 +45,16 @@ const EditWorkPlace: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!workplace.street) {
-      newErrors.street = "Street is required.";
+      newErrors.street = "Street is required";
     }
     if (!workplace.street_number.match(/^\d+$/)) {
-      newErrors.street_number = "The street number must be a number.";
+      newErrors.street_number = "Street number must be numeric";
     }
     if (!workplace.postal_code.match(/^\d{3}\s\d{2}$/)) {
-      newErrors.postal_code = "Postal code must be in the format 'XXX XX'.";
+      newErrors.postal_code = "Invalid postal code format. Use 'XXX XX'";
     }
     if (!workplace.city) {
-      newErrors.city = "City is required.";
+      newErrors.city = "City is required";
     }
 
     setErrors(newErrors);
@@ -71,14 +71,14 @@ const EditWorkPlace: React.FC = () => {
 
     try {
       await api.put(`/workplace/${id}/`, workplace);
-      setToastMessage("The workplace has been updated.");
+      setToastMessage("Workplace updated");
       setShowToast(true);
       setTimeout(() => {
         navigate("/work-places");
       }, 3000);
     } catch (error) {
-      console.error("An error occurred while updating the workplace: ", error);
-      setToastMessage("An error occurred while updating the workplace.");
+      console.error("Error updating workplace: ", error);
+      setToastMessage("Error updating workplace");
       setShowToast(true);
     }
   };

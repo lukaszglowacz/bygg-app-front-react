@@ -62,27 +62,27 @@ const RegisterUser: React.FC = () => {
   const validateForm = () => {
     const newErrors: FieldErrors = {};
     if (!formData.email) {
-      newErrors.email = ["Email is required."];
+      newErrors.email = ["Email is required"];
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = ["Invalid email address."];
+      newErrors.email = ["Invalid email format"];
     }
 
     if (!formData.password) {
-      newErrors.password = ["Password is required."];
+      newErrors.password = ["Password is required"];
     }
 
     if (!formData.first_name) {
-      newErrors.first_name = ["First name is required."];
+      newErrors.first_name = ["First name is required"];
     }
 
     if (!formData.last_name) {
-      newErrors.last_name = ["Last name is required."];
+      newErrors.last_name = ["Last name is required"];
     }
 
     if (!formData.personnummer) {
-      newErrors.personnummer = ["Personnummer is required."];
+      newErrors.personnummer = ["Personnummer is required"];
     } else if (!/^\d{6}-\d{4}$/.test(formData.personnummer)) {
-      newErrors.personnummer = ["Personnummer must be in format YYMMDD-XXXX."];
+      newErrors.personnummer = ["Invalid personnummer format, expected: YYMMDD-XXXX"];
     }
 
     setErrors(newErrors);
@@ -99,13 +99,13 @@ const RegisterUser: React.FC = () => {
     try {
       const response = await api.post("/register/", formData);
       if (response.status === 201) {
-        setToastMessage("Registration successful.");
+        setToastMessage("Registration completed");
         setShowToast(true);
         setTimeout(() => {
           navigate("/login");
         }, 3000); // Opóźnienie 3 sekundy przed przekierowaniem
       } else {
-        throw new Error("Unsuccessful registration attempt");
+        throw new Error("Failed to register");
       }
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
@@ -113,7 +113,7 @@ const RegisterUser: React.FC = () => {
       } else {
         setErrors({
           general: [
-            "Registration failed. Please check your details and try again.",
+            "Registration failed. Please try again",
           ],
         });
       }

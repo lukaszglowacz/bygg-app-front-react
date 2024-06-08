@@ -16,8 +16,8 @@ export const useWorkTimeDataById = (id: number) => {
         setError("No work session found with the given ID");
       }
     } catch (error) {
-      setError("Error fetching work session");
-      console.error("Error fetching work session data", error);
+      setError("Failed to load work session");
+      console.error("Failed to load work session: ", error);
     } finally {
       setIsLoading(false);
     }

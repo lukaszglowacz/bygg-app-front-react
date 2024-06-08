@@ -12,7 +12,7 @@ const useAllLiveSessions = (): [Session[], boolean] => {
         const response = await api.get<Session[]>('/livesession/active/');
         setSessions(response.data || []);
       } catch (error) {
-        console.error('Error fetching all live sessions:', error);
+        console.error('Unable to load live sessions:', error);
         setSessions([]); // Resetujemy sesje w przypadku błędu
       } finally {
         setLoading(false);

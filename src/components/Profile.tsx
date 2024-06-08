@@ -59,11 +59,11 @@ const validatePassword = (password: string): string[] => {
     /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (password.length < 8) {
-    errors.push("The password must contain at least 8 characters.");
+    errors.push("Password must be at least 8 characters");
   }
   if (!regex_password.test(password)) {
     errors.push(
-      "The password must contain at least one uppercase letter, one number, and one special character."
+      "Password must include an uppercase letter, a number, and a special character"
     );
   }
 
@@ -186,7 +186,7 @@ const ProfileComponent: React.FC = () => {
         setErrors({
           ...errors,
           personnummer: [
-            "Invalid personnummer format. Expected format: YYMMDD-XXXX.",
+            "Invalid personnummer format. Expected: YYMMDD-XXXX",
           ],
         });
         return;
@@ -200,7 +200,7 @@ const ProfileComponent: React.FC = () => {
       });
       await loadProfile();
       setProfile(response.data);
-      setToastMessage("The profile has been updated.");
+      setToastMessage("Profile updated");
       setShowToast(true);
 
       setTimeout(() => {
@@ -210,7 +210,7 @@ const ProfileComponent: React.FC = () => {
       console.error("An error occurred while updating the profile:", error);
       setErrors({
         ...errors,
-        general: ["Failed to update profile."],
+        general: ["Profile update failed"],
       });
     }
   };
@@ -221,7 +221,7 @@ const ProfileComponent: React.FC = () => {
     if (newPassword !== confirmPassword) {
       setErrors({
         ...errors,
-        password: ["New password and confirm password do not match."],
+        password: ["Passwords do not match"],
       });
       return;
     }
@@ -241,7 +241,7 @@ const ProfileComponent: React.FC = () => {
         new_password: newPassword,
         confirm_password: confirmPassword,
       });
-      setToastMessage("Password has been changed successfully.");
+      setToastMessage("Password changed successfully");
       setShowToast(true);
 
       setTimeout(() => {
@@ -253,7 +253,7 @@ const ProfileComponent: React.FC = () => {
       const axiosError = error as AxiosError<ErrorResponse>;
       const errorResponse = axiosError.response?.data;
       const errorMessage =
-        errorResponse?.detail || "Failed to change password.";
+        errorResponse?.detail || "Password change failed";
 
       setErrors({
         ...errors,
@@ -265,7 +265,7 @@ const ProfileComponent: React.FC = () => {
   const handleDeleteProfile = async (): Promise<void> => {
     try {
       await api.delete(`/accounts/user/delete/`); // Użyj endpointa z widoku Django do trwałego usunięcia użytkownika
-      setToastMessage("Profile has been deleted.");
+      setToastMessage("Profile deleted");
       setShowToast(true);
       setTimeout(() => {
         logout();
@@ -275,7 +275,7 @@ const ProfileComponent: React.FC = () => {
       console.error("An error occurred while deleting the profile:", error);
       setErrors({
         ...errors,
-        general: ["Failed to delete profile."],
+        general: ["Profile deletion failed"],
       });
     }
   };
@@ -593,7 +593,7 @@ const ProfileComponent: React.FC = () => {
                 </h5>
                 <p className="text-muted text-center">
                   Once you delete your account, there is no going back. Please
-                  be certain.
+                  be certain
                 </p>
                 <div className="d-flex justify-content-around mt-3">
                   <div className="text-center">
@@ -617,16 +617,16 @@ const ProfileComponent: React.FC = () => {
         onHide={() => setShowDeleteModal(false)}
         onConfirm={handleConfirmFirstDelete}
       >
-        <p>Are you sure you want to delete your account?</p>
+        <p>Confirm account deletion</p>
       </ConfirmModal>
       <ConfirmModal
         show={showFinalDeleteModal}
         onHide={() => setShowFinalDeleteModal(false)}
         onConfirm={handleDeleteProfile}
       >
-        <p>This action is irreversible and will delete all your data permanently.</p>
+        <p>This action will permanently delete all your data</p>
         <p className="text-danger">
-          You will no longer have access to your account and all associated data will be lost.
+          You will no longer have access to your account and all associated data will be lost
         </p>
       </ConfirmModal>
       <ToastNotification

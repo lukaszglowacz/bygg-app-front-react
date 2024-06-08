@@ -2,8 +2,26 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { ProfileWorksession, Profile } from "../api/interfaces/types";
-import { Container, Row, Col, Card, Alert, Button, ListGroup } from "react-bootstrap";
-import { House, ClockHistory, ClockFill, HourglassSplit, PersonBadge, Envelope, PersonCircle, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Alert,
+  Button,
+  ListGroup,
+} from "react-bootstrap";
+import {
+  House,
+  ClockHistory,
+  ClockFill,
+  HourglassSplit,
+  PersonBadge,
+  Envelope,
+  PersonCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "react-bootstrap-icons";
 import { sumTotalTimeForProfile } from "../utils/timeUtils";
 import { formatTime } from "../utils/dateUtils"; // Importing dateUtils
 import Loader from "./Loader";
@@ -22,7 +40,9 @@ const WorkHourByDay: React.FC = () => {
     const fetchSessionsByDay = async () => {
       try {
         setLoading(true);
-        const response = await api.get<ProfileWorksession[]>("/profile/worksessions");
+        const response = await api.get<ProfileWorksession[]>(
+          "/profile/worksessions"
+        );
         const daySessions = getSessionsForDate(response.data, date);
         if (daySessions.length > 0) {
           setProfile(daySessions[0].profile);
@@ -33,7 +53,7 @@ const WorkHourByDay: React.FC = () => {
         setTotalTime(sumTotalTimeForProfile(daySessions));
         setLoading(false);
       } catch (error: any) {
-        setError("Failed to retrieve the work session for this day.");
+        setError("Unable to load today's work sessions");
         setLoading(false);
       }
     };
@@ -41,7 +61,10 @@ const WorkHourByDay: React.FC = () => {
     fetchSessionsByDay();
   }, [date]);
 
-  const getSessionsForDate = (sessions: ProfileWorksession[], date?: string) => {
+  const getSessionsForDate = (
+    sessions: ProfileWorksession[],
+    date?: string
+  ) => {
     if (!date) return [];
     const targetDate = moment.tz(date, "Europe/Stockholm");
     const sessionsForDate: ProfileWorksession[] = [];
@@ -53,36 +76,47 @@ const WorkHourByDay: React.FC = () => {
       let currentStart = start.clone();
 
       while (currentStart.isBefore(end)) {
-        const sessionEndOfDay = currentStart.clone().endOf('day');
-        const sessionEnd = end.isBefore(sessionEndOfDay) ? end : sessionEndOfDay;
+        const sessionEndOfDay = currentStart.clone().endOf("day");
+        const sessionEnd = end.isBefore(sessionEndOfDay)
+          ? end
+          : sessionEndOfDay;
 
-        if (currentStart.isSame(targetDate, 'day')) {
+        if (currentStart.isSame(targetDate, "day")) {
           sessionsForDate.push({
             ...session,
             start_time: currentStart.toISOString(),
             end_time: sessionEnd.toISOString(),
             total_time: calculateTotalTime(currentStart, sessionEnd),
           });
-        } else if (currentStart.isBefore(targetDate) && sessionEnd.isAfter(targetDate)) {
-          const fullDaySessionStart = targetDate.clone().startOf('day');
-          const fullDaySessionEnd = targetDate.clone().endOf('day');
+        } else if (
+          currentStart.isBefore(targetDate) &&
+          sessionEnd.isAfter(targetDate)
+        ) {
+          const fullDaySessionStart = targetDate.clone().startOf("day");
+          const fullDaySessionEnd = targetDate.clone().endOf("day");
 
           sessionsForDate.push({
             ...session,
             start_time: fullDaySessionStart.toISOString(),
             end_time: fullDaySessionEnd.toISOString(),
-            total_time: calculateTotalTime(fullDaySessionStart, fullDaySessionEnd),
+            total_time: calculateTotalTime(
+              fullDaySessionStart,
+              fullDaySessionEnd
+            ),
           });
         }
 
-        currentStart = sessionEnd.clone().add(1, 'second');
+        currentStart = sessionEnd.clone().add(1, "second");
       }
     });
 
     return sessionsForDate;
   };
 
-  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+  const calculateTotalTime = (
+    start: moment.Moment,
+    end: moment.Moment
+  ): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = Math.floor(duration.minutes());
@@ -94,7 +128,7 @@ const WorkHourByDay: React.FC = () => {
       console.error("Date is undefined");
       return;
     }
-    const currentDate = moment.tz(date, "Europe/Stockholm").add(offset, 'days');
+    const currentDate = moment.tz(date, "Europe/Stockholm").add(offset, "days");
     navigate(`/work-hours/day/${currentDate.format("YYYY-MM-DD")}`);
   };
 
@@ -104,7 +138,10 @@ const WorkHourByDay: React.FC = () => {
         <Row className="justify-content-center mt-3">
           <Col md={6}>
             <Card className="mt-3 mb-3">
-              <Card.Header as="h6" className="d-flex justify-content-center align-items-center">
+              <Card.Header
+                as="h6"
+                className="d-flex justify-content-center align-items-center"
+              >
                 Daily statement
               </Card.Header>
               <Card.Body>
@@ -141,7 +178,10 @@ const WorkHourByDay: React.FC = () => {
             <Col className="text-center">
               {date ? (
                 <>
-                  <div className="font-weight-bold" style={{ fontSize: "14px" }}>
+                  <div
+                    className="font-weight-bold"
+                    style={{ fontSize: "14px" }}
+                  >
                     {moment.tz(date, "Europe/Stockholm").format("D MMMM YYYY")}
                   </div>
                   <small className="text-muted">
@@ -172,9 +212,7 @@ const WorkHourByDay: React.FC = () => {
       {!loading && !error && !sessions.length && (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
-            <Alert variant="warning">
-              There are no work sessions for this day.
-            </Alert>
+            <Alert variant="warning">No work sessions found for this day</Alert>
           </Col>
         </Row>
       )}
@@ -186,13 +224,17 @@ const WorkHourByDay: React.FC = () => {
                 <ListGroup.Item className="mb-2 small">
                   <Row className="align-items-center">
                     <Col xs={12}>
-                      <House className="me-2" /> {session.workplace.street} {session.workplace.street_number}, {session.workplace.postal_code} {session.workplace.city}
+                      <House className="me-2" /> {session.workplace.street}{" "}
+                      {session.workplace.street_number},{" "}
+                      {session.workplace.postal_code} {session.workplace.city}
                     </Col>
                     <Col xs={12}>
-                      <ClockFill className="me-2" /> {formatTime(session.start_time)}
+                      <ClockFill className="me-2" />{" "}
+                      {formatTime(session.start_time)}
                     </Col>
                     <Col xs={12}>
-                      <ClockHistory className="me-2" /> {formatTime(session.end_time)}
+                      <ClockHistory className="me-2" />{" "}
+                      {formatTime(session.end_time)}
                     </Col>
                     <Col xs={12}>
                       <HourglassSplit className="me-2" /> {session.total_time}

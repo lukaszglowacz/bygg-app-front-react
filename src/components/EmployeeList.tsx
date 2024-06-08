@@ -25,7 +25,9 @@ const EmployeeList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
+    null
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +38,7 @@ const EmployeeList: React.FC = () => {
         setLoading(false);
       } catch (err: any) {
         console.error("Error fetching employees:", err);
-        setError("Failed to fetch employees");
+        setError("Error fetching employees");
         setLoading(false);
       }
     };
@@ -61,7 +63,7 @@ const EmployeeList: React.FC = () => {
         setShowModal(false);
       } catch (error) {
         console.error("Error ending session", error);
-        setError("Failed to end session");
+        setError("Error ending session");
       }
     }
   };
@@ -84,7 +86,9 @@ const EmployeeList: React.FC = () => {
                   )}
                   {employee.full_name}
                 </Accordion.Header>
-                <Accordion.Body style={{ fontSize: "0.9em", lineHeight: "1.6" }}>
+                <Accordion.Body
+                  style={{ fontSize: "0.9em", lineHeight: "1.6" }}
+                >
                   <div className="d-flex align-items-center justify-content-between mb-2">
                     <div className="d-flex align-items-center">
                       {employee.current_session_status === "Trwa" ? (
@@ -109,7 +113,9 @@ const EmployeeList: React.FC = () => {
                       </div>
                       <div className="d-flex align-items-center mb-2">
                         <HourglassSplit className="me-2" />
-                        <TimeElapsed startTime={employee.current_session_start_time} />
+                        <TimeElapsed
+                          startTime={employee.current_session_start_time}
+                        />
                       </div>
                     </>
                   )}
@@ -154,7 +160,7 @@ const EmployeeList: React.FC = () => {
         onHide={() => setShowModal(false)}
         onConfirm={handleEndSession}
       >
-        Are you sure you want to end this session?
+        Confirm ending this session
       </ConfirmModal>
     </Container>
   );

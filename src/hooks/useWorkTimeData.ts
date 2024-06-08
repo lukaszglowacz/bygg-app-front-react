@@ -15,7 +15,7 @@ export const useWorkTimeData = (userId = '') => {
       setHasMore(response.data.next !== null);
       setPage(prevPage => prevPage + 1);
     } catch (error) {
-      console.error("Error fetching work times", error);
+      console.error("Failed to load work times: ", error);
     }
   }, [userId, page]);
 

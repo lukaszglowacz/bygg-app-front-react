@@ -11,7 +11,7 @@ const NetworkStatusAlert: React.FC = () => {
 
   return (
     <Alert variant="warning" className="text-center">
-      Your internet connection is currently offline.
+      No internet connection
     </Alert>
   );
 };

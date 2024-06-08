@@ -42,7 +42,7 @@ const WorkHour: React.FC = () => {
       setTotalTime(totalTimeCalculated);
       setLoading(false);
     } catch (error: any) {
-      setError("Failed to fetch work sessions");
+      setError("Unable to load work sessions");
       setLoading(false);
     }
   };
@@ -274,7 +274,7 @@ const WorkHour: React.FC = () => {
       ) : (
         <Row className="justify-content-center mt-3">
           <Col md={6}>
-            <Alert variant="info" className="text-center">No work sessions available</Alert>
+            <Alert variant="info" className="text-center">No work sessions found</Alert>
           </Col>
         </Row>
       )}

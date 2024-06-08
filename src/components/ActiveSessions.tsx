@@ -17,7 +17,7 @@ const ActiveSessions: React.FC = () => {
         <Row className="justify-content-center">
           <Col md={6}>
             <Alert className="text-center" variant="info">
-              You are not currently working
+              No active sessions
             </Alert>
           </Col>
         </Row>
@@ -31,10 +31,10 @@ const ActiveSessions: React.FC = () => {
                     {session.status === "Trwa" && (
                       <i className="bi bi-check-circle-fill me-2"></i>
                     )}
-                    You are working now
+                    Currently working
                   </Card.Title>
-                  
-                  <Card.Text className="mb-0 small" >
+
+                  <Card.Text className="mb-0 small">
                     <i className="bi bi-geo-alt-fill me-2"></i>
                     {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
                   </Card.Text>

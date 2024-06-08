@@ -35,7 +35,7 @@ const ResetPasswordComponent: React.FC = () => {
 
     try {
       await api.post("/password-reset/", { email });
-      setToastMessage("Password reset email sent.");
+      setToastMessage("Password reset email sent");
       setShowToast(true);
       setTimeout(() => {
         navigate("/login");
@@ -49,7 +49,7 @@ const ResetPasswordComponent: React.FC = () => {
         }
       } else {
         setErrors({
-          general: ["Failed to send password reset email. Please try again later."],
+          general: ["Failed to send reset email. Please try again"],
         });
       }
     }

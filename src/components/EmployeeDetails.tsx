@@ -47,8 +47,8 @@ const EmployeeDetails: React.FC = () => {
       setTotalTime(totalTimeCalculated);
       setLoading(false);
     } catch (err: any) {
-      console.error("Error fetching employee details:", err);
-      setError("Failed to fetch employee details");
+      console.error("Error fetching employee details", err);
+      setError("Error fetching employee details");
       setLoading(false);
     }
   };
@@ -151,7 +151,7 @@ const EmployeeDetails: React.FC = () => {
             ))
           ) : (
             <Col xs={12} className="text-center p-2">
-              <small>No work session</small>
+              <small>No work sessions</small>
             </Col>
           )}
         </Row>
@@ -278,10 +278,10 @@ const EmployeeDetails: React.FC = () => {
         const blob = new Blob([response.data], { type: "application/pdf" });
         saveAs(blob, fileName);
       } else {
-        console.error("Employee data not available.");
+        console.error("Employee data unavailable");
       }
     } catch (err: any) {
-      console.error("Error downloading PDF:", err);
+      console.error("Failed to download PDF:", err);
     }
   };
 

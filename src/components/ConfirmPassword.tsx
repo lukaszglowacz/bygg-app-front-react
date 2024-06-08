@@ -1,17 +1,15 @@
 import React, { useState, ChangeEvent } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import {
-  Container,
-  Form,
-  Alert,
-  InputGroup,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Container, Form, Alert, InputGroup, Row, Col } from "react-bootstrap";
 import api from "../api/api";
 import ToastNotification from "./ToastNotification";
 import { AxiosError } from "axios";
-import { LockFill, KeyFill, EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import {
+  LockFill,
+  KeyFill,
+  EyeFill,
+  EyeSlashFill,
+} from "react-bootstrap-icons";
 import LoadingButton from "./LoadingButton";
 
 interface FieldErrors {
@@ -31,7 +29,8 @@ const ConfirmPassword: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [confirm_password, setConfirmPassword] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState<boolean>(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] =
+    useState<boolean>(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -50,11 +49,11 @@ const ConfirmPassword: React.FC = () => {
       /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (password.length < 8) {
-      errors.push("The password must contain at least 8 characters.");
+      errors.push("Password must have at least 8 characters");
     }
     if (!regex_password.test(password)) {
       errors.push(
-        "The password must contain at least one uppercase letter, one number, and one special character."
+        "Password must include an uppercase letter, a number, and a special character"
       );
     }
 
@@ -89,13 +88,13 @@ const ConfirmPassword: React.FC = () => {
       const axiosError = error as AxiosError<ErrorResponse>;
       if (axiosError.response && axiosError.response.status === 400) {
         setErrors({
-          general: ["Your password reset link has expired. If you still want to reset your password, click here"]
+          general: ["Password reset link expired. Click here to reset again"],
         });
       } else if (axiosError.response && axiosError.response.data) {
         setErrors(axiosError.response.data);
       } else {
         setErrors({
-          general: ["Failed to reset password. Please try again later."],
+          general: ["Failed to reset password. Try again later"],
         });
       }
     }
@@ -114,7 +113,13 @@ const ConfirmPassword: React.FC = () => {
       <Row className="justify-content-center">
         <Col md={6} className="mx-auto">
           <h2 className="text-center mb-4">Reset Password</h2>
-          <Form onSubmit={(e) => { e.preventDefault(); handleReset(); }} className="mt-3">
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleReset();
+            }}
+            className="mt-3"
+          >
             <Form.Group controlId="password" className="mb-3">
               <InputGroup>
                 <InputGroup.Text>
@@ -128,8 +133,15 @@ const ConfirmPassword: React.FC = () => {
                   onChange={handleChange}
                   isInvalid={!!errors.password}
                 />
-                <InputGroup.Text onClick={togglePasswordVisibility} style={{ cursor: "pointer" }}>
-                  {passwordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                <InputGroup.Text
+                  onClick={togglePasswordVisibility}
+                  style={{ cursor: "pointer" }}
+                >
+                  {passwordVisible ? (
+                    <EyeSlashFill size={20} />
+                  ) : (
+                    <EyeFill size={20} />
+                  )}
                 </InputGroup.Text>
               </InputGroup>
               {errors.password?.map((err, index) => (
@@ -152,8 +164,15 @@ const ConfirmPassword: React.FC = () => {
                   onChange={handleChange}
                   isInvalid={!!errors.confirm_password}
                 />
-                <InputGroup.Text onClick={toggleConfirmPasswordVisibility} style={{ cursor: "pointer" }}>
-                  {confirmPasswordVisible ? <EyeSlashFill size={20} /> : <EyeFill size={20} />}
+                <InputGroup.Text
+                  onClick={toggleConfirmPasswordVisibility}
+                  style={{ cursor: "pointer" }}
+                >
+                  {confirmPasswordVisible ? (
+                    <EyeSlashFill size={20} />
+                  ) : (
+                    <EyeFill size={20} />
+                  )}
                 </InputGroup.Text>
               </InputGroup>
               {errors.confirm_password?.map((err, index) => (
@@ -183,7 +202,8 @@ const ConfirmPassword: React.FC = () => {
           </Form>
           {errors.general && (
             <Alert variant="warning">
-              Your password reset link has expired. If you still want to reset your password, click <Link to="/reset-password">here</Link>.
+              Password reset link expired. Click{" "}
+              <Link to="/reset-password">here</Link> to reset again
             </Alert>
           )}
         </Col>

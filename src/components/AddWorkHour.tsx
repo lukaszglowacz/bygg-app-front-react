@@ -59,7 +59,7 @@ const AddWorkHour: React.FC = () => {
           setEmployee(responseEmployee.data);
         }
       } catch (error) {
-        setError("Failed to load data.");
+        setError("Unable to load data");
       } finally {
         setLoading(false);
       }
@@ -71,17 +71,17 @@ const AddWorkHour: React.FC = () => {
     setError(null);
 
     if (!isAuthenticated || !employeeId || !newSession.workplaceId) {
-      setError("You must be logged in and select a workplace.");
+      setError("Login and select a workplace");
       return;
     }
 
     if (!newSession.start_time || !newSession.end_time) {
-      setError("All fields are required.");
+      setError("Please fill in all fields");
       return;
     }
 
     if (new Date(newSession.end_time) < new Date(newSession.start_time)) {
-      setError("End time cannot be earlier than start time.");
+      setError("End time must be after start time");
       return;
     }
 
@@ -92,16 +92,16 @@ const AddWorkHour: React.FC = () => {
         start_time: newSession.start_time,
         end_time: newSession.end_time,
       });
-      setToastMessage("Work session added successfully.");
+      setToastMessage("Work session successfully added");
       setShowToast(true);
       setTimeout(() => {
         navigate(`/employee/${employeeId}/day/${date}`);
       }, 3000);
     } catch (error) {
       if (error instanceof Error) {
-        setError("Failed to add a work session. Error: " + error.message);
+        setError("Error adding work session: " + error.message);
       } else {
-        setError("Failed to add a work session for an unknown reason.");
+        setError("Unable to add work session");
       }
     }
   };
