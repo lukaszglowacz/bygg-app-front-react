@@ -24,7 +24,9 @@ const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [sessionsByDay, setSessionsByDay] = useState<Map<string, WorkSession[]>>(new Map());
+  const [sessionsByDay, setSessionsByDay] = useState<
+    Map<string, WorkSession[]>
+  >(new Map());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,7 +44,10 @@ const EmployeeDetails: React.FC = () => {
       const splitSessions = splitSessionsByDay(sessions);
       const sessionsMap = groupSessionsByDay(splitSessions);
       setSessionsByDay(sessionsMap);
-      const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
+      const filteredSessions = filterSessionsByMonth(
+        splitSessions,
+        currentDate
+      );
       const totalTimeCalculated = sumTotalTime(filteredSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
@@ -95,7 +100,10 @@ const EmployeeDetails: React.FC = () => {
     return splitSessions;
   };
 
-  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+  const calculateTotalTime = (
+    start: moment.Moment,
+    end: moment.Moment
+  ): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
@@ -119,15 +127,20 @@ const EmployeeDetails: React.FC = () => {
     const days = daysInMonth();
     return days.map((day) => {
       const daySessions = sessionsByDay.get(day) || [];
+      const dayOfWeek = moment(day).format("dddd"); // Dodanie nazwy dnia tygodnia
       return (
         <Row key={day} className="mb-3">
           <Col
             xs={12}
             className="d-flex justify-content-between align-items-center bg-light p-2"
           >
-            <div>{formatDate(day)}</div>
+            <div className="small">
+              {formatDate(day)} <span className="text-muted">{dayOfWeek}</span>
+            </div>
             <Button
-              onClick={() => navigate(`/employee/${id}/day/${day}`, { state: { id } })}
+              onClick={() =>
+                navigate(`/employee/${id}/day/${day}`, { state: { id } })
+              }
               variant="outline-success"
               size="sm"
             >
@@ -159,7 +172,9 @@ const EmployeeDetails: React.FC = () => {
     });
   };
 
-  const groupSessionsByDay = (sessions: WorkSession[]): Map<string, WorkSession[]> => {
+  const groupSessionsByDay = (
+    sessions: WorkSession[]
+  ): Map<string, WorkSession[]> => {
     const map = new Map<string, WorkSession[]>();
     sessions.forEach((session) => {
       const start = moment.utc(session.start_time).tz("Europe/Stockholm");
@@ -188,7 +203,10 @@ const EmployeeDetails: React.FC = () => {
     return map;
   };
 
-  const filterSessionsByMonth = (sessions: WorkSession[], date: Date): WorkSession[] => {
+  const filterSessionsByMonth = (
+    sessions: WorkSession[],
+    date: Date
+  ): WorkSession[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
 

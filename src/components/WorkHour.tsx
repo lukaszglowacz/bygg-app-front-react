@@ -93,10 +93,13 @@ const WorkHour: React.FC = () => {
     const days = daysInMonth();
     return days.map((day) => {
       const daySessions = sessionsByDay.get(day) || [];
+      const dayOfWeek = moment(day).format("dddd"); // Dodanie nazwy dnia tygodnia
       return (
         <Row key={day} className="mb-3">
           <Col xs={12} className="d-flex justify-content-between align-items-center bg-light p-2">
-            <div>{formatDate(day)}</div>
+            <div className="small">
+              {formatDate(day)} <span className="text-muted">{dayOfWeek}</span>
+            </div>
             <Button onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-secondary" size="sm">
               <ChevronRight />
             </Button>
