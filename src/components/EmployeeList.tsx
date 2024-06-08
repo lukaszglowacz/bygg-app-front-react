@@ -4,7 +4,17 @@ import Accordion from "react-bootstrap/Accordion";
 import api from "../api/api";
 import { Employee } from "../api/interfaces/types";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { HourglassSplit, Person, PersonFill, GeoAlt, CheckCircle, XCircle, Power, Clock, ClockHistory } from "react-bootstrap-icons";
+import {
+  HourglassSplit,
+  Person,
+  PersonFill,
+  GeoAlt,
+  CheckCircle,
+  XCircle,
+  Power,
+  Clock,
+  ClockHistory,
+} from "react-bootstrap-icons";
 import TimeElapsed from "./TimeElapsed";
 import Loader from "./Loader";
 import ConfirmModal from "./ConfirmModal";

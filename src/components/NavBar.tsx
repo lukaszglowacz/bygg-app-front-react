@@ -76,11 +76,9 @@ const NavbarComponent: React.FC = () => {
         setBackPath("/employees");
         setShowBackButton(true);
       } else if (matchPath({ path: "/employee/:id/day/:date", end: true }, location.pathname)) {
-        const searchParams = new URLSearchParams(location.search);
-        const employeeId = searchParams.get("employeeId");
-        const date = searchParams.get("date");
+        const { id } = matchPath("/employee/:id/day/:date", location.pathname)?.params || {};
         setCurrentTitle("Time Tracking\nDay View");
-        setBackPath(`/employee/${employeeId}/day/${date}`);
+        setBackPath(`/employees/${id}`);
         setShowBackButton(true);
       } else if (matchPath({ path: "/work-hours/day/:date", end: true }, location.pathname)) {
         setCurrentTitle("Time Tracking\nDay View");
