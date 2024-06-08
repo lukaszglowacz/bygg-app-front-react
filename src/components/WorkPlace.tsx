@@ -85,6 +85,9 @@ const WorkPlaceContainer: React.FC = () => {
       } catch (error) {
         console.error("Failed to delete the workplace", error);
         setShowModal(false);
+        setDeleteError(
+          "Cannot delete this workplace as it is currently in use. Please try again later."
+        );
       }
     }
   };
