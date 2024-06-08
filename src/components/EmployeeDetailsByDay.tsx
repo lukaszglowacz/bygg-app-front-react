@@ -131,7 +131,7 @@ const EmployeeDetailsByDay: React.FC = () => {
   };
 
   const handleEditSession = (sessionId: number) => {
-    navigate(`/edit-work-hour/${sessionId}?date=${date}`);
+    navigate(`/edit-work-hour/${sessionId}?date=${date}&employeeId=${id}`);
   };
 
   const handleDeleteSession = (sessionId: number) => {

@@ -76,9 +76,11 @@ const NavbarComponent: React.FC = () => {
         setBackPath("/employees");
         setShowBackButton(true);
       } else if (matchPath({ path: "/employee/:id/day/:date", end: true }, location.pathname)) {
-        const { id } = matchPath("/employee/:id/day/:date", location.pathname)?.params || {};
+        const searchParams = new URLSearchParams(location.search);
+        const employeeId = searchParams.get("employeeId");
+        const date = searchParams.get("date");
         setCurrentTitle("Time Tracking\nDay View");
-        setBackPath(`/employees/${id}`);
+        setBackPath(`/employee/${employeeId}/day/${date}`);
         setShowBackButton(true);
       } else if (matchPath({ path: "/work-hours/day/:date", end: true }, location.pathname)) {
         setCurrentTitle("Time Tracking\nDay View");
@@ -92,8 +94,11 @@ const NavbarComponent: React.FC = () => {
         setBackPath(`/employee/${employeeId}/day/${date}`);
         setShowBackButton(true);
       } else if (matchPath({ path: "/edit-work-hour/:id", end: true }, location.pathname)) {
+        const searchParams = new URLSearchParams(location.search);
+        const employeeId = searchParams.get("employeeId");
+        const date = searchParams.get("date");
         setCurrentTitle("Edit Work Hour");
-        setBackPath("/work-hours");
+        setBackPath(`/employee/${employeeId}/day/${date}`);
         setShowBackButton(true);
       } else if (matchPath({ path: "/edit-work-place/:id", end: true }, location.pathname)) {
         setCurrentTitle("Edit Work Place");

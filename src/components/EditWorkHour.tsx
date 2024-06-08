@@ -3,7 +3,6 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
   Form,
-  Button,
   Col,
   Row,
   Alert,
@@ -13,7 +12,6 @@ import {
   GeoAltFill,
   CalendarEventFill,
   Calendar2CheckFill,
-  Trash,
   Save2,
 } from "react-bootstrap-icons";
 import api from "../api/api";
@@ -43,6 +41,12 @@ interface WorkSession {
   start_time: string;
   end_time: string;
 }
+
+const formatDateTimeLocal = (date: string) => {
+  const d = new Date(date);
+  const pad = (num: number) => (num < 10 ? `0${num}` : num);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 const EditWorkHour: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -132,23 +136,20 @@ const EditWorkHour: React.FC = () => {
     });
   };
 
-  const handleDeleteClick = async (sessionId: number) => {
-    try {
-      await api.delete(`/worksession/${sessionId}`);
-      navigate(`/employee/${workSession?.profile.id}/day/${date}`);
-    } catch (err) {
-      const error = err as AxiosError;
-      setError(
-        `Failed to delete session. ${error.response?.data || error.message}`
-      );
-      console.error(error);
-    }
-  };
-
   if (loading) return <Loader />;
 
   return (
     <Container className="mt-4">
+      {workSession && (
+        <Row className="justify-content-center mt-3">
+          <Col md={6}>
+            <Alert variant="info" className="text-center">
+              Editing work session for: <br />
+              <strong>{workSession.profile.full_name}</strong>
+            </Alert>
+          </Col>
+        </Row>
+      )}
       <Row>
         <Col md={6} className="mx-auto">
           <Form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
@@ -178,7 +179,7 @@ const EditWorkHour: React.FC = () => {
               <Form.Control
                 type="datetime-local"
                 name="start_time"
-                value={workSession?.start_time || ""}
+                value={workSession ? formatDateTimeLocal(workSession.start_time) : ""}
                 onChange={handleChange}
                 required
               />
@@ -191,7 +192,7 @@ const EditWorkHour: React.FC = () => {
               <Form.Control
                 type="datetime-local"
                 name="end_time"
-                value={workSession?.end_time || ""}
+                value={workSession ? formatDateTimeLocal(workSession.end_time) : ""}
                 onChange={handleChange}
                 required
               />
@@ -214,19 +215,6 @@ const EditWorkHour: React.FC = () => {
                       size={24}
                     />
                     <div>Save</div>
-                  </div>
-                  <div className="text-center">
-                    <Button
-                      variant="danger"
-                      className="btn-sm p-0"
-                      onClick={() =>
-                        workSession && handleDeleteClick(workSession.id)
-                      }
-                      title="Delete"
-                    >
-                      <Trash size={24} />
-                    </Button>
-                    <div>Delete</div>
                   </div>
                 </div>
               </Col>
