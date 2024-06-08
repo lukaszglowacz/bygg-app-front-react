@@ -27,22 +27,22 @@ const ActiveSessions: React.FC = () => {
             {sessions.map((session) => (
               <Card key={session.id} className="mb-4 shadow-sm">
                 <Card.Body>
-                  <Card.Title className="text-success mb-3 ">
+                  <Card.Title className="text-success mb-2 small">
                     {session.status === "Trwa" && (
                       <i className="bi bi-check-circle-fill me-2"></i>
                     )}
                     Currently working
                   </Card.Title>
 
-                  <Card.Text className="mb-0 small">
+                  <Card.Text className="mb-1 small">
                     <i className="bi bi-geo-alt-fill me-2"></i>
                     {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
                   </Card.Text>
-                  <Card.Text className="mb-0 small">
+                  <Card.Text className="mb-1 small">
                     <i className="bi bi-calendar-event-fill me-2"></i>
                     {formatDate(session.start_time)}
                   </Card.Text>
-                  <Card.Text className="mb-0 small">
+                  <Card.Text className="mb-1 small">
                     <i className="bi bi-clock-fill me-2"></i>
                     {formatTime(session.start_time)}
                   </Card.Text>
