@@ -88,6 +88,7 @@ const EditWorkHour: React.FC = () => {
           start_time,
           end_time,
         };
+        console.log("Updated session data:", updatedSession); // Debugowanie danych
         await api.put(`/worksession/${id}`, updatedSession);
         setToastMessage("Work session updated");
         setShowToast(true);
