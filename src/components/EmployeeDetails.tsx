@@ -15,8 +15,8 @@ import { FaDownload } from "react-icons/fa";
 import MonthYearDisplay from "./MonthYearDisplay";
 import { saveAs } from "file-saver";
 import Loader from "./Loader";
-import { formatDate } from "../utils/dateUtils"; // Importowanie funkcji formatujących
-import { sumTotalTime } from "../utils/timeUtils"; // Importowanie funkcji obliczającej całkowity czas
+import { formatDate } from "../utils/dateUtils";
+import { sumTotalTime } from "../utils/timeUtils";
 import moment from "moment-timezone";
 import LoadingButton from "./LoadingButton";
 
@@ -114,7 +114,7 @@ const EmployeeDetails: React.FC = () => {
     const days = daysInMonth();
     return days.map((day) => {
       const daySessions = sessionsByDay.get(day) || [];
-      const dayOfWeek = moment(day).format("dddd"); // Dodanie nazwy dnia tygodnia
+      const dayOfWeek = moment(day).format("dddd");
       return (
         <Row key={day} className="mb-3">
           <Col

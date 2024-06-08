@@ -18,16 +18,14 @@ import {
 import TimeElapsed from "./TimeElapsed";
 import Loader from "./Loader";
 import ConfirmModal from "./ConfirmModal";
-import { formatDateTime } from "../utils/dateUtils"; // Importowanie funkcji formatujących
+import { formatDateTime } from "../utils/dateUtils";
 
 const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
-    null
-  );
+  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
