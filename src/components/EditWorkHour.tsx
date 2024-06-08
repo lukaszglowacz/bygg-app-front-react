@@ -29,7 +29,7 @@ interface Workplace {
 interface WorkSession {
   id: number;
   profile: Profile;
-  workplace: Workplace;
+  workplace: string;
   start_time: string;
   end_time: string;
 }
@@ -84,7 +84,7 @@ const EditWorkHour: React.FC = () => {
         const updatedSession = {
           id,
           profile: profile.id,
-          workplace: workplace.id,
+          workplace: workplace,
           start_time: new Date(start_time).toISOString(),
           end_time: new Date(end_time).toISOString(),
         };
@@ -155,7 +155,7 @@ const EditWorkHour: React.FC = () => {
               </InputGroup.Text>
               <Form.Select
                 name="workplace"
-                value={workSession?.workplace.id || ""}
+                value={workSession?.workplace || ""}
                 onChange={handleChange}
                 required
               >
