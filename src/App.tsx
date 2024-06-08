@@ -43,7 +43,7 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<ProtectedRoute path="/profile" element={ProfileComponent} />} />
-                <Route path="/login" element={<LoginComponent />} />
+                <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <LoginComponent />} />
                 <Route path="/add-work-hour" element={<ProtectedRoute path="/add-work-hour" element={AddWorkHour} />} />
                 <Route path="/work-hours" element={<ProtectedRoute path="/work-hours" element={WorkHour} />} />
                 <Route path="/work-hours/day/:date" element={<ProtectedRoute path="/work-hours/day/:date" element={WorkHourByDay} />} />
@@ -58,7 +58,7 @@ const App: React.FC = () => {
                 <Route path="/employee/:id/day/:date" element={<ProtectedRoute path="/employee/:id/day/:date" element={EmployeeDetailsByDay} />} />
                 <Route path="/reset-password" element={<ResetPasswordComponent />} />
                 <Route path="/reset-password/:uidb64/:token" element={<ConfirmPassword />} />
-                <Route path="*" element={<Navigate to="/login" />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </Col>
           </Row>
