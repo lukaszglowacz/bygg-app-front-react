@@ -23,22 +23,22 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           <div className="text-center">
             <Button
               variant="outline-success"
-              className="btn-sm p-0"
+              className="btn-sm p-0 border-0"
               onClick={onConfirm}
               title="Yes"
             >
-              <CheckSquareFill size={24} />
+              <CheckSquareFill size={48} />
             </Button>
             <div>Yes</div>
           </div>
           <div className="text-center">
             <Button
               variant="outline-danger"
-              className="btn-sm p-0"
+              className="btn-sm p-0 border-0"
               onClick={onHide}
               title="No"
             >
-              <XSquareFill size={24} />
+              <XSquareFill size={48} />
             </Button>
             <div>No</div>
           </div>
