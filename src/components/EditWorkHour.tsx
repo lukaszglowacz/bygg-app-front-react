@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
-  Container,
-  Form,
-  Col,
-  Row,
-  Alert,
-  InputGroup,
+  Container, Form, Col, Row, Alert, InputGroup,
 } from "react-bootstrap";
 import {
-  GeoAltFill,
-  CalendarEventFill,
-  Calendar2CheckFill,
-  Save2,
+  GeoAltFill, CalendarEventFill, Calendar2CheckFill, Save2,
 } from "react-bootstrap-icons";
 import api from "../api/api";
 import { AxiosError } from "axios";
@@ -104,10 +96,11 @@ const EditWorkHour: React.FC = () => {
         }, 3000);
       } catch (err) {
         const error = err as AxiosError;
-        setError(
-          `Error updating session: ${error.response?.data || error.message}`
-        );
-        console.error(error);
+        console.error("Error updating session:", error.response?.data || error.message);
+        const errorMessage = error.response?.data
+          ? JSON.stringify(error.response.data)
+          : error.message;
+        setError(`Error updating session: ${errorMessage}`);
       }
     }
   };
