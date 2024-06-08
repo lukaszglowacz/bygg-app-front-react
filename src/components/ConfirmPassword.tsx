@@ -145,7 +145,7 @@ const ConfirmPassword: React.FC = () => {
                 </InputGroup.Text>
               </InputGroup>
               {errors.password?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">
+                <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                   {err}
                 </Alert>
               ))}
@@ -176,7 +176,7 @@ const ConfirmPassword: React.FC = () => {
                 </InputGroup.Text>
               </InputGroup>
               {errors.confirm_password?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">
+                <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                   {err}
                 </Alert>
               ))}
@@ -201,7 +201,7 @@ const ConfirmPassword: React.FC = () => {
             </div>
           </Form>
           {errors.general && (
-            <Alert variant="warning">
+            <Alert variant="warning" className="text-center">
               Password reset link expired. Click{" "}
               <Link to="/reset-password">here</Link> to reset again
             </Alert>

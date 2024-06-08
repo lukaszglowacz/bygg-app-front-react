@@ -131,7 +131,7 @@ const RegisterUser: React.FC = () => {
           <h2 className="mb-3 text-center">Sign Up</h2>
           {errors.general &&
             errors.general.map((error, index) => (
-              <Alert key={index} variant="danger">
+              <Alert key={index} variant="danger" className="text-center">
                 {error}
               </Alert>
             ))}
@@ -151,7 +151,7 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.email?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">
+                <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                   {err}
                 </Alert>
               ))}
@@ -182,7 +182,7 @@ const RegisterUser: React.FC = () => {
                 </InputGroup.Text>
               </InputGroup>
               {errors.password?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">
+                <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                   {err}
                 </Alert>
               ))}
@@ -203,7 +203,7 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.first_name?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">
+                <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                   {err}
                 </Alert>
               ))}
@@ -224,7 +224,7 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.last_name?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">
+                <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                   {err}
                 </Alert>
               ))}
@@ -245,7 +245,7 @@ const RegisterUser: React.FC = () => {
                 />
               </InputGroup>
               {errors.personnummer?.map((err, index) => (
-                <Alert key={index} variant="warning" className="mt-2 w-100">
+                <Alert key={index} variant="warning" className="mt-2 w-100 text-center">
                   {err}
                 </Alert>
               ))}

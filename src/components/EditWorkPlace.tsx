@@ -109,7 +109,7 @@ const EditWorkPlace: React.FC = () => {
                     isInvalid={!!errors.street}
                   />
                   <Form.Control.Feedback type="invalid">
-                    <Alert variant="warning">{errors.street}</Alert>
+                    <Alert variant="warning" className="text-center">{errors.street}</Alert>
                   </Form.Control.Feedback>
                 </div>
               </Col>
@@ -132,7 +132,7 @@ const EditWorkPlace: React.FC = () => {
                     isInvalid={!!errors.street_number}
                   />
                   <Form.Control.Feedback type="invalid">
-                    <Alert variant="warning">{errors.street_number}</Alert>
+                    <Alert variant="warning" className="text-center">{errors.street_number}</Alert>
                   </Form.Control.Feedback>
                 </div>
               </Col>
@@ -155,7 +155,7 @@ const EditWorkPlace: React.FC = () => {
                     isInvalid={!!errors.postal_code}
                   />
                   <Form.Control.Feedback type="invalid">
-                    <Alert variant="warning">{errors.postal_code}</Alert>
+                    <Alert variant="warning" className="text-center">{errors.postal_code}</Alert>
                   </Form.Control.Feedback>
                 </div>
               </Col>
@@ -178,7 +178,7 @@ const EditWorkPlace: React.FC = () => {
                     isInvalid={!!errors.city}
                   />
                   <Form.Control.Feedback type="invalid">
-                    <Alert variant="warning">{errors.city}</Alert>
+                    <Alert variant="warning" className="text-center">{errors.city}</Alert>
                   </Form.Control.Feedback>
                 </div>
               </Col>

@@ -154,7 +154,7 @@ const WorkPlaceContainer: React.FC = () => {
                       </div>
                     </div>
                     {deleteError && (
-                      <Alert variant="danger" className="mt-3">
+                      <Alert variant="danger" className="mt-3 text-center">
                         {deleteError}
                       </Alert>
                     )}

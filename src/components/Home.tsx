@@ -216,7 +216,7 @@ const Home: React.FC = () => {
       </Row>
       <Row className="justify-content-md-center">
         <Col md={4} className="text-center">
-          {alertInfo && <Alert variant="info">{alertInfo}</Alert>}
+          {alertInfo && <Alert variant="info" className="text-center">{alertInfo}</Alert>}
         </Col>
       </Row>
 

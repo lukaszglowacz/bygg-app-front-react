@@ -93,7 +93,7 @@ const AddWorkPlace: React.FC = () => {
                   />
                 </div>
                 {errors.street && (
-                  <Alert variant="warning" className="mt-2">
+                  <Alert variant="warning" className="mt-2 text-center">
                     {errors.street}
                   </Alert>
                 )}
@@ -119,7 +119,7 @@ const AddWorkPlace: React.FC = () => {
                   />
                 </div>
                 {errors.street_number && (
-                  <Alert variant="warning" className="mt-2">
+                  <Alert variant="warning" className="mt-2 text-center">
                     {errors.street_number}
                   </Alert>
                 )}
@@ -145,7 +145,7 @@ const AddWorkPlace: React.FC = () => {
                   />
                 </div>
                 {errors.postal_code && (
-                  <Alert variant="warning" className="mt-2">
+                  <Alert variant="warning" className="mt-2 text-center">
                     {errors.postal_code}
                   </Alert>
                 )}
@@ -171,7 +171,7 @@ const AddWorkPlace: React.FC = () => {
                   />
                 </div>
                 {errors.city && (
-                  <Alert variant="warning" className="mt-2">
+                  <Alert variant="warning" className="mt-2 text-center">
                     {errors.city}
                   </Alert>
                 )}

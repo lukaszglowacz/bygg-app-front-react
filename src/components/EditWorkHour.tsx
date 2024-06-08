@@ -198,7 +198,7 @@ const EditWorkHour: React.FC = () => {
               />
             </InputGroup>
             {error && (
-              <Alert variant="danger" className="mt-3">
+              <Alert variant="danger" className="mt-3 text-center">
                 {error}
               </Alert>
             )}

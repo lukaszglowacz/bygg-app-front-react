@@ -61,7 +61,7 @@ const ResetPasswordComponent: React.FC = () => {
         <Col md={6} className="mx-auto">
           <h2 className="text-center mb-4">Reset Password</h2>
           {errors.general && errors.general.map((error, index) => (
-            <Alert key={index} variant="danger">{error}</Alert>
+            <Alert key={index} variant="danger" className="text-center">{error}</Alert>
           ))}
           <Form onSubmit={(e) => { e.preventDefault(); handleReset(); }} className="mt-3">
             <Form.Group controlId="email" className="mb-3">
@@ -78,7 +78,7 @@ const ResetPasswordComponent: React.FC = () => {
                   isInvalid={!!errors.email}
                 />
                 {errors.email && errors.email.map((err, index) => (
-                  <Alert key={index} variant="warning" className="mt-2 w-100">{err}</Alert>
+                  <Alert key={index} variant="warning" className="mt-2 w-100 text-center">{err}</Alert>
                 ))}
               </InputGroup>
             </Form.Group>

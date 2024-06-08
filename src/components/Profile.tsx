@@ -366,7 +366,7 @@ const ProfileComponent: React.FC = () => {
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.firstName && (
-                          <Alert variant="warning" className="mt-2 w-100">
+                          <Alert variant="warning" className="mt-2 w-100 text-center">
                             {errors.firstName}
                           </Alert>
                         )}
@@ -393,7 +393,7 @@ const ProfileComponent: React.FC = () => {
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.lastName && (
-                          <Alert variant="warning" className="mt-2 w-100">
+                          <Alert variant="warning" className="mt-2 w-100 text-center">
                             {errors.lastName}
                           </Alert>
                         )}
@@ -420,7 +420,7 @@ const ProfileComponent: React.FC = () => {
                       />
                       <Form.Control.Feedback type="invalid">
                         {errors.personnummer && (
-                          <Alert variant="warning" className="mt-2 w-100">
+                          <Alert variant="warning" className="mt-2 w-100 text-center">
                             {errors.personnummer}
                           </Alert>
                         )}
@@ -428,7 +428,7 @@ const ProfileComponent: React.FC = () => {
                     </InputGroup>
                   </Form.Group>
                   {errors.general && (
-                    <Alert variant="warning">{errors.general}</Alert>
+                    <Alert variant="warning" className="text-center">{errors.general}</Alert>
                   )}
                   <div className="d-flex justify-content-around mt-3">
                     <div className="text-center">
@@ -485,7 +485,7 @@ const ProfileComponent: React.FC = () => {
                       </InputGroup.Text>
                       <Form.Control.Feedback type="invalid">
                         {errors.oldPassword && (
-                          <Alert variant="warning" className="mt-2 w-100">
+                          <Alert variant="warning" className="mt-2 w-100 text-center">
                             {errors.oldPassword}
                           </Alert>
                         )}
@@ -518,7 +518,7 @@ const ProfileComponent: React.FC = () => {
                       </InputGroup.Text>
                       <Form.Control.Feedback type="invalid">
                         {errors.newPassword && (
-                          <Alert variant="warning" className="mt-2 w-100">
+                          <Alert variant="warning" className="mt-2 w-100 text-center">
                             {errors.newPassword}
                           </Alert>
                         )}
@@ -558,7 +558,7 @@ const ProfileComponent: React.FC = () => {
                       </InputGroup.Text>
                       <Form.Control.Feedback type="invalid">
                         {errors.confirmPassword && (
-                          <Alert variant="warning" className="mt-2 w-100">
+                          <Alert variant="warning" className="mt-2 w-100 text-center">
                             {errors.confirmPassword}
                           </Alert>
                         )}
@@ -566,7 +566,7 @@ const ProfileComponent: React.FC = () => {
                     </InputGroup>
                   </Form.Group>
                   {errors.password && (
-                    <Alert variant="warning">{errors.password}</Alert>
+                    <Alert variant="warning" className="text-center">{errors.password}</Alert>
                   )}
                   <div className="d-flex justify-content-around mt-3">
                     <div className="text-center">
