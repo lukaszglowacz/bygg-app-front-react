@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError, AxiosResponse, AxiosRequestConfig } from "axios";
 
 const api: AxiosInstance = axios.create({
-  baseURL: "http://192.168.0.69:8000",
+  baseURL: "https://worktime-app-api-080c4d35911e.herokuapp.com",
   headers: {
     "Content-Type": "application/json",
   },
@@ -33,7 +33,7 @@ api.interceptors.response.use(
     ) {
       originalRequest.retry = true;
       try {
-        const tokenResponse = await axios.post<{ access: string }>("http://192.168.0.69:8000/api/token/refresh/", {
+        const tokenResponse = await axios.post<{ access: string }>("https://worktime-app-api-080c4d35911e.herokuapp.com/api/token/refresh/", {
           refresh: localStorage.getItem("refreshToken")
         });
         if (tokenResponse.data.access) {
