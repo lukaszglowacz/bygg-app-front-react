@@ -263,7 +263,7 @@ const EmployeeDetailsByDay: React.FC = () => {
       {!isLoadingSessions && !error && !sessions.length && (
         <Row className="justify-content-center my-3">
           <Col md={6} className="text-center">
-            <Alert variant="warning" className="text-center">
+            <Alert variant="info" className="text-center">
               No work sessions for this day
             </Alert>
           </Col>
