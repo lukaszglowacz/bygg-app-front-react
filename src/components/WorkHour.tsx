@@ -111,7 +111,7 @@ const WorkHour: React.FC = () => {
                   <div>
                     <small>{session.workplace.street} {session.workplace.street_number}</small>
                   </div>
-                  <small className="text-muted">{session.workplace.postal_code} {session.workplace.city}</small>
+                  <small>{session.workplace.postal_code} {session.workplace.city}</small>
                 </div>
                 <div>
                   <small style={{ color: "green" }}>{session.total_time}</small>

@@ -24,7 +24,9 @@ const EmployeeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [sessionsByDay, setSessionsByDay] = useState<Map<string, WorkSession[]>>(new Map());
+  const [sessionsByDay, setSessionsByDay] = useState<
+    Map<string, WorkSession[]>
+  >(new Map());
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,7 +44,10 @@ const EmployeeDetails: React.FC = () => {
       const splitSessions = splitSessionsByDay(sessions);
       const sessionsMap = groupSessionsByDay(splitSessions);
       setSessionsByDay(sessionsMap);
-      const filteredSessions = filterSessionsByMonth(splitSessions, currentDate);
+      const filteredSessions = filterSessionsByMonth(
+        splitSessions,
+        currentDate
+      );
       const totalTimeCalculated = sumTotalTime(filteredSessions);
       setTotalTime(totalTimeCalculated);
       setLoading(false);
@@ -95,7 +100,10 @@ const EmployeeDetails: React.FC = () => {
     return splitSessions;
   };
 
-  const calculateTotalTime = (start: moment.Moment, end: moment.Moment): string => {
+  const calculateTotalTime = (
+    start: moment.Moment,
+    end: moment.Moment
+  ): string => {
     const duration = moment.duration(end.diff(start));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
@@ -107,7 +115,12 @@ const EmployeeDetails: React.FC = () => {
     const month = currentDate.getMonth() + 1;
     return new Array(new Date(year, month, 0).getDate())
       .fill(null)
-      .map((_, i) => `${year}-${month.toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`);
+      .map(
+        (_, i) =>
+          `${year}-${month.toString().padStart(2, "0")}-${(i + 1)
+            .toString()
+            .padStart(2, "0")}`
+      );
   };
 
   const displayDaysWithSessions = (): JSX.Element[] => {
@@ -125,7 +138,9 @@ const EmployeeDetails: React.FC = () => {
               {formatDate(day)} <span className="text-muted">{dayOfWeek}</span>
             </div>
             <Button
-              onClick={() => navigate(`/employee/${id}/day/${day}`, { state: { id } })}
+              onClick={() =>
+                navigate(`/employee/${id}/day/${day}`, { state: { id } })
+              }
               variant="outline-success"
               size="sm"
             >
@@ -141,9 +156,17 @@ const EmployeeDetails: React.FC = () => {
               >
                 <div>
                   <div>
-                    <small>{`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.postal_code} ${session.workplace.city}`}</small>
+                    <small>
+                      {session.workplace.street}{" "}
+                      {session.workplace.street_number}
+                    </small>
                   </div>
-                  <small className="text-muted">{session.total_time}</small>
+                  <small>
+                    {session.workplace.postal_code} {session.workplace.city}
+                  </small>
+                </div>
+                <div>
+                  <small style={{ color: "green" }}>{session.total_time}</small>
                 </div>
               </Col>
             ))
@@ -157,7 +180,9 @@ const EmployeeDetails: React.FC = () => {
     });
   };
 
-  const groupSessionsByDay = (sessions: WorkSession[]): Map<string, WorkSession[]> => {
+  const groupSessionsByDay = (
+    sessions: WorkSession[]
+  ): Map<string, WorkSession[]> => {
     const map = new Map<string, WorkSession[]>();
     sessions.forEach((session) => {
       const start = moment.utc(session.start_time).tz("Europe/Stockholm");
@@ -186,14 +211,19 @@ const EmployeeDetails: React.FC = () => {
     return map;
   };
 
-  const filterSessionsByMonth = (sessions: WorkSession[], date: Date): WorkSession[] => {
+  const filterSessionsByMonth = (
+    sessions: WorkSession[],
+    date: Date
+  ): WorkSession[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
 
     const filteredSessions: WorkSession[] = [];
 
     sessions.forEach((session) => {
-      const sessionStart = moment.utc(session.start_time).tz("Europe/Stockholm");
+      const sessionStart = moment
+        .utc(session.start_time)
+        .tz("Europe/Stockholm");
       const sessionEnd = moment.utc(session.end_time).tz("Europe/Stockholm");
 
       if (sessionStart.month() === month && sessionStart.year() === year) {
@@ -228,7 +258,10 @@ const EmployeeDetails: React.FC = () => {
     );
     setCurrentDate(newDate);
     if (employee) {
-      const newFilteredSessions = filterSessionsByMonth(employee.work_session, newDate);
+      const newFilteredSessions = filterSessionsByMonth(
+        employee.work_session,
+        newDate
+      );
       const newSessionsMap = groupSessionsByDay(newFilteredSessions);
       setSessionsByDay(newSessionsMap);
       const newTotalTime = sumTotalTime(newFilteredSessions);
@@ -238,7 +271,10 @@ const EmployeeDetails: React.FC = () => {
 
   useEffect(() => {
     if (employee) {
-      const filteredSessions = filterSessionsByMonth(employee.work_session, currentDate);
+      const filteredSessions = filterSessionsByMonth(
+        employee.work_session,
+        currentDate
+      );
       const sessionsMap = groupSessionsByDay(filteredSessions);
       setSessionsByDay(sessionsMap);
       const newTotalTime = sumTotalTime(filteredSessions);
@@ -305,7 +341,7 @@ const EmployeeDetails: React.FC = () => {
               </Card.Text>
               <Card.Text className="small text-muted">
                 <HourglassSplit className="me-2" />
-                <strong>{totalTime}</strong>
+                <strong style={{ color: "green" }}>{totalTime}</strong>
               </Card.Text>
               <div className="text-center">
                 <LoadingButton
