@@ -385,44 +385,44 @@ Following the above steps will help you fully utilize the capabilities of the Gu
 
 ## Sample Images/Screenshots
 ### Login
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE).png" alt="Login" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE).png" alt="Login" style="width: 30%;">
 
 ### Sign Up
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(1).png" alt="Sign Up" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(1).png" alt="Sign Up" style="width: 30%;">
 
 ### Reset Password
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(2).png" alt="Reset password" style="width: 50%;"><img src="screenshots/worktime-app-react-cd9b9f8fb803.herokuapp.com_reset-password_Mw_c8cizw-2fa20e7d90c05fe49da5163e5423b847_(iPhone%20SE).png" alt="Reset password" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(2).png" alt="Reset password" style="width: 30%;"><img src="screenshots/worktime-app-react-cd9b9f8fb803.herokuapp.com_reset-password_Mw_c8cizw-2fa20e7d90c05fe49da5163e5423b847_(iPhone%20SE).png" alt="Reset password" style="width: 30%;">
 
 
 ### Home
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(3).png" alt="Home" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(3).png" alt="Home" style="width: 30%;">
 
 ### Profile
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(4).png" alt="Profile" style="width: 50%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(5).png" alt="Profile" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(4).png" alt="Profile" style="width: 30%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(5).png" alt="Profile" style="width: 30%;">
 
 ### Month View
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(7).png" alt="Month View" style="width: 50%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(8).png" alt="Team" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(7).png" alt="Month View" style="width: 30%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(8).png" alt="Team" style="width: 30%;">
 
 ### Team - Employer
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(9).png" alt="Team" style="width: 50%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(10).png" alt="Month View Employer" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(9).png" alt="Team" style="width: 30%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(10).png" alt="Month View Employer" style="width: 30%;">
 
 ### Month View - Employer
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(11).png" alt="Add Work Session" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(11).png" alt="Add Work Session" style="width: 30%;">
 
 ### Add Work Session - Employer
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(13).png" alt="Confirm Deletion Modal" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(13).png" alt="Confirm Deletion Modal" style="width: 30%;">
 
 ### Edit Work Session - Employer
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(14).png" alt="Workplace" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(14).png" alt="Workplace" style="width: 30%;">
 
 ### Confirm Deletion Modal - Employer
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(15).png" alt="Navbar" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(15).png" alt="Navbar" style="width: 30%;">
 
 ### Workplace - Employer
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(16).png" alt="Strona główna" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(16).png" alt="Strona główna" style="width: 30%;">
 
 ### Menu
-<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(17).png" alt="Strona główna" style="width: 50%;">
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(17).png" alt="Strona główna" style="width: 30%;">
 
 
 
