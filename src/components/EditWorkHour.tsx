@@ -14,8 +14,8 @@ import LoadingButton from "./LoadingButton";
 
 interface WorkSession {
   id: number;
-  profile: number; // Change profile to number
-  workplace: Workplace;
+  profile: number;
+  workplace: number;
   start_time: string;
   end_time: string;
   total_time?: string;
@@ -84,7 +84,8 @@ const EditWorkHour: React.FC = () => {
         if (session) {
           setWorkSession({
             ...session,
-            profile: employeeRes.data.id // Change to employee ID
+            profile: employeeRes.data.id,
+            workplace: session.workplace, // Treat as a number
           });
         } else {
           setWorkSession(null);
@@ -125,7 +126,7 @@ const EditWorkHour: React.FC = () => {
         const updatedSession = {
           id: workSession.id,
           profile: workSession.profile, // Send profile ID
-          workplace: workSession.workplace.id, // Ensure workplace ID is sent
+          workplace: workSession.workplace, // Send workplace ID
           start_time: new Date(workSession.start_time).toISOString(),
           end_time: new Date(workSession.end_time).toISOString(),
         };
@@ -158,10 +159,7 @@ const EditWorkHour: React.FC = () => {
 
       switch (name) {
         case "workplace":
-          const selectedWorkplace = workplaces.find(wp => wp.id === parseInt(value, 10));
-          if (selectedWorkplace) {
-            updatedSession.workplace = selectedWorkplace;
-          }
+          updatedSession[name] = parseInt(value, 10); // Ensure the value is treated as a number
           break;
         case "profile":
           updatedSession[name] = parseInt(value, 10); // Ensure the value is treated as a number
@@ -209,7 +207,7 @@ const EditWorkHour: React.FC = () => {
               </InputGroup.Text>
               <Form.Select
                 name="workplace"
-                value={String(workSession.workplace.id)}
+                value={String(workSession.workplace)}
                 onChange={handleChange}
                 required
               >
