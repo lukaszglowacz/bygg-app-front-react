@@ -36,7 +36,7 @@ const ActiveSessions: React.FC = () => {
 
                   <Card.Text className="mb-1 small">
                     <i className="bi bi-geo-alt-fill me-2"></i>
-                    {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.city}`}
+                    {`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.postal_code} ${session.workplace.city}`}
                   </Card.Text>
                   <Card.Text className="mb-1 small">
                     <i className="bi bi-calendar-event-fill me-2"></i>
