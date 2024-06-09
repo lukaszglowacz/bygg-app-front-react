@@ -170,7 +170,7 @@ const WorkHourByDay: React.FC = () => {
         <Col md={6}>
           <Row className="justify-content-between">
             <Col className="text-start">
-              <Button onClick={() => changeDay(-1)} variant="success">
+              <Button className="btn-sm" onClick={() => changeDay(-1)} variant="success">
                 <ChevronLeft />
               </Button>
             </Col>
@@ -194,7 +194,7 @@ const WorkHourByDay: React.FC = () => {
             </Col>
 
             <Col className="text-end">
-              <Button onClick={() => changeDay(1)} variant="success">
+              <Button className="btn-sm" onClick={() => changeDay(1)} variant="success">
                 <ChevronRight />
               </Button>
             </Col>

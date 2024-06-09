@@ -100,7 +100,7 @@ const WorkHour: React.FC = () => {
             <div className="small">
               {formatDate(day)} <span className="text-muted">{dayOfWeek}</span>
             </div>
-            <Button onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-secondary" size="sm">
+            <Button className="border-0" onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-secondary" size="sm">
               <ChevronRight />
             </Button>
           </Col>
@@ -254,7 +254,7 @@ const WorkHour: React.FC = () => {
             <Col md={6}>
               <Row className="align-items-center">
                 <Col xs={2} className="text-start">
-                  <Button onClick={() => handleMonthChange(-1)} variant="success">
+                  <Button className="btn-sm" onClick={() => handleMonthChange(-1)} variant="success">
                     <ChevronLeft />
                   </Button>
                 </Col>
@@ -262,7 +262,7 @@ const WorkHour: React.FC = () => {
                   <MonthYearDisplay currentDate={currentDate} />
                 </Col>
                 <Col xs={2} className="text-end">
-                  <Button onClick={() => handleMonthChange(1)} variant="success">
+                  <Button className="btn-sm" onClick={() => handleMonthChange(1)} variant="success">
                     <ChevronRight />
                   </Button>
                 </Col>

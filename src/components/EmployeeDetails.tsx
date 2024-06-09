@@ -143,6 +143,7 @@ const EmployeeDetails: React.FC = () => {
               }
               variant="outline-success"
               size="sm"
+              className="border-0"
             >
               <ChevronRight />
             </Button>
@@ -341,7 +342,7 @@ const EmployeeDetails: React.FC = () => {
               </Card.Text>
               <Card.Text className="small text-muted">
                 <HourglassSplit className="me-2" />
-                <strong style={{ color: "green" }}>{totalTime}</strong>
+                <strong>{totalTime}</strong>
               </Card.Text>
               <div className="text-center">
                 <LoadingButton
@@ -362,7 +363,7 @@ const EmployeeDetails: React.FC = () => {
         <Col md={6}>
           <Row className="align-items-center">
             <Col xs={2} className="text-start">
-              <Button onClick={() => handleMonthChange(-1)} variant="success">
+              <Button className="btn-sm" onClick={() => handleMonthChange(-1)} variant="success">
                 <ChevronLeft />
               </Button>
             </Col>
@@ -370,7 +371,7 @@ const EmployeeDetails: React.FC = () => {
               <MonthYearDisplay currentDate={currentDate} />
             </Col>
             <Col xs={2} className="text-end">
-              <Button onClick={() => handleMonthChange(1)} variant="success">
+              <Button className="btn-sm" onClick={() => handleMonthChange(1)} variant="success">
                 <ChevronRight />
               </Button>
             </Col>
