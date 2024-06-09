@@ -13,7 +13,7 @@ const WorkPlaceContainer: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [workplaceToDelete, setWorkplaceToDelete] = useState<number | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<{ id: number; message: string } | null>(null);
   const navigate = useNavigate();
   const { profile, loadProfile } = useUserProfile();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -44,6 +44,22 @@ const WorkPlaceContainer: React.FC = () => {
     fetchWorkplaces();
   }, []);
 
+  const fetchActiveSessions = async (workplaceId: number) => {
+    try {
+      const response = await api.get("/employee/");
+      const activeSessions = response.data.filter(
+        (employee: any) => 
+          employee.current_workplace && 
+          employee.current_workplace.id === workplaceId &&
+          employee.current_session_status === "Trwa"
+      );
+      return activeSessions.length > 0;
+    } catch (error) {
+      console.error("Failed to verify workplace usage", error);
+      return false;
+    }
+  };
+
   const handleAddClick = () => {
     navigate("/add-work-place");
   };
@@ -53,25 +69,17 @@ const WorkPlaceContainer: React.FC = () => {
   };
 
   const handleDeleteClick = async (id: number) => {
-    try {
-      const response = await api.get(`/livesession/active/`);
-      const activeSessions = response.data.filter(
-        (session: any) => session.workplace.id === id
-      );
+    const isActive = await fetchActiveSessions(id);
 
-      if (activeSessions.length > 0) {
-        setDeleteError(
-          "Cannot delete, workplace in use. Try again later"
-        );
-      } else {
-        setShowModal(true);
-        setWorkplaceToDelete(id);
+    if (isActive) {
+      setDeleteError({ id, message: "Cannot delete, workplace in use. Try again later" });
+      setTimeout(() => {
         setDeleteError(null);
-      }
-    } catch (error) {
-      setDeleteError(
-        "Failed to verify workplace usage. Try again later"
-      );
+      }, 3000); // Hide the alert after 5 seconds
+    } else {
+      setShowModal(true);
+      setWorkplaceToDelete(id);
+      setDeleteError(null);
     }
   };
 
@@ -85,9 +93,10 @@ const WorkPlaceContainer: React.FC = () => {
       } catch (error) {
         console.error("Unable to delete workplace", error);
         setShowModal(false);
-        setDeleteError(
-          "Cannot delete this workplace as it is currently in use. Please try again later."
-        );
+        setDeleteError({ id: workplaceToDelete, message: "Cannot delete this workplace as it is currently in use. Please try again later." });
+        setTimeout(() => {
+          setDeleteError(null);
+        }, 3000); // Hide the alert after 5 seconds
       }
     }
   };
@@ -153,9 +162,9 @@ const WorkPlaceContainer: React.FC = () => {
                         <div>Delete</div>
                       </div>
                     </div>
-                    {deleteError && (
-                      <Alert variant="danger" className="mt-3 text-center">
-                        {deleteError}
+                    {deleteError && deleteError.id === workplace.id && (
+                      <Alert variant="warning" className="mt-3 text-center">
+                        {deleteError.message}
                       </Alert>
                     )}
                   </Accordion.Body>
