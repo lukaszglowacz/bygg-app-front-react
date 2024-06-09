@@ -103,7 +103,9 @@ const EmployeeList: React.FC = () => {
                     <>
                       <div className="d-flex align-items-center mb-2">
                         <GeoAlt className="me-2" />
-                        {employee.current_workplace}
+                        {employee.current_workplace && (
+                          `${employee.current_workplace.street} ${employee.current_workplace.street_number}, ${employee.current_workplace.postal_code} ${employee.current_workplace.city}`
+                        )}
                       </div>
                       <div className="d-flex align-items-center mb-2">
                         <Clock className="me-2" />

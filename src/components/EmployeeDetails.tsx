@@ -141,7 +141,7 @@ const EmployeeDetails: React.FC = () => {
               >
                 <div>
                   <div>
-                    <small>{session.workplace}</small>
+                    <small>{`${session.workplace.street} ${session.workplace.street_number}, ${session.workplace.postal_code} ${session.workplace.city}`}</small>
                   </div>
                   <small className="text-muted">{session.total_time}</small>
                 </div>

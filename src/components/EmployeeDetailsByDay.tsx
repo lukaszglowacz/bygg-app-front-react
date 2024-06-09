@@ -257,7 +257,7 @@ const EmployeeDetailsByDay: React.FC = () => {
                 <ListGroup.Item className="mb-2 small">
                   <Row className="align-items-center">
                     <Col xs={12}>
-                      <House className="me-2" /> {session.workplace}
+                      <House className="me-2" /> {session.workplace.street} {session.workplace.street_number}, {session.workplace.postal_code} {session.workplace.city}
                     </Col>
                     <Col xs={12}>
                       <ClockFill className="me-2" />{" "}

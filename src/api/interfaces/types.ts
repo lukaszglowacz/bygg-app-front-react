@@ -82,7 +82,7 @@ export interface Profile {
     current_session_id: number;
     current_session_start_time: string;
     current_session_status: string;
-    current_workplace: string;
+    current_workplace: Workplace;
     personnummer: number;
     user_email: string;
     image: string;
@@ -92,7 +92,7 @@ export interface Profile {
   export interface WorkSession {
     id: number;
     profile: Profile;
-    workplace: number;
+    workplace: Workplace;
     start_time: string;
     end_time: string;
     total_time: string;

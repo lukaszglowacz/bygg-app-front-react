@@ -15,7 +15,7 @@ import LoadingButton from "./LoadingButton";
 interface WorkSession {
   id: number;
   profile: number;
-  workplace: number;
+  workplace: Workplace;
   start_time: string;
   end_time: string;
   total_time?: string;
@@ -82,10 +82,7 @@ const EditWorkHour: React.FC = () => {
         setWorkplaces(workplacesRes.data);
 
         if (session) {
-          setWorkSession({
-            ...session,
-            workplace: session.workplace, // Use the workplace ID from the session directly
-          });
+          setWorkSession(session);
         } else {
           setWorkSession(null);
         }
@@ -127,6 +124,7 @@ const EditWorkHour: React.FC = () => {
           profile: employee!.id,
           start_time: new Date(workSession.start_time).toISOString(),
           end_time: new Date(workSession.end_time).toISOString(),
+          workplace: workSession.workplace.id, // Send workplace ID to the backend
         };
         console.log("Updated session data:", updatedSession);
         const response = await api.put(`/worksession/${id}`, updatedSession);
@@ -157,6 +155,11 @@ const EditWorkHour: React.FC = () => {
 
       switch (name) {
         case "workplace":
+          const selectedWorkplace = workplaces.find(wp => wp.id === parseInt(value, 10));
+          if (selectedWorkplace) {
+            updatedSession.workplace = selectedWorkplace;
+          }
+          break;
         case "profile":
           updatedSession[name] = parseInt(value, 10); // Ensure the value is treated as a number
           break;
@@ -203,7 +206,7 @@ const EditWorkHour: React.FC = () => {
               </InputGroup.Text>
               <Form.Select
                 name="workplace"
-                value={String(workSession.workplace)}
+                value={String(workSession.workplace.id)}
                 onChange={handleChange}
                 required
               >
