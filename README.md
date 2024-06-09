@@ -1,479 +1,506 @@
-
 # Gurudo
 
-Gurudo to innowacyjna aplikacja do zarządzania czasem pracy, inspirowana postacią Gurudo z Dragon Ball Z, który posiada unikalną zdolność zatrzymywania czasu podczas walki. Aplikacja ma na celu wspomaganie pracodawców i pracowników w efektywnym zarządzaniu sesjami pracy, śledzeniu czasu oraz zwiększaniu produktywności w miejscu pracy.
+Gurudo is an innovative work time management application inspired by the character Gurudo from Dragon Ball Z, who possesses the unique ability to stop time during battles. The application aims to assist employers and employees in efficiently managing work sessions, tracking time, and increasing productivity in the workplace.
 
 ---
 
-## Spis treści
-- [Gurudo](#gurudo)
-  - [Spis treści](#spis-treści)
-  - [Wprowadzenie](#wprowadzenie)
-  - [Wymagania systemowe](#wymagania-systemowe)
-    - [Backend](#backend)
-    - [Frontend](#frontend)
-    - [Inne narzędzia](#inne-narzędzia)
-    - [Narzędzia deweloperskie](#narzędzia-deweloperskie)
-    - [Konfiguracja systemowa](#konfiguracja-systemowa)
-  - [Instrukcja instalacji](#instrukcja-instalacji)
-    - [Kroki do sklonowania repozytorium](#kroki-do-sklonowania-repozytorium)
-    - [Ustawienia backendowe](#ustawienia-backendowe)
-      - [Konfiguracja CORS w Django](#konfiguracja-cors-w-django)
-    - [Ustawienia frontendowe](#ustawienia-frontendowe)
-      - [Konfiguracja baseURL w pliku api.js](#konfiguracja-baseurl-w-pliku-apijs)
-    - [Instrukcje dotyczące instalacji zależności backendu (Django)](#instrukcje-dotyczące-instalacji-zależności-backendu-django)
-    - [Instrukcje dotyczące instalacji zależności frontendowych (React)](#instrukcje-dotyczące-instalacji-zależności-frontendowych-react)
-    - [Uruchamianie serwera backendowego](#uruchamianie-serwera-backendowego)
-    - [Uruchamianie aplikacji frontendowej](#uruchamianie-aplikacji-frontendowej)
-  - [Użycie](#użycie)
-    - [Kroki do zalogowania się i rozpoczęcia pracy z aplikacją](#kroki-do-zalogowania-się-i-rozpoczęcia-pracy-z-aplikacją)
-    - [Przykłady głównych funkcji aplikacji](#przykłady-głównych-funkcji-aplikacji)
-      - [Interfejs Pracownika](#interfejs-pracownika)
-      - [Interfejs Pracodawcy](#interfejs-pracodawcy)
-      - [Dodawanie pracowników](#dodawanie-pracowników)
-      - [Rejestrowanie sesji pracy](#rejestrowanie-sesji-pracy)
-      - [Przeglądanie i edytowanie sesji pracy](#przeglądanie-i-edytowanie-sesji-pracy)
-      - [Generowanie raportów miesięcznych](#generowanie-raportów-miesięcznych)
-      - [Zarządzanie miejscami pracy](#zarządzanie-miejscami-pracy)
-      - [Podsumowanie](#podsumowanie)
-  - [Funkcje aplikacji](#funkcje-aplikacji)
-    - [Zarządzanie pracownikami](#zarządzanie-pracownikami)
-    - [Zarządzanie miejscami pracy](#zarządzanie-miejscami-pracy)
-    - [Rejestrowanie sesji pracy](#rejestrowanie-sesji-pracy)
-    - [Generowanie raportów](#generowanie-raportów)
-    - [Przegląd sesji według dnia](#przegląd-sesji-według-dnia)
-    - [Przegląd sesji według miesiąca](#przegląd-sesji-według-miesiąca)
-    - [Zarządzanie uprawnieniami użytkowników](#zarządzanie-uprawnieniami-użytkowników)
-    - [Intuicyjny interfejs](#intuicyjny-interfejs)
-    - [Alerty dotyczące nieprawidłowych działań](#alerty-dotyczące-nieprawidłowych-działań)
-    - [Integracja z zewnętrznymi narzędziami](#integracja-z-zewnętrznymi-narzędziami)
-  - [Przykładowe obrazy/screenshoty](#przykładowe-obrazy-screenshoty)
-  - [Dokumentacja API](#dokumentacja-api)
-    - [Endpointy](#endpointy)
-      - [Główny Endpoint](#główny-endpoint)
-      - [Admin](#admin)
-      - [Autoryzacja API](#autoryzacja-api)
-      - [Profile](#profile)
-      - [Miejsca Pracy](#miejsca-pracy)
-      - [Sesje Pracy](#sesje-pracy)
-      - [Aktywne Sesje](#aktywne-sesje)
-      - [Pracownicy](#pracownicy)
-      - [Token JWT](#token-jwt)
-      - [Rejestracja Użytkownika](#rejestracja-użytkownika)
-      - [Resetowanie Hasła](#resetowanie-hasła)
-      - [Konta](#konta)
-  - [Konfiguracja](#konfiguracja)
-    - [Ustawienia backendowe](#ustawienia-backendowe)
-      - [Konfiguracja CORS w Django](#konfiguracja-cors-w-django)
-    - [Ustawienia frontendowe](#ustawienia-frontendowe)
-      - [Konfiguracja baseURL w pliku api.js](#konfiguracja-baseurl-w-pliku-apijs)
-  - [Przykładowe komponenty kodu](#przykładowe-komponenty-kodu)
-    - [EmployeeDetailsByDay.tsx](#employeedetailsbydaytsx)
-  - [Zarządzanie błędami](#zarządzanie-błędami)
-    - [Jak obsługiwać błędy w aplikacji](#jak-obsługiwać-błędy-w-aplikacji)
-      - [Wyświetlanie komunikatów o błędach](#wyświetlanie-komunikatów-o-błędach)
-      - [Obsługa błędów sieciowych](#obsługa-błędów-sieciowych)
-  - [Zarządzanie sesjami pracy](#zarządzanie-sesjami-pracy)
-    - [Jak aplikacja radzi sobie z sesjami pracy](#jak-aplikacja-radzi-sobie-z-sesjami-pracy)
-      - [Aktualne sesje pracy](#aktualne-sesje-pracy)
-      - [Usuwanie miejsc pracy, gdy są aktywne sesje](#usuwanie-miejsc-pracy-gdy-są-aktywne-sesje)
-      - [Monitorowanie aktywności pracowników](#monitorowanie-aktywności-pracowników)
-  - [Testy manualne](#testy-manualne)
-  - [Informacje o autorze](#informacje-o-autorze)
-  - [Licencja](#licencja)
-  - [Podziękowania](#podziękowania)
+## Table of Contents
 
-  
+<!-- toc -->
+
+- [Introduction](#introduction)
+- [System Requirements](#system-requirements)
+  * [Backend](#backend)
+  * [Frontend](#frontend)
+  * [Other Tools](#other-tools)
+  * [Development Tools](#development-tools)
+  * [System Configuration](#system-configuration)
+- [Installation Instructions](#installation-instructions)
+  * [Steps to Clone the Repository](#steps-to-clone-the-repository)
+  * [Instructions for Installing Backend Dependencies (Django)](#instructions-for-installing-backend-dependencies-django)
+  * [Instructions for installing frontend dependencies (React)](#instructions-for-installing-frontend-dependencies-react)
+  * [Running the Backend Server](#running-the-backend-server)
+  * [Running the Frontend Application](#running-the-frontend-application)
+- [Usage](#usage)
+  * [Examples of Main Application Features](#examples-of-main-application-features)
+    + [Employee Interface](#employee-interface)
+    + [Employer Interface](#employer-interface)
+    + [Adding Employees](#adding-employees)
+    + [Recording Work Sessions](#recording-work-sessions)
+    + [Viewing and Editing Work Sessions](#viewing-and-editing-work-sessions)
+    + [Generating Monthly Reports](#generating-monthly-reports)
+    + [Managing Workplaces](#managing-workplaces)
+  * [Summary](#summary)
+- [Application Features](#application-features)
+    + [Employee Management](#employee-management)
+    + [Workplace Management](#workplace-management)
+    + [Work Session Recording](#work-session-recording)
+    + [Report Generation](#report-generation)
+    + [Daily Session Overview](#daily-session-overview)
+    + [Monthly Session Overview](#monthly-session-overview)
+    + [User Permissions Management](#user-permissions-management)
+    + [Intuitive Interface](#intuitive-interface)
+    + [Action Alerts](#action-alerts)
+    + [Integration with External Tools](#integration-with-external-tools)
+- [Sample Images/Screenshots](#sample-imagesscreenshots)
+  * [Login](#login)
+  * [Sign Up](#sign-up)
+  * [Reset Password](#reset-password)
+  * [Confirm Reset Password](#confirm-reset-password)
+  * [Home](#home)
+  * [Profile](#profile)
+  * [Profile](#profile-1)
+  * [Month View](#month-view)
+  * [Month View](#month-view-1)
+  * [Team - Employer](#team---employer)
+  * [Team - Employer](#team---employer-1)
+  * [Month View - Employer](#month-view---employer)
+  * [Add Work Session - Employer](#add-work-session---employer)
+  * [Edit Work Session - Employer](#edit-work-session---employer)
+  * [Confirm Deletion Modal - Employer](#confirm-deletion-modal---employer)
+  * [Workplace - Employer](#workplace---employer)
+  * [Menu](#menu)
+- [API Documentation](#api-documentation)
+  * [Endpoints](#endpoints)
+    + [1. Main Endpoint](#1-main-endpoint)
+    + [2. Admin](#2-admin)
+    + [3. API Authorization](#3-api-authorization)
+    + [4. Profiles](#4-profiles)
+    + [5. Workplaces](#5-workplaces)
+    + [6. Work Sessions](#6-work-sessions)
+    + [7. Active Sessions](#7-active-sessions)
+    + [8. Employees](#8-employees)
+    + [9. JWT Token](#9-jwt-token)
+    + [10. User Registration](#10-user-registration)
+    + [11. Password Reset](#11-password-reset)
+    + [12. Accounts](#12-accounts)
+- [Configuration](#configuration)
+  * [Backend Settings](#backend-settings)
+    + [CORS Configuration in Django](#cors-configuration-in-django)
+  * [Frontend Settings](#frontend-settings)
+    + [baseURL Configuration in `api.ts`](#baseurl-configuration-in-apits)
+- [Sample Code Components](#sample-code-components)
+  * [EmployeeDetailsByDay.tsx](#employeedetailsbydaytsx)
+- [Error Management](#error-management)
+  * [How to Handle Errors in the Application](#how-to-handle-errors-in-the-application)
+    + [Displaying Error Messages](#displaying-error-messages)
+    + [Handling Network Errors](#handling-network-errors)
+- [Managing Work Sessions](#managing-work-sessions)
+  * [How the Application Manages Work Sessions](#how-the-application-manages-work-sessions)
+    + [Current Work Sessions](#current-work-sessions)
+    + [Deleting Workplaces When There Are Active Sessions](#deleting-workplaces-when-there-are-active-sessions)
+    + [Monitoring Employee Activity](#monitoring-employee-activity)
+- [Manual Testing](#manual-testing)
+  * [Application Errors - Completed Fixes](#application-errors---completed-fixes)
+  * [Application Errors to Fix in the Future](#application-errors-to-fix-in-the-future)
+- [About the Author](#about-the-author)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
+
+<!-- tocstop -->
 
 ---
 
-## Wprowadzenie
+## Introduction
 
-Gurudo to nowoczesna aplikacja stworzona w celu ułatwienia zarządzania czasem pracy. Aplikacja została zainspirowana postacią Gurudo z Dragon Ball, który posiada zdolność zatrzymywania czasu, co symbolizuje kontrolę i efektywne zarządzanie czasem. 
+Gurudo is a modern application designed to facilitate work time management. The application is inspired by the character Gurudo from Dragon Ball, who has the ability to stop time, symbolizing control and effective time management.
 
-Gurudo jest narzędziem przeznaczonym zarówno dla pracodawców, jak i pracowników. Umożliwia śledzenie godzin pracy, zarządzanie miejscami pracy oraz monitorowanie sesji pracy w czasie rzeczywistym. Aplikacja została zaprojektowana z myślą o łatwości użycia i intuicyjnym interfejsie, aby maksymalnie usprawnić procesy zarządzania czasem pracy.
+Gurudo is a tool intended for both employers and employees. It enables tracking working hours, managing workplaces, and monitoring work sessions in real-time. The application is designed with ease of use and an intuitive interface in mind, to streamline work time management processes as much as possible.
 
-Wprowadzenie do Gurudo zawiera:
-- Krótką historię powstania projektu
-- Cel i misję aplikacji
-- Kluczowe funkcje i możliwości
-- Korzyści płynące z użytkowania aplikacji
+The introduction to Gurudo includes:
+- A brief history of the project's inception
+- The application's goal and mission
+- Key features and capabilities
+- Benefits of using the application
 
-Celem Gurudo jest dostarczenie kompleksowego rozwiązania do zarządzania czasem pracy, które zwiększa efektywność, poprawia organizację i wspiera lepsze zarządzanie zasobami ludzkimi w każdej organizacji.
+The aim of Gurudo is to provide a comprehensive solution for managing work time, which increases efficiency, improves organization, and supports better human resource management in any organization.
+
 
 ---
 
-## Wymagania systemowe
+## System Requirements
 
-Aby uruchomić i korzystać z aplikacji Gurudo, należy spełnić następujące wymagania systemowe:
+To run and use the Gurudo application, the following system requirements must be met:
 
 ### Backend
 **Python**
-  - Wersja: 3.8 lub nowsza
-  - Python jest podstawowym językiem programowania używanym do budowy backendu aplikacji.
+  - Version: 3.8 or higher
+  - Python is the primary programming language used to build the backend of the application.
 
 **Django**
-  - Wersja: 3.2 lub nowsza
-  - Django jest głównym frameworkiem webowym używanym do tworzenia backendu aplikacji Gurudo.
+  - Version: 3.2 or higher
+  - Django is the main web framework used to create the backend of the Gurudo application.
 
 **Django REST Framework**
-  - Wersja: 3.12 lub nowsza
-  - Używany do budowy API, które komunikuje się z frontendem.
+  - Version: 3.12 or higher
+  - Used to build the API that communicates with the frontend.
 
 **djangorestframework-simplejwt**
-  - Używany do zarządzania autoryzacją i autentykacją JWT.
+  - Used to manage JWT authorization and authentication.
 
 **cloudinary**
-  - Wersja: 1.25.0 lub nowsza
-  - Używana do przechowywania i zarządzania plikami multimedialnymi w aplikacji.
+  - Version: 1.25.0 or higher
+  - Used for storing and managing media files in the application.
 
 **dj-database-url**
-  - Używany do konfiguracji połączenia z bazą danych.
+  - Used to configure the database connection.
 
 ### Frontend
 **Node.js**
-  - Wersja: 14.x lub nowsza
-  - Node.js jest środowiskiem uruchomieniowym JavaScript, które jest wymagane do uruchomienia narzędzi buildowania i zarządzania pakietami frontendowymi.
+  - Version: 14.x or higher
+  - Node.js is the JavaScript runtime environment required to run build tools and manage frontend packages.
 
 **npm (Node Package Manager)**
-  - Wersja: 6.x lub nowsza
-  - npm jest używany do zarządzania pakietami JavaScript i bibliotekami frontendowymi.
+  - Version: 6.x or higher
+  - npm is used to manage JavaScript packages and frontend libraries.
 
 **React**
-  - Wersja: 18.2.0 lub nowsza
-  - React jest biblioteką JavaScript używaną do budowy interfejsu użytkownika.
+  - Version: 18.2.0 or higher
+  - React is a JavaScript library used to build the user interface.
 
 **React Bootstrap**
-  - Wersja: 2.10.2 lub nowsza
-  - Używany do stylizacji komponentów frontendowych.
+  - Version: 2.10.2 or higher
+  - Used to style frontend components.
 
 **React Router**
-  - Wersja: 6.22.3 lub nowsza
-  - Używany do zarządzania routami w aplikacji frontendowej.
+  - Version: 6.22.3 or higher
+  - Used to manage routes in the frontend application.
 
 **Vite**
-  - Wersja: 5.2.0 lub nowsza
-  - Używany jako narzędzie do buildowania i uruchamiania aplikacji frontendowej.
+  - Version: 5.2.0 or higher
+  - Used as a build tool and to run the frontend application.
 
-### Inne narzędzia
+### Other Tools
 **PostgreSQL**
-  - Wersja: 12.x lub nowsza
-  - PostgreSQL jest rekomendowaną bazą danych do przechowywania danych aplikacji.
+  - Version: 12.x or higher
+  - PostgreSQL is the recommended database for storing application data.
 
-**Docker (opcjonalnie)**
-  - Używany do konteneryzacji aplikacji, co ułatwia jej wdrożenie i zarządzanie środowiskami.
+**Docker (optional)**
+  - Used for containerizing the application, which simplifies deployment and environment management.
 
-### Narzędzia deweloperskie
+### Development Tools
 **Visual Studio Code**
-  - Wersja: najnowsza
-  - Edytor kodu rekomendowany do pracy nad projektem.
+  - Version: latest
+  - Recommended code editor for working on the project.
 
 **Git**
-  - Wersja: najnowsza
-  - System kontroli wersji używany do zarządzania kodem źródłowym projektu.
+  - Version: latest
+  - Version control system used to manage the project's source code.
 
 **Chrome DevTools / Safari DevTools**
-  - Narzędzia do debugowania frontendowej części aplikacji.
+  - Tools for debugging the frontend part of the application.
 
-### Konfiguracja systemowa
-**System operacyjny**
-  - Linux, macOS, Windows (najlepiej z zainstalowanym WSL2 dla Windows)
+### System Configuration
+**Operating System**
+  - Linux, macOS, Windows (preferably with WSL2 installed for Windows)
 
-**Przeglądarka internetowa**
-  - Google Chrome, Mozilla Firefox, Safari (najnowsza wersja)
+**Web Browser**
+  - Google Chrome, Mozilla Firefox, Safari (latest version)
 
-Zapewnienie zgodności z powyższymi wymaganiami systemowymi umożliwi prawidłowe uruchomienie i korzystanie z aplikacji Gurudo.
+Ensuring compliance with the above system requirements will enable the proper functioning and usage of the Gurudo application.
 
 ---
 
-## Instrukcja instalacji
+## Installation Instructions
 
-### Kroki do sklonowania repozytorium
-1. Otwórz terminal lub wiersz poleceń.
-2. Przejdź do katalogu, w którym chcesz sklonować repozytorium.
-3. Wykonaj poniższe polecenie, aby sklonować repozytorium (frontend):
+### Steps to Clone the Repository
+1. Open the terminal or command prompt.
+2. Navigate to the directory where you want to clone the repository.
+3. Execute the following command to clone the repository (frontend):
    ```bash
    git clone https://github.com/lukaszglowacz/bygg-app-front-react.git
-4. Przejdź do katalogu projektu:
+4. Navigate to the project directory:
    ```bash
    cd bygg-app-front-react
-5. Wykonaj poniższe polecenie, aby sklonować repozytorium (backend):
+5. Execute the following command to clone the repository (backend):
    ```bash
    git clone https://github.com/lukaszglowacz/bygg-drf-api.git
-6. Przejdź do katalogu projektu:
+6. Navigate to the project directory:
    ```bash
    cd bygg-drf-api
-### Instrukcje dotyczące instalacji zależności backendu (Django)
-1. Upewnij się, że masz zainstalowanego Pythona w wersji 3.8 lub nowszej.
-2. Zainstaluj wirtualne środowisko (venv):
+### Instructions for Installing Backend Dependencies (Django)
+1. Ensure that you have Python version 3.8 or later installed.
+2. Install a virtual environment (venv):
    ```bash
    python -m venv venv
-3. Aktywuj wirtualne środowisko:
+3. Activate the virtual environment:
    - Na systemie Windows:
      ```bash
      venv\Scripts\activate
    - Na systemie macOS/Linux:
      ```bash
      source venv/bin/activate
-4. Zainstaluj zależności backendu z pliku `requirements.txt`:
+4. Install backend dependencies from the `requirements.txt` file:
    ```bash
    pip install -r requirements.txt
-### Instrukcje dotyczące instalacji zależności frontendowych (React)
-1. Upewnij się, że masz zainstalowanego Node.js w wersji 14.x lub nowszej oraz npm w wersji 6.x lub nowszej.
-2. Przejdź do katalogu frontendowego:
+### Instructions for installing frontend dependencies (React)
+1. Ensure you have Node.js version 14.x or newer and npm version 6.x or newer installed.
+2. Navigate to the frontend directory:
    ```bash
    cd bygg-app-front-react
-3. Zainstaluj zależności frontendowe:
+3. Install the frontend dependencies:
    ```bash
    npm install
-### Uruchamianie serwera backendowego
-1. Upewnij się, że wirtualne środowisko jest aktywowane.
-2. Wykonaj migracje bazy danych:
+### Running the Backend Server
+1. Ensure that the virtual environment is activated.
+2. Run the database migrations:
    ```bash
    python manage.py makemigrations
    python manage.py migrate
-3. Uruchom serwer Django:
+3. Start the Django server:
     ```bash
     python manage.py runserver
-  Powinieneś zobaczyć komunikat informujący o uruchomieniu serwera na `http://127.0.0.1:8000/`
+  You should see a message indicating that the server is running at `http://127.0.0.1:8000/`
 
-### Uruchamianie aplikacji frontendowej
-1. Upewnij się, że jesteś w katalogu frontendowym:
+
+### Running the Frontend Application
+1. Make sure you are in the frontend directory:
    ```bash
    cd bygg-app-front-react
-2. Uruchom serwer deweloperski:
+2. Start the development server:
    ```bash
    npm run dev
-  Powinieneś zobaczyć komunikat informujący o uruchomieniu aplikacji na `http://localhost:3000/`.
+ You should see a message indicating that the application is running at `http://localhost:3000/`.
 
+---
+
+## Usage
+### Examples of Main Application Features
+
+The interface for employees and employers differs based on user permissions.
+
+#### Employee Interface
+1. Employees can record their working hours using the "Start" and "End" buttons.
+2. Employees can view their work sessions, hour summaries, and historical work session data.
+3. The total hours worked are displayed, along with basic information needed to monitor working hours during a specific period.
+4. Employees can edit their personal data, change their password, and permanently delete their account.
+
+
+#### Employer Interface
+1. Employers have access to all the functions available to employees.
+2. Employers can manage workplaces, including adding, deleting, and editing workplace data.
+3. Employers can manage their employees' work sessions, including adding, editing, and deleting sessions.
+4. Employers can monitor in real-time which employees are currently active, where they are working, and when they started their work.
+5. Employers can remotely end an active work session of any employee.
+6. Employers can generate monthly activity reports for each of their employees in PDF format.
+
+
+ #### Adding Employees
+Employees automatically receive employee permissions upon registering for the application. To register, follow these steps:
+
+1. Click the "Sign Up here" button on the login screen.
+2. Provide the necessary information (email, password, first name, last name, personnummer).
+3. Click the "Sign Up" button.
+4. You will be redirected to the login screen.
+5. Fill in the login form with the registration details and log into the application.
+
+#### Recording Work Sessions
+
+1. On the homepage, select the workplace from the dropdown list by clicking the building icon.
+2. When you are at the workplace and ready to start working, click "Start".
+3. When you finish working, click "End".
+
+#### Viewing and Editing Work Sessions
+
+1. Go to the "Team Management" section in the navigation menu.
+2. Select an employee.
+3. Click the "Show Hours" button.
+4. You will be taken to the employee's monthly work session view.
+5. Find the month and day of the session you want to edit.
+6. Click the "ArrowRight" button next to the date of the work session.
+7. You will be taken to the daily view of the work sessions.
+8. Click the "Edit" button.
+9. Fill out the form with the new data.
+10. Click the "Save" button.
+
+#### Generating Monthly Reports
+
+1. Go to the "Team Management" section in the navigation menu.
+2. Select an employee.
+3. Click the "Show Hours" button.
+4. You will be taken to the employee's monthly work session view.
+5. Click the "Download" button.
+6. A PDF file with the selected employee's monthly summary for the chosen month will be generated.
+
+#### Managing Workplaces
+
+1. Go to the "Locations" section in the navigation menu.
+2. Click the "Add" button.
+3. Fill out the form with detailed information such as street, street number, postal code, and city.
+4. Click the "Save" button to add a new workplace.
+5. Employees will now be able to select this workplace from the dropdown menu.
+6. To edit a workplace, click the "Edit" button and make the necessary changes.
+7. To delete a workplace, click the "Delete" button and confirm the deletion.
+
+### Summary
+
+The Gurudo application offers a range of features that simplify time and workplace management. With an intuitive user interface and advanced functionalities, employers and employees can efficiently manage their duties and work hours.
+
+Following the above steps will help you fully utilize the capabilities of the Gurudo application.
 
 
 ---
 
-## Użycie
-### Przykłady głównych funkcji aplikacji
+## Application Features
 
-Interfejs dla pracownika i pracodawcy różni się w zależności od uprawnień użytkownika.
+#### Employee Management
+- Ability to add, edit, and delete employees.
+- Review and manage employee data, including their work session history.
 
-#### Interfejs Pracownika
-1. Pracownik ma możliwość rejestrowania swojego czasu pracy poprzez przyciski "Start" i "End".
-2. Pracownik może przeglądać swoje sesje pracy, zestawienia godzin oraz historyczne dane dotyczące sesji pracy.
-3. Wyświetlana jest suma przepracowanych godzin oraz podstawowe informacje potrzebne do monitorowania czasu pracy w danym okresie.
-4. Pracownik ma możliwość edycji swoich danych osobowych, zmiany hasła oraz trwałego usunięcia swojego konta.
+#### Workplace Management
+- Adding, editing, and deleting workplaces.
+- Review available workplaces and assign them to employee work sessions.
 
-#### Interfejs Pracodawcy
-1. Gurudo
-   1. Spis treści
-   2. Wprowadzenie
-   3. Wymagania systemowe
-      1. Backend
-      2. Frontend
-      3. Inne narzędzia
-      4. Narzędzia deweloperskie
-      5. Konfiguracja systemowa
-   4. Instrukcja instalacji
-      1. Kroki do sklonowania repozytorium
-      2. Ustawienia frontendowe
-         1. Konfiguracja baseURL w pliku api.js
-   5. Przykładowe komponenty kodu
-      1. EmployeeDetailsByDay.tsx
-   6. Zarządzanie błędami
-      1. Jak obsługiwać błędy w aplikacji
-         1. Wyświetlanie komunikatów o błędach
-         2. Obsługa błędów sieciowych
-   7. Zarządzanie sesjami pracy
-      1. Jak aplikacja radzi sobie z sesjami pracy
-         1. Aktualne sesje pracy
-         2. Usuwanie miejsc pracy, gdy są aktywne sesje
-         3. Monitorowanie aktywności pracowników
-   8. Testy manualne
-      1. Błędy w aplikacji - Wykonane poprawki
-      2. Błędy aplikacji do zrobienia w przyszłości
-   9. Informacje o autorze
-   10. Licencja
-   11. Podziękowania
+#### Work Session Recording
+- Employees can start and end work sessions.
+- Monitor active work sessions in real time.
+- Employers can add, edit, and delete employee work sessions.
 
-#### Dodawanie pracowników
-Pracownik otrzymuje automatycznie uprawnienia pracownika podczas rejestracji do aplikacji. Aby się zarejestrować, wykonaj następujące kroki:
+#### Report Generation
+- Create reports of employee work sessions.
+- Generate monthly summaries of employee activities in PDF format.
 
-1. Kliknij przycisk "Sign Up here" w oknie logowania.
-2. Podaj niezbędne dane (email, hasło, imię, nazwisko, personnummer).
-3. Kliknij przycisk "Sign Up".
-4. Zostaniesz przekierowany do okna logowania.
-5. Uzupełnij formularz logowania danymi z formularza rejestracji i zaloguj się do aplikacji.
+#### Daily Session Overview
+- Review employee work sessions by the selected day.
+- Detailed information on the start time, end time, and total work time.
 
-#### Rejestrowanie sesji pracy
+#### Monthly Session Overview
+- Review employee work sessions by the selected month.
+- Summary of total work time for each day of the month.
 
-1. Na stronie głównej wybierz miejsce pracy z rozwijanej listy, klikając ikonę budynku.
-2. Gdy jesteś w miejscu pracy i rozpoczynasz pracę, kliknij "Start".
-3. Gdy kończysz pracę, kliknij "End".
+#### User Permissions Management
+- Ability to assign roles and permissions for employees and employers.
+- Manage access to different application functions based on user roles.
 
-#### Przeglądanie i edytowanie sesji pracy
+#### Intuitive Interface
+- Display detailed real-time instructions to facilitate navigation and use of the application.
 
-1. Przejdź do sekcji "Team Management" w menu nawigacyjnym.
-2. Wybierz pracownika.
-3. Kliknij na przycisk "Show Hours".
-4. Przejdziesz do sekcji widoku miesięcznego sesji pracy pracownika.
-5. Znajdź miesiąc i dzień sesji, którą chcesz edytować.
-6. Kliknij na przycisk "ArrowRight" po prawej stronie ekranu przy dacie, w której znajduje się sesja pracy.
-7. Przejdziesz do sekcji widoku dnia z sesjami pracy.
-8. Kliknij na przycisk "Edit".
-9. Uzupełnij formularz nowymi danymi.
-10. Kliknij na przycisk "Save".
+#### Action Alerts
+- Notifications of errors, such as an employer attempting to delete a workplace currently in use by an employee.
 
-#### Generowanie raportów miesięcznych
-
-1. Przejdź do sekcji "Team Management" w menu nawigacyjnym.
-2. Wybierz pracownika.
-3. Kliknij na przycisk "Show Hours".
-4. Przejdziesz do sekcji widoku miesięcznego sesji pracy pracownika.
-5. Kliknij na przycisk "Download".
-6. Zostanie wygenerowany plik PDF z miesięcznym zestawieniem wybranego pracownika za wybrany przez Ciebie miesiąc.
-   
-#### Zarządzanie miejscami pracy
-
-1. Przejdź do sekcji "Locations" w menu nawigacyjnym.
-2. Kliknij przycisk "Add".
-3. Wypełnij formularz dodawania miejsca pracy, podając szczegółowe informacje takie jak ulica, numer ulicy, kod pocztowy, miasto.
-4. Kliknij przycisk "Save", aby dodać nowe miejsce pracy.
-5. Pracownicy będą mogli teraz wybrać to miejsce pracy z rozwijanego menu.
-6. Aby edytować miejsce pracy, kliknij przycisk "Edit" i wprowadź niezbędne zmiany.
-7. Aby usunąć miejsce pracy, kliknij przycisk "Delete" i potwierdź usunięcie.
-
-### Podsumowanie
-
-Aplikacja Gurudo oferuje szereg funkcji ułatwiających zarządzanie czasem pracy i miejscami pracy. Dzięki intuicyjnemu interfejsowi użytkownika i zaawansowanym funkcjom, pracodawcy i pracownicy mogą efektywnie zarządzać swoimi obowiązkami i czasem pracy.
-
-Zapewniamy, że przestrzeganie powyższych kroków pomoże w pełnym wykorzystaniu możliwości aplikacji Gurudo.
-
----
-
-## Funkcje aplikacji
-
-#### Zarządzanie pracownikami
-- Możliwość dodawania, edytowania i usuwania pracowników.
-- Przegląd i zarządzanie danymi pracowników, w tym historią ich sesji pracy.
-
-#### Zarządzanie miejscami pracy
-- Dodawanie, edytowanie i usuwanie miejsc pracy.
-- Przegląd dostępnych miejsc pracy i przypisywanie ich do sesji pracy pracowników.
-
-#### Rejestrowanie sesji pracy
-- Rozpoczynanie i kończenie sesji pracy przez pracowników.
-- Monitorowanie aktywnych sesji pracy w czasie rzeczywistym.
-- Dodawanie, edytowanie i usuwanie sesji pracy pracowników przez pracodawcę.
-
-#### Generowanie raportów
-- Tworzenie raportów z sesji pracy pracowników.
-- Generowanie zestawień miesięcznych aktywności pracowników w formacie PDF.
-
-#### Przegląd sesji według dnia
-- Przegląd sesji pracy pracowników według wybranego dnia.
-- Szczegółowe informacje o czasie rozpoczęcia, zakończenia oraz całkowitym czasie pracy.
-
-#### Przegląd sesji według miesiąca
-- Przegląd sesji pracy pracowników według wybranego miesiąca.
-- Podsumowanie całkowitego czasu pracy dla każdego dnia w miesiącu.
-
-#### Zarządzanie uprawnieniami użytkowników
-- Możliwość przypisywania ról i uprawnień pracownika i pracodawcy.
-- Zarządzanie dostępem do różnych funkcji aplikacji w zależności od roli użytkownika.
-
-#### Intuicyjny interfejs** 
-- Wyświetlanie szczegółowych instrukcji w czasie rzeczywistym, ułatwiających nawigację i użytkowanie aplikacji.
-  
-#### Alerty dotyczące nieprawidłowych działań
-- Powiadomienia o błędach, takich jak próba usunięcia miejsca pracy przez pracodawcę, gdy aktualnie pracuje na nim pracownik.
-
-#### Integracja z zewnętrznymi narzędziami
-- Możliwość integracji z narzędziami do zarządzania projektami i innymi systemami HR.
-- API umożliwiające komunikację z zewnętrznymi aplikacjami.
-
----
-
-## Przykładowe obrazy/screenshoty
-
+#### Integration with External Tools
+- Ability to integrate with project management tools and other HR systems.
+- API enabling communication with external applications.
 
 
 ---
 
-## Dokumentacja API
+## Sample Images/Screenshots
+### Login
+![Login](screenshots/192.168.0.69_3000_(iPhone%20SE).png)
+### Sign Up
+![Sign Up](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(1).png)
+### Reset Password
+![Reset password](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(2).png)
+### Confirm Reset Password
+![Reset password](screenshots/worktime-app-react-cd9b9f8fb803.herokuapp.com_reset-password_Mw_c8cizw-2fa20e7d90c05fe49da5163e5423b847_(iPhone%20SE).png)
+### Home
+![Home](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(3).png)
+### Profile
+![Profile](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(4).png)
+### Profile
+![Profile](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(5).png)
+### Month View
+![Month View](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(7).png)
+### Month View
+![Team](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(8).png)
+### Team - Employer
+![Team](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(9).png)
+### Team - Employer
+![Month View Employer](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(10).png)
+### Month View - Employer
+![Add Work Session](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(11).png)
+### Add Work Session - Employer
+![Confirm Deletion Modal](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(13).png)
+### Edit Work Session - Employer
+![Workplace](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(14).png)
+### Confirm Deletion Modal - Employer
+![Navbar](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(15).png)
+### Workplace - Employer
+![Strona główna](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(16).png)
+### Menu
+![Strona główna](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(17).png)
 
-### Endpointy
 
-#### 1. Główny Endpoint
+---
+
+## API Documentation
+
+### Endpoints
+
+#### 1. Main Endpoint
 - **URL:** `/`
-- **Metoda:** GET
-- **Opis:** Ten endpoint jest głównym punktem wejścia do API, zwykle używany do sprawdzenia stanu API.
+- **Method:** GET
+- **Description:** This endpoint is the main entry point to the API, typically used to check the status of the API.
 
 #### 2. Admin
 - **URL:** `/admin/`
-- **Metoda:** GET, POST
-- **Opis:** Panel administracyjny Django, dostępny tylko dla administratorów. Służy do zarządzania modelami aplikacji.
+- **Method:** GET, POST
+- **Description:** Django admin panel, accessible only to administrators. Used for managing application models.
 
-#### 3. Autoryzacja API
+#### 3. API Authorization
 - **URL:** `/api-auth/`
-- **Metoda:** GET, POST
-- **Opis:** Obsługuje logowanie i wylogowanie użytkowników za pomocą interfejsu REST API.
+- **Method:** GET, POST
+- **Description:** Handles user login and logout via the REST API.
 
-#### 4. Profile
+#### 4. Profiles
 - **URL:** `/profile/`
-- **Metoda:** GET, POST, PUT, DELETE
-- **Opis:** Endpoint do zarządzania profilami użytkowników. Obsługuje tworzenie, odczytywanie, aktualizowanie i usuwanie profili.
+- **Method:** GET, POST, PUT, DELETE
+- **Description:** Endpoint for managing user profiles. Supports creating, reading, updating, and deleting profiles.
 
-#### 5. Miejsca Pracy
+#### 5. Workplaces
 - **URL:** `/workplace/`
-- **Metoda:** GET, POST, PUT, DELETE
-- **Opis:** Endpoint do zarządzania miejscami pracy. Obsługuje tworzenie, odczytywanie, aktualizowanie i usuwanie miejsc pracy.
+- **Method:** GET, POST, PUT, DELETE
+- **Description:** Endpoint for managing workplaces. Supports creating, reading, updating, and deleting workplaces.
 
-#### 6. Sesje Pracy
+#### 6. Work Sessions
 - **URL:** `/worksession/`
-- **Metoda:** GET, POST, PUT, DELETE
-- **Opis:** Endpoint do zarządzania sesjami pracy. Obsługuje tworzenie, odczytywanie, aktualizowanie i usuwanie sesji pracy.
+- **Method:** GET, POST, PUT, DELETE
+- **Description:** Endpoint for managing work sessions. Supports creating, reading, updating, and deleting work sessions.
 
-#### 7. Aktywne Sesje
+#### 7. Active Sessions
 - **URL:** `/livesession/`
-- **Metoda:** GET
-- **Opis:** Endpoint do odczytywania aktualnie aktywnych sesji pracy. Obsługuje tylko odczytywanie.
+- **Method:** GET
+- **Description:** Endpoint for reading currently active work sessions. Supports only reading.
 
-#### 8. Pracownicy
+#### 8. Employees
 - **URL:** `/employee/`
-- **Metoda:** GET, POST, PUT, DELETE
-- **Opis:** Endpoint do zarządzania pracownikami. Obsługuje tworzenie, odczytywanie, aktualizowanie i usuwanie pracowników.
+- **Method:** GET, POST, PUT, DELETE
+- **Description:** Endpoint for managing employees. Supports creating, reading, updating, and deleting employees.
 
-#### 9. Token JWT
+#### 9. JWT Token
 - **URL:** `/api/token/`
-- **Metoda:** POST
-- **Opis:** Endpoint do uzyskiwania tokenu JWT dla zalogowanego użytkownika.
+- **Method:** POST
+- **Description:** Endpoint for obtaining JWT tokens for logged-in users.
 
 - **URL:** `/api/token/refresh/`
-- **Metoda:** POST
-- **Opis:** Endpoint do odświeżania tokenu JWT dla zalogowanego użytkownika.
+- **Method:** POST
+- **Description:** Endpoint for refreshing JWT tokens for logged-in users.
 
-#### 10. Rejestracja Użytkownika
+#### 10. User Registration
 - **URL:** `/register/`
-- **Metoda:** POST
-- **Opis:** Endpoint do rejestracji nowego użytkownika.
+- **Method:** POST
+- **Description:** Endpoint for registering a new user.
 
-#### 11. Resetowanie Hasła
+#### 11. Password Reset
 - **URL:** `/password-reset/`
-- **Metoda:** POST, GET
-- **Opis:** Endpoint do resetowania hasła użytkownika. Obsługuje żądanie resetowania hasła oraz potwierdzenie resetowania hasła.
+- **Method:** POST, GET
+- **Description:** Endpoint for resetting user passwords. Supports password reset requests and confirmations.
 
-#### 12. Konta
+#### 12. Accounts
 - **URL:** `/accounts/`
-- **Metoda:** GET, POST, PUT, DELETE
-- **Opis:** Endpoint do zarządzania kontami użytkowników. Obsługuje tworzenie, odczytywanie, aktualizowanie i usuwanie kont.
+- **Method:** GET, POST, PUT, DELETE
+- **Description:** Endpoint for managing user accounts. Supports creating, reading, updating, and deleting accounts.
 
 ---
 
-## Konfiguracja
+## Configuration
 
-### Ustawienia backendowe
+### Backend Settings
 
-#### Konfiguracja CORS w Django
+#### CORS Configuration in Django
 
-Aby umożliwić komunikację między frontendem a backendem, należy skonfigurować CORS w pliku `settings.py`:
+To enable communication between the frontend and backend, configure CORS in the `settings.py` file:
 
 ```python
 # settings.py
@@ -498,9 +525,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 ``````
 
-### Ustawienia frontendowe
-#### Konfiguracja baseURL w pliku api.js
-Plik `api.ts` zawiera konfigurację Axios, w tym ustawienie podstawowego URL-a (baseURL) dla żądań HTTP do backendu:
+### Frontend Settings
+#### baseURL Configuration in `api.ts`
+The `api.ts` file contains the Axios configuration, including setting the baseURL for HTTP requests to the backend:
 
 ``````jsx
 
@@ -567,11 +594,11 @@ export default api;
 
 ---
 
-## Przykładowe komponenty kodu
-W tej sekcji przedstawiamy przykłady kodu dla głównych komponentów aplikacji, które pokazują, jak zbudowane są poszczególne części aplikacji. Komponenty te są kluczowe dla funkcjonowania aplikacji i ilustrują, jak różne technologie i biblioteki są wykorzystywane do realizacji konkretnych funkcji.
+## Sample Code Components
+This section presents code examples for the main components of the application, demonstrating how various parts of the application are built. These components are crucial for the functionality of the application and illustrate how different technologies and libraries are used to implement specific features.
 
 ### EmployeeDetailsByDay.tsx
-Komponent EmployeeDetailsByDay.tsx jest odpowiedzialny za wyświetlanie szczegółowych informacji o sesjach pracy danego pracownika w wybranym dniu przez pracodawcę. Poniżej znajduje się przykładowy kod tego komponentu.
+The EmployeeDetailsByDay.tsx component is responsible for displaying detailed information about an employee's work sessions on a selected day for the employer. Below is the sample code for this component.
 
 ``````jsx
 import React, { useState, useEffect } from "react";
@@ -920,15 +947,15 @@ export default EmployeeDetailsByDay;
 ---
 
 
-## Zarządzanie błędami
+## Error Management
 
-Zarządzanie błędami w aplikacji Gurudo jest kluczowym elementem zapewnienia wysokiej jakości doświadczenia użytkownika. W tej sekcji opisano, jak obsługiwać błędy, aby aplikacja działała płynnie i była przyjazna dla użytkownika.
+Managing errors in the Gurudo application is a crucial aspect of ensuring a high-quality user experience. This section describes how to handle errors to keep the application running smoothly and user-friendly.
 
-### Jak obsługiwać błędy w aplikacji
+### How to Handle Errors in the Application
 
-#### Wyświetlanie komunikatów o błędach
+#### Displaying Error Messages
 
-W aplikacji Gurudo wyświetlanie komunikatów o błędach jest realizowane za pomocą komponentów `Alert` z biblioteki React Bootstrap. Komunikaty o błędach informują użytkownika o problemach, które wystąpiły podczas korzystania z aplikacji, i sugerują możliwe kroki naprawcze.
+In the Gurudo application, error messages are displayed using the `Alert` components from the React Bootstrap library. Error messages inform the user about issues that have occurred while using the application and suggest possible corrective actions.
 
 ``````jsx
 import React, { useState } from 'react';
@@ -945,9 +972,10 @@ import React, { useState } from 'react';
    export default ErrorNotification;
 ``````
 
-#### Obsługa błędów sieciowych
+#### Handling Network Errors
 
-Aplikacja Gurudo używa biblioteki Axios do wykonywania zapytań HTTP. Obsługa błędów sieciowych jest realizowana poprzez przechwytywanie błędów za pomocą interceptorów Axios.
+The Gurudo application uses the Axios library to perform HTTP requests. Network error handling is implemented by intercepting errors using Axios interceptors.
+
 
 ``````jsx
 import axios, { AxiosError, AxiosResponse } from 'axios';
@@ -979,18 +1007,19 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
    export default api;
 ``````
 
-Poprawna obsługa błędów jest niezbędna do zapewnienia stabilności i użyteczności aplikacji. Stosowanie powyższych technik pomaga w identyfikacji, diagnozowaniu i rozwiązywaniu problemów, co przekłada się na lepsze doświadczenie użytkownika.
+Proper error handling is essential for ensuring the stability and usability of the application. Employing the techniques mentioned above helps in identifying, diagnosing, and resolving issues, leading to a better user experience.
 
 ---
 
-## Zarządzanie sesjami pracy
+## Managing Work Sessions
 
-Zarządzanie sesjami pracy jest kluczowym aspektem działania aplikacji Gurudo. Poniżej opisano, jak aplikacja radzi sobie z różnymi aspektami zarządzania sesjami pracy, w tym aktualnymi sesjami, usuwaniem miejsc pracy, gdy są aktywne sesje, oraz innymi powiązanymi operacjami.
+Managing work sessions is a key aspect of the Gurudo application. Below is a description of how the application handles various aspects of work session management, including current sessions, deleting workplaces when there are active sessions, and other related operations.
 
-### Jak aplikacja radzi sobie z sesjami pracy
-#### Aktualne sesje pracy
+### How the Application Manages Work Sessions
+#### Current Work Sessions
 
-Aplikacja Gurudo śledzi aktualne sesje pracy pracowników, zapewniając wgląd w bieżące działania. Każdy pracownik może rozpocząć i zakończyć sesję pracy za pomocą przycisków "Start" i "End" na stronie głównej. Informacje o aktualnych sesjach są przechowywane i mogą być przeglądane przez pracodawców w celu monitorowania aktywności pracowników.
+The Gurudo application tracks current work sessions of employees, providing insight into ongoing activities. Each employee can start and end a work session using the "Start" and "End" buttons on the main page. Information about current sessions is stored and can be reviewed by employers to monitor employee activity.
+
 
 ``````jsx
 import React, { useState, useEffect } from "react";
@@ -1226,8 +1255,9 @@ export default Home;
 
 ``````
 
-#### Usuwanie miejsc pracy, gdy są aktywne sesje
-Aby zapewnić integralność danych, aplikacja nie pozwala na usunięcie miejsca pracy, gdy są z nim powiązane aktywne sesje pracy. Przed usunięciem miejsca pracy aplikacja sprawdza, czy żaden z pracowników nie jest obecnie zalogowany i nie pracuje w tym miejscu.
+#### Deleting Workplaces When There Are Active Sessions
+To ensure data integrity, the application does not allow the deletion of a workplace if there are active work sessions associated with it. Before deleting a workplace, the application checks to ensure that no employees are currently logged in and working at that location.
+
 
 ``````jsx
 import React, { useEffect, useState } from "react";
@@ -1422,8 +1452,9 @@ export default WorkPlaceContainer;
 
 ``````
 
-#### Monitorowanie aktywności pracowników
-Pracodawcy mają dostęp do przeglądania bieżącej aktywności swoich pracowników. Mogą zobaczyć, którzy pracownicy są obecnie zalogowani i w jakich miejscach pracują, co umożliwia lepsze zarządzanie zespołem i zasobami.
+#### Monitoring Employee Activity
+Employers have access to view the current activity of their employees. They can see which employees are currently logged in and where they are working, allowing for better team and resource management.
+
 
 ``````jsx
 import React, { useState, useEffect } from "react";
@@ -1598,104 +1629,107 @@ export default EmployeeList;
 
 ``````
 
-Zarządzanie sesjami pracy w aplikacji Gurudo jest zaprojektowane w taki sposób, aby zapewnić zarówno pracownikom, jak i pracodawcom efektywne narzędzia do monitorowania i zarządzania czasem pracy.
+Work session management in the Gurudo application is designed to provide both employees and employers with efficient tools to monitor and manage work hours.
 
 ---
 
-## Testy manualne
-### Błędy w aplikacji - Wykonane poprawki
+## Manual Testing
+### Application Errors - Completed Fixes
 
-1. **Błąd przy edycji godzin pracy na telefonie.**
-   - Błąd związany z przekazywaniem obiektu w postaci stringa, gdy serwer oczekiwał jedynie typu numer ID. Naprawiono.
+1. **Error editing work hours on the phone.**
+   - The error was related to passing an object as a string when the server expected only a numeric ID type. Fixed.
 
-2. **Poprawa stylu przycisków "Next" i "Back".**
-   - Przyciski były za duże, utrudniając prawidłowy UX. Zaktualizowano styl.
+2. **Improvement of "Next" and "Back" button styles.**
+   - The buttons were too large, hindering proper UX. Updated style.
 
-3. **Powrót z edycji godzin pracy do konkretnego dnia.**
-   - Aplikacja nie powracała do poprzedniego widoku po edycji godzin pracy. Naprawiono.
+3. **Return from editing work hours to the specific day.**
+   - The application did not return to the previous view after editing work hours. Fixed.
 
-4. **Powrót pracodawcy z widoku dnia do miesiąca.**
-   - Błąd związany z niewłaściwym endpointem. Teraz ładuje poprawnie dane użytkownika po powrocie.
+4. **Employer return from day view to month view.**
+   - The error was related to an incorrect endpoint. Now correctly loads user data upon return.
 
-5. **Brak kluczyka przy formularzu zmiany hasła.**
-   - Dodano możliwość podglądu wpisanego hasła w formularzu zmiany hasła.
+5. **Lack of key icon in the password change form.**
+   - Added the ability to toggle password visibility in the password change form.
 
-6. **Informacja o wygaśnięciu linka.**
-   - Dodano alert informujący o wygaśnięciu linka oraz przekierowanie do funkcji odzyskiwania hasła.
+6. **Information about link expiration.**
+   - Added an alert informing about link expiration and a redirection to the password recovery function if the user wishes to reset the password.
 
-7. **Słabe połączenie z internetem.**
-   - Dodano informację o braku połączenia sieciowego. Alert pojawia się przy braku połączenia i znika po jego przywróceniu.
+7. **Weak internet connection.**
+   - Added a network connection alert. The alert appears when the user is out of network range and disappears when the connection is restored.
 
-8. **Loader na widoku dziennym.**
-   - Zoptymalizowano działanie loadera, aby ładował tylko sesje pracy, a nie cały komponent.
+8. **Loader on the daily view.**
+   - Optimized loader functionality to load only work sessions, not the entire component.
 
-9. **Loader przy przyciskach.**
-   - Dodano loader przy przyciskach, aby informować użytkownika o oczekiwaniu na odpowiedź z serwera.
+9. **Loader on buttons.**
+   - Added a loader to buttons to inform the user to wait for a server response.
 
-10. **Tytuł i przycisk powrotu w Navbar w widoku dodawania sesji pracy.**
-    - Dodano prawidłowy tytuł i przycisk powrotu.
+10. **Title and back button in Navbar on the work session addition view.**
+    - Added correct title and back button.
 
-11. **Modal przy przycisku usunięcia sesji pracy.**
-    - Dodano modal potwierdzający usunięcie sesji pracy, zwiększając bezpieczeństwo operacji.
+11. **Modal for deleting work session.**
+    - Added a confirmation modal for deleting a work session, increasing operational security.
 
-12. **Modal przy usuwaniu miejsca pracy.**
-    - Dodano modal potwierdzający usunięcie miejsca pracy oraz odświeżanie listy miejsc pracy.
+12. **Modal for deleting workplace.**
+    - Added a confirmation modal for deleting a workplace and refreshing the workplace list after deletion.
 
-13. **Usunięcie profilu użytkownika.**
-    - Dodano możliwość usunięcia konta użytkownika wraz z potwierdzeniem i informacją o nieodwracalności operacji.
+13. **User profile deletion.**
+    - Added the ability for a user to delete their account with confirmation and information about the irreversibility of the operation.
 
-14. **Blokada usunięcia miejsca pracy przy aktywnej sesji.**
-    - Dodano funkcję zabezpieczającą przed usunięciem miejsca pracy, gdy ktoś aktualnie tam pracuje.
+14. **Blocking workplace deletion with active sessions.**
+    - Added a function to prevent deleting a workplace if someone is currently working there.
 
-15. **Odświeżanie stanu po dodaniu godzin pracy przez pracodawcę.**
-    - Dodano automatyczne odświeżanie stanu godzin pracy po ich dodaniu.
+15. **Refreshing state after adding work hours by the employer.**
+    - Added automatic state refresh of work hours after addition.
 
-16. **Problem przy ładowaniu sesji pracy przez nowego użytkownika.**
-    - Dodano alert informujący o braku sesji pracy dla nowego użytkownika.
+16. **Issue loading work sessions by new user.**
+    - Added an alert informing about no work sessions for new users.
 
-17. **Blokada dostępu do strony logowania dla zalogowanych użytkowników.**
-    - Dodano przekierowanie zalogowanego użytkownika na stronę główną.
+17. **Blocking login page access for logged-in users.**
+    - Added a function redirecting logged-in users to the home page.
 
-18. **Automatyczne wylogowanie po zmianie hasła.**
-    - Po zmianie hasła użytkownik jest teraz automatycznie wylogowywany i przekierowywany na stronę logowania.
+18. **Automatic logout after password change.**
+    - Users are now automatically logged out and redirected to the login page after changing their password.
 
-19. **Poprawa wyświetlania alertów.**
-    - Poprawiono styl wyświetlania alertów i podzielono je na kategorie (info, warning, danger).
+19. **Improved alert display.**
+    - Improved alert display style and categorized them (info, warning, danger).
 
-20. **Poprawa widoku dla aktywnej sesji.**
-    - Ustandaryzowano widok aktywnej sesji użytkownika.
+20. **Improved active session view.**
+    - Standardized the active session user view.
 
-21. **Nazwy dni tygodnia w widoku miesięcznym.**
-    - Dodano nazwy dni tygodnia, zwiększając przejrzystość widoku.
+21. **Day names in the monthly view.**
+    - Added day names to the monthly view for better clarity.
 
-22. **Ustandaryzowanie adresów miejsc pracy.**
-    - Ustandaryzowano format wyświetlania adresów miejsc pracy.
+22. **Standardized workplace addresses.**
+    - Standardized the format of displaying workplace addresses.
 
-23. **Kapitalizacja imienia i nazwiska.**
-    - Wprowadzono automatyczną kapitalizację imienia i nazwiska użytkownika.
+23. **Capitalization of first and last name.**
+    - Implemented automatic capitalization of the user's first and last name.
 
-### Błędy aplikacji do zrobienia w przyszłości
+### Application Errors to Fix in the Future
 
-1. **Link aktywacyjny po rejestracji na maila.**
-   - Wprowadzenie funkcji wysyłania linka aktywacyjnego na adres e-mail w celu potwierdzenia autentyczności użytkownika. Zwiększy to bezpieczeństwo i zapobiegnie rejestracji na nieistniejące adresy e-mail.
+1. **Activation link after registration via email.**
+   - Implementing a function to send an activation link to the user's email to confirm authenticity. This will increase security and prevent registration with non-existent email addresses.
+   - 
+---
+
+## About the Author
+
+The Gurudo project was created and is maintained by Lucka Baron, an experienced Full Stack Developer. If you have any questions about the project, need assistance, or have suggestions for the development of the application, please contact:
+
+- **Name:** Lucka Baron
+- **Role:** Full Stack Developer
+- **Email:** bakatjur@gmail.com
+
+Lucka Baron is open to any questions and is happy to help resolve any issues related to the Gurudo application.
 
 
 ---
 
-## Informacje o autorze
+## License
 
-Projekt Gurudo został stworzony i jest utrzymywany przez Lucka Baron, doświadczonego Full Stack Developera. Jeśli masz jakiekolwiek pytania dotyczące projektu, potrzebujesz pomocy lub masz sugestie dotyczące rozwoju aplikacji, prosimy o kontakt:
+The Gurudo project is released under the MIT License. Detailed information about the license is provided below:
 
-- **Imię i nazwisko:** Lucka Baron
-- **Rola:** Full Stack Developer
-- **E-mail:** bakatjur@gmail.com
 
-Lucka Baron jest otwarty na wszelkie pytania i chętnie pomoże w rozwiązaniu wszelkich problemów związanych z aplikacją Gurudo.
-
----
-
-## Licencja
-Projekt Gurudo jest udostępniany na licencji MIT. Poniżej znajdują się szczegółowe informacje na temat licencji:
 
 ``````
 MIT License
@@ -1724,12 +1758,14 @@ MIT License
 
 ---
 
-## Podziękowania
+## Acknowledgements
 
-Serdeczne podziękowania dla:
+Special thanks to:
 
-- Mojej dziewczyny, Swietłany, która wspierała mnie na każdym etapie tworzenia projektu.
-- Wszystkich ludzi, którzy pomogli mi w testach manualnych i używali aplikacji.
-- Przyjaciół, którzy zainspirowali mnie do stworzenia aplikacji.
+- My girlfriend, Swietłana, who supported me at every stage of the project.
+- Everyone who helped with manual testing and used the application.
+- Friends who inspired me to create the application.
 
-Dziękuję za waszą nieocenioną pomoc i wsparcie.
+Thank you for your invaluable help and support.
+
+Lucka
