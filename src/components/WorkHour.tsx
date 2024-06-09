@@ -100,7 +100,7 @@ const WorkHour: React.FC = () => {
             <div className="small">
               {formatDate(day)} <span className="text-muted">{dayOfWeek}</span>
             </div>
-            <Button className="border-0" onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-secondary" size="sm">
+            <Button className="border-0" onClick={() => navigate(`/work-hours/day/${day}`)} variant="outline-success" size="sm">
               <ChevronRight />
             </Button>
           </Col>
