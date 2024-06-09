@@ -36,31 +36,38 @@ const EmployeeDetailsByDay: React.FC = () => {
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [sessions, setSessions] = useState<WorkSession[]>([]);
   const [totalTime, setTotalTime] = useState<string>("0 h, 0 min");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoadingSessions, setIsLoadingSessions] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchEmployeeAndSessions = async () => {
+    const fetchEmployee = async () => {
       try {
-        setLoading(true);
         const response = await api.get<Employee>(`/employee/${id}`);
         setEmployee(response.data);
-        const allSessions = response.data.work_session;
-        const daySessions = getSessionsForDate(allSessions, date);
-        setSessions(daySessions);
-        setTotalTime(sumTotalTime(daySessions));
-        setLoading(false);
       } catch (err) {
-        setError("Error retrieving work session data");
-        setLoading(false);
+        setError("Error retrieving employee data");
       }
     };
 
-    fetchEmployeeAndSessions();
-  }, [id, date]);
+    fetchEmployee();
+  }, [id]);
+
+  useEffect(() => {
+    if (employee) {
+      fetchSessions(employee.work_session, date);
+    }
+  }, [employee, date]);
+
+  const fetchSessions = (allSessions: WorkSession[], date?: string) => {
+    setIsLoadingSessions(true);
+    const daySessions = getSessionsForDate(allSessions, date);
+    setSessions(daySessions);
+    setTotalTime(sumTotalTime(daySessions));
+    setIsLoadingSessions(false);
+  };
 
   const getSessionsForDate = (sessions: WorkSession[], date?: string) => {
     if (!date) return [];
@@ -163,9 +170,6 @@ const EmployeeDetailsByDay: React.FC = () => {
     navigate(`/add-work-hour?date=${date}&employeeId=${id}`);
   };
 
-  if (loading) return <Loader />;
-  if (error) return <div>Error: {error}</div>;
-
   return (
     <Container className="mt-4">
       <Row className="justify-content-center my-3">
@@ -249,9 +253,25 @@ const EmployeeDetailsByDay: React.FC = () => {
         </Col>
       </Row>
 
-      <ListGroup className="mb-4">
-        {sessions.length > 0 ? (
-          sessions.map((session) => (
+      {isLoadingSessions && (
+        <Row className="justify-content-center my-5">
+          <Col md={6} className="text-center">
+            <Loader />
+          </Col>
+        </Row>
+      )}
+      {!isLoadingSessions && !error && !sessions.length && (
+        <Row className="justify-content-center my-3">
+          <Col md={6} className="text-center">
+            <Alert variant="warning" className="text-center">
+              No work sessions for this day
+            </Alert>
+          </Col>
+        </Row>
+      )}
+      {!isLoadingSessions && !error && sessions.length > 0 && (
+        <ListGroup className="mb-4">
+          {sessions.map((session) => (
             <Row key={session.id} className="justify-content-center">
               <Col md={6}>
                 <ListGroup.Item className="mb-2 small">
@@ -302,15 +322,9 @@ const EmployeeDetailsByDay: React.FC = () => {
                 </ListGroup.Item>
               </Col>
             </Row>
-          ))
-        ) : (
-          <Row className="justify-content-center my-3">
-            <Col md={6} className="text-center">
-              <Alert variant="warning" className="text-center">No work sessions for this day</Alert>
-            </Col>
-          </Row>
-        )}
-      </ListGroup>
+          ))}
+        </ListGroup>
+      )}
 
       <ConfirmModal
         show={showModal}
