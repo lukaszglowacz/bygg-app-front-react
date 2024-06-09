@@ -106,29 +106,31 @@ const EditWorkHour: React.FC = () => {
   const handleSubmit = async () => {
     setError(null);
     setShowWorkplaceWarning(false);
-
+  
     if (workSession) {
       if (!workSession.workplace) {
         setShowWorkplaceWarning(true);
         return;
       }
-
+  
       if (new Date(workSession.end_time) < new Date(workSession.start_time)) {
         setError("End time must be after start time");
         return;
       }
-
+  
       try {
         const updatedSession = {
-          ...workSession,
+          id: workSession.id,
           profile: employee!.id,
+          workplace: workSession.workplace.id, // Send workplace ID to the backend
           start_time: new Date(workSession.start_time).toISOString(),
           end_time: new Date(workSession.end_time).toISOString(),
-          workplace: workSession.workplace.id, // Send workplace ID to the backend
         };
-        console.log("Updated session data:", JSON.stringify(updatedSession));
-        const response = await api.put(`/worksession/${id}`, updatedSession);
-        console.log('API response:', JSON.stringify(response.data));
+  
+        console.log("Updated session data before sending:", updatedSession); // Log the data to be sent
+  
+        const response = await api.put(`/worksession/${id}/`, updatedSession);
+        console.log('API response:', response.data);
         setToastMessage("Work session updated");
         setShowToast(true);
         setTimeout(() => {
@@ -136,7 +138,7 @@ const EditWorkHour: React.FC = () => {
         }, 3000);
       } catch (err) {
         const error = err as AxiosError;
-        console.error("Error updating session:", JSON.stringify(error.response?.data || error.message));
+        console.error("Error updating session:", error.response?.data || error.message);
         const errorMessage = error.response?.data
           ? JSON.stringify(error.response.data, null, 2)
           : error.message;
@@ -144,6 +146,7 @@ const EditWorkHour: React.FC = () => {
       }
     }
   };
+  
 
   const handleChange = (event: React.ChangeEvent<any>) => {
     const { name, value } = event.target;
