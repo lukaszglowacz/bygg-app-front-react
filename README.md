@@ -6,8 +6,6 @@ Gurudo is an innovative work time management application inspired by the charact
 
 ## Table of Contents
 
-<!-- toc -->
-
 - [Introduction](#introduction)
 - [System Requirements](#system-requirements)
   * [Backend](#backend)
