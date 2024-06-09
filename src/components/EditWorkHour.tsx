@@ -14,7 +14,7 @@ import LoadingButton from "./LoadingButton";
 
 interface WorkSession {
   id: number;
-  profile: number;
+  profile: number; // Change profile to number
   workplace: Workplace;
   start_time: string;
   end_time: string;
@@ -82,7 +82,10 @@ const EditWorkHour: React.FC = () => {
         setWorkplaces(workplacesRes.data);
 
         if (session) {
-          setWorkSession(session);
+          setWorkSession({
+            ...session,
+            profile: employeeRes.data.id // Change to employee ID
+          });
         } else {
           setWorkSession(null);
         }
@@ -120,11 +123,11 @@ const EditWorkHour: React.FC = () => {
 
       try {
         const updatedSession = {
-          ...workSession,
-          profile: employee!.id,
+          id: workSession.id,
+          profile: workSession.profile, // Send profile ID
+          workplace: workSession.workplace.id, // Ensure workplace ID is sent
           start_time: new Date(workSession.start_time).toISOString(),
           end_time: new Date(workSession.end_time).toISOString(),
-          workplace: workSession.workplace.id, // Send workplace ID to the backend
         };
         console.log("Updated session data:", JSON.stringify(updatedSession));
         const response = await api.put(`/worksession/${id}`, updatedSession);
