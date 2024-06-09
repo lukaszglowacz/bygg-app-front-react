@@ -385,39 +385,45 @@ Following the above steps will help you fully utilize the capabilities of the Gu
 
 ## Sample Images/Screenshots
 ### Login
-![Login](screenshots/192.168.0.69_3000_(iPhone%20SE).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE).png" alt="Login" style="width: 50%;">
+
 ### Sign Up
-![Sign Up](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(1).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(1).png" alt="Sign Up" style="width: 50%;">
+
 ### Reset Password
-![Reset password](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(2).png)
-### Confirm Reset Password
-![Reset password](screenshots/worktime-app-react-cd9b9f8fb803.herokuapp.com_reset-password_Mw_c8cizw-2fa20e7d90c05fe49da5163e5423b847_(iPhone%20SE).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(2).png" alt="Reset password" style="width: 50%;"><img src="screenshots/worktime-app-react-cd9b9f8fb803.herokuapp.com_reset-password_Mw_c8cizw-2fa20e7d90c05fe49da5163e5423b847_(iPhone%20SE).png" alt="Reset password" style="width: 50%;">
+
+
 ### Home
-![Home](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(3).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(3).png" alt="Home" style="width: 50%;">
+
 ### Profile
-![Profile](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(4).png)
-### Profile
-![Profile](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(5).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(4).png" alt="Profile" style="width: 50%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(5).png" alt="Profile" style="width: 50%;">
+
 ### Month View
-![Month View](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(7).png)
-### Month View
-![Team](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(8).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(7).png" alt="Month View" style="width: 50%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(8).png" alt="Team" style="width: 50%;">
+
 ### Team - Employer
-![Team](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(9).png)
-### Team - Employer
-![Month View Employer](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(10).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(9).png" alt="Team" style="width: 50%;"><img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(10).png" alt="Month View Employer" style="width: 50%;">
+
 ### Month View - Employer
-![Add Work Session](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(11).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(11).png" alt="Add Work Session" style="width: 50%;">
+
 ### Add Work Session - Employer
-![Confirm Deletion Modal](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(13).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(13).png" alt="Confirm Deletion Modal" style="width: 50%;">
+
 ### Edit Work Session - Employer
-![Workplace](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(14).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(14).png" alt="Workplace" style="width: 50%;">
+
 ### Confirm Deletion Modal - Employer
-![Navbar](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(15).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(15).png" alt="Navbar" style="width: 50%;">
+
 ### Workplace - Employer
-![Strona główna](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(16).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(16).png" alt="Strona główna" style="width: 50%;">
+
 ### Menu
-![Strona główna](screenshots/192.168.0.69_3000_(iPhone%20SE)%20(17).png)
+<img src="screenshots/192.168.0.69_3000_(iPhone%20SE)%20(17).png" alt="Strona główna" style="width: 50%;">
+
 
 
 ---
