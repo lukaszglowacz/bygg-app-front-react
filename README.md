@@ -1713,7 +1713,7 @@ Work session management in the Gurudo application is designed to provide both em
 
 1. **Activation link after registration via email.**
    - Implementing a function to send an activation link to the user's email to confirm authenticity. This will increase security and prevent registration with non-existent email addresses.
-   - 
+
 ---
 
 ## About the Author
