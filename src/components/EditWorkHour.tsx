@@ -66,7 +66,7 @@ const EditWorkHour: React.FC = () => {
   const [showWorkplaceWarning, setShowWorkplaceWarning] = useState(false);
 
   useEffect(() => {
-    console.log("Params: ", { id, employeeId, date });
+    console.log("Params: ", JSON.stringify({ id, employeeId, date }));
 
     const fetchData = async () => {
       try {
@@ -86,7 +86,7 @@ const EditWorkHour: React.FC = () => {
         } else {
           setWorkSession(null);
         }
-        console.log("Data fetched successfully:", { employee: employeeRes.data, session, workplaces: workplacesRes.data });
+        console.log("Data fetched successfully:", JSON.stringify({ employee: employeeRes.data, session, workplaces: workplacesRes.data }));
       } catch (error) {
         setError("Error loading data");
         console.error("Error loading data:", error);
@@ -126,9 +126,9 @@ const EditWorkHour: React.FC = () => {
           end_time: new Date(workSession.end_time).toISOString(),
           workplace: workSession.workplace.id, // Send workplace ID to the backend
         };
-        console.log("Updated session data:", updatedSession);
+        console.log("Updated session data:", JSON.stringify(updatedSession));
         const response = await api.put(`/worksession/${id}`, updatedSession);
-        console.log('API response:', response);
+        console.log('API response:', JSON.stringify(response.data));
         setToastMessage("Work session updated");
         setShowToast(true);
         setTimeout(() => {
@@ -136,7 +136,7 @@ const EditWorkHour: React.FC = () => {
         }, 3000);
       } catch (err) {
         const error = err as AxiosError;
-        console.error("Error updating session:", error.response?.data || error.message);
+        console.error("Error updating session:", JSON.stringify(error.response?.data || error.message));
         const errorMessage = error.response?.data
           ? JSON.stringify(error.response.data, null, 2)
           : error.message;
